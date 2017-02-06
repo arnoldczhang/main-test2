@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>perform_test</title>
+        <meta charset="UTF-8">
+        <meta http-equiv="Access-Control-Allow-Origin" content="*">
+        <meta name="viewport" content="width=device-width">
+        <style type="text/css"></style>
+        <link rel="stylesheet" type="text/css" href="./test/main.css">
+    </head>
+    <body>
+        <div id="tpl2">
+            
+        </div>
+        <div id="tpl3">
+            <input type="text" :model="ddd" :on="input:getValue()">
+            {{
+            ddd
+            +
+            1
+            }}
+            {{
+            ddd
+            +
+            11
+            }}
+            {{
+            ddd
+            +
+            111
+            }}
+            {{
+            ddd
+            +
+            1111
+            }}
+            <div class="lvalert_show" 
+                    lv-show="popHotelNum" 
+                    lv-on="click: closePopNum(false)"
+                    lv-class="{'aa' : popHotelNum, 'bb cc' : !popHotelNum, 'dd ee ffdd' : popHotelNum}">
+                <div class="lvalert_container">
+                    <p class="title">修改间数</p>
+                    <div>
+                        <ul>
+                            <b>{{myName.toUpperCase()}}</b>
+                            <li lv-for="nn in selectHouseNum trackBy $outerIndex">
+                                <h1 lv-for="aa in nn.num trackBy $middleIndex" 
+                                    lv-text="aa.aa"
+                                    lv-on="click:showOne()"></h1>
+                                <div lv-for="aa in nn.num trackBy $middleIndex">
+                                    <label lv-text="'index : ' + $middleIndex + '-outerIndex : ' + $outerIndex" 
+                                            lv-on="{'click' : show(aa.aa + 100), mousemove : move(aa.aa + 200)}"></label>
+                                </div>
+                                <b lv-for="aa in nn.num">{{bigger(aa.aa)}}</b>
+                            </li>
+                            <li lv-text="cityName"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tpl4">
+            <input type="text" v-model="ddd">
+            {{ddd}}
+            <div class="lvalert_show" v-show="popHotelNum" v-on:click="closePopNum(false)">
+                <div class="lvalert_container">
+                    <p class="title">修改间数</p>
+                    <div>
+                        <ul>
+                            <b>{{myName.toUpperCase()}}</b>
+                            <li v-for="(nn, $outerIndex) in selectHouseNum">
+                                <h1 v-for="(aa, $middleIndex) in nn.num" 
+                                    v-on:click="showOne()">{{aa.aa}}</h1>
+                                <div v-for="(aa, $middleIndex) in nn.num">
+                                    <label v-on:click="show(aa.aa + 100)"
+                                            v-on:mousemove="move(aa.aa + 200)">index : {{$middleIndex}}-outerIndex : {{$outerIndex}}</label>
+                                </div>
+                                <b v-for="aa in nn.num">{{bigger(aa.aa)}}</b>
+                            </li>
+                            <li>{{cityName}}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="./test/lodash.js"></script>
+        <script src="./test/platform.js"></script>
+        <script src="./test/benchmark.js"></script>
+        <script src="./test/vue-2.0.3.js"></script>
+        <script src="./resources/main-test2.js"></script>
+        <script src="./test/test.js"></script>
+        <script type="text/javascript">
+        </script>
+    </body>
+</html>
