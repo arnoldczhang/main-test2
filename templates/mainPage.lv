@@ -1,0 +1,55 @@
+<!DOCTYPE html >
+<html>
+<head>
+<title>node_multipage</title>
+<meta charset="utf-8">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="max-age=7200" />
+<meta http-equiv="expires" content="0">
+<meta content="initial-scale=1.0,user-scalable=no,minimum-scale=1,maximum-scale=1,width=device-width" name="viewport">
+<link rel="alternate" type="application/vnd.wap.xhtml+xml" media="handheld" href="target"/>
+<meta http-equiv=Content-Type content="text/html;charset=utf-8"/>
+<style type="text/css"></style>
+{CSS}
+</head>
+<body>
+<script type="text/javascript" src="resources/main-test2.js"> </script>
+<script type="text/javascript">
+window.__RENDER_FN = {FN};
+window.__INITIAL_STATE__  = {MODEL};
+</script>
+<!--@ BODY -->
+<div id="container">
+  <input type="text" :model="text" />
+  <label :text="text" ></label>
+  <div id="viewport">
+    <div class="g-city-sct-container">
+        <div class="g-city-sct-bd">
+              <ul class="city-list">
+                    <li :for="let letter in letterArr" :attr="{'id' : letter + '_title', 'data-key': letter}">
+                          <h4 class="sc-letter-list sc-letter-list-open "
+                                :on="click:toggleShow(letter)">{{
+                                letter.toLowerCase()
+                                }}</h4>
+                          <ul :attr="{'id' : letter + '_actTitle_UL'}" class="m-city-list"
+                                :show="letterShowObj[letter]">
+                                <li :for="let letterInfo in letterObj[letter]" 
+                                  :attr="{'data-name' : letterInfo.name, 'data-id' : letterInfo.id, 'data-shortPinyin' : letterInfo.shortPinyin, 'data-pinyin' : letterInfo.pinyin, 'data-index' : $index,  'data-render-id' : letter + '_actTitle_LI_' + letterInfo.id}">
+                                  {{letterInfo.name}}
+                                  </li>
+                          </ul>
+                        </li>
+              </ul>
+        </div>
+        <ul class="g-letter-list" >
+            <li>
+                <a :for="let letter in letterArr" :href="'#' + letter + '_title'">{{letter}}</a>
+            </li>
+        </ul>
+    </div>
+  </div>
+</div>
+<!-- BODY @-->
+{JS}
+</body>
+</html>
