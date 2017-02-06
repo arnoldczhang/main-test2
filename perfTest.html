@@ -12,12 +12,44 @@
         <div id="for_inst">
              <div class="for_div" :for="el in arr">
                <label :text="el"></label>
+               <div class="for_div3" :for="el in arr2">
+                   <span>
+                      <b :text="el"></b>
+                   </span>
+               </div>
+            </div>
+            <div class="for_div2" :for="el in arr2">
+                <span>
+                   <label :text="el"></label>
+                </span>
             </div>
              <ul class="for_ul">
+                <li :for="el in arr2">
+                     <label :text="el"></label>
+                </li>
                <li :for="el in arr">
                     <label :text="el"></label>
                </li>
             </ul>
+            <div class="for_div2" :for="el in arr2">
+               <label>{{el}}xxx</label>
+                <ul class="for_ul">
+                   <li :for="el in arr2">
+                        <label :text="el"></label>
+                        <ul class="for_ul3" :for="el in arr2">
+                            <li>
+                               <b :text="el"></b>
+                            </li>
+                        </div>
+                   </li>
+                  <li :for="el in arr">
+                       <label :text="el"></label>
+                  </li>
+               </ul>
+            </div>
+             <div class="for_div2" :for="el in arr">
+               <label>{{el}}xxx</label>
+            </div>
         </div>
         <div id="tpl2">
             
@@ -102,21 +134,26 @@
         <script src="./resources/main-test2.js"></script>
         <script src="./test/test.js"></script>
         <script type="text/javascript">
-            jsInst = JSpring([function ($scope, $, module) {
+            var jsInst = JSpring([function ($scope, $, module) {
                 setTimeout(function () {
                     $scope.arr.$set(1, 'bbb');
+                    $scope.arr2.$set(1, 'BBB');
                     setTimeout(function () {
                         $scope.arr = ['aaa', 'bbbb'];
+                        $scope.arr2 = ['AAA', 'BBBB', 'CCC'];
                         setTimeout(function () {
                             $scope.arr = ['a'];
+                            $scope.arr2 = ['A', 'BB'];
                             setTimeout(function () {
                                 $scope.arr = ['a', 'b', 'c', 'd'];
-                            }, 200);
-                        }, 200);
-                    }, 200);
-                }, 200);
+                                $scope.arr2 = ['A', 'B', 'C'];
+                            }, 2000);
+                        }, 2000);
+                    }, 2000);
+                }, 2000);
             }, {
-                    arr : ['aa', 'bb', 'cc']
+                    arr : ['aa', 'bb', 'cc'],
+                    arr2 : ['AA', 'BB']
             }, '#for_inst']);
         </script>
         <script type="text/javascript">

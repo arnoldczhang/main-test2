@@ -1090,11 +1090,24 @@
 			+ ')\\b', 'g');
 	};
 
-	function replaceVNode (patchQ, prevVNode, newVNode) {
+	function replaceVNode (patchQ, prevVNode, newVNode, opts) {
 		_.push(patchQ, {
 			type : UpdateType.REPLACE,
 			vNode : [prevVNode, newVNode]
 		});
+		opts.step = 0;
+	};
+
+	function childrenDiff (prevChildren, newChildren, prevVNode, inst, childOpts) {
+		if (prevChildren.length <= newChildren.length) {
+			_.each(newChildren, function diffEach (child, i) {
+				inst.diff(child, prevChildren[i + childOpts.step] || emptyDataObj, prevVNode, childOpts);
+			}), inst;
+		} else {
+			_.each(prevChildren, function diffEach (child, i) {
+				inst.diff(newChildren[i + childOpts.step] || emptyDataObj, child, prevVNode, childOpts);
+			}), inst;
+		}
 	};
 
 	function setMapObjValue (scope, keyStr, value) {
@@ -2277,7 +2290,6 @@
 	};
 
 	_JSpring.prototype = {
-		STEP : 0,
 		isStatic : true,
 		constructor : _JSpring,
 		routeAttrs : ['uniqId', 'controller', 'service'],
@@ -2354,7 +2366,6 @@
 		collectGb : function collectGb () {
 			var cach = this.cach;
 			_.clearArr(cach, ['updateKey', 'tickQ']);
-			this.STEP = 0;
 		},
 
 		serverRender : function serverRender () {
@@ -2447,7 +2458,8 @@
 			return _this;
 		},
 
-		diff : function diff (newVNode, prevVNode, parentVNode) {
+		diff : function diff (newVNode, prevVNode, parentVNode, opts) {
+			opts = opts || {};
 			var 
 				_this = this
 				, patchQ = _this.cach.patchQ
@@ -2457,34 +2469,22 @@
 				, initCompare = isTheSameStaticVNode(newVNode, prevVNode)
 				, prevChildren
 				, newChildren
+				, childOpts = {
+					step : 0
+				}
 				, nUKeys
 				, oUKeys
 				, nUniq
 				, uniq
-				, step = 0
 				;
 
 			if (initCompare.isEqStatic) {
 
 				if (!initCompare.isBothText) {
-
 					prevChildren = prevVNode.children;
 					newChildren = newVNode.children;
-
-					if (prevChildren.length <= newChildren.length) {
-						_.each(newChildren, function diffEach (child, i) {
-							step = Math.min(step, _this.STEP);
-							_this.diff(child, prevChildren[i + step] || emptyDataObj, prevVNode);
-						});
-					} else {
-						_.each(prevChildren, function diffEach (child, i) {
-							step = Math.min(step, _this.STEP);
-							_this.diff(newChildren[i + step] || emptyDataObj, child, prevVNode);
-						});
-					}
-					_this.STEP = 0;
+					childrenDiff(prevChildren, newChildren, prevVNode, _this, childOpts)
 				}
-				return _this;
 			} else {
 
 				if (initCompare.isBothText || initCompare.isBothCmt) {
@@ -2518,36 +2518,20 @@
 								uniq[ukey] = newValue;
 							}
 						});
+						prevChildren = prevVNode.children;
+						newChildren = newVNode.children;
+						childrenDiff(prevChildren, newChildren, prevVNode, _this, childOpts)
 					} else {
 
 						//replace
-						replaceVNode(patchQ, prevVNode, newVNode);
-						_this.STEP = 0;
-						return _this;
+						replaceVNode(patchQ, prevVNode, newVNode, opts);
 					}
-
-					prevChildren = prevVNode.children;
-					newChildren = newVNode.children;
-
-					if (prevChildren.length <= newChildren.length) {
-						_.each(newChildren, function diffEach (child, i) {
-							step = Math.min(step, _this.STEP);
-							_this.diff(child, prevChildren[i + step] || emptyDataObj, prevVNode);
-						}), _this;
-					} else {
-						_.each(prevChildren, function diffEach (child, i) {
-							step = Math.min(step, _this.STEP);
-							_this.diff(newChildren[i + step] || emptyDataObj, child, prevVNode);
-						}), _this;
-					}
-					return _this;
 				} else {
 
 					if (initCompare.isEqTag) {
 						
 						//replace
-						replaceVNode(patchQ, prevVNode, newVNode);
-						_this.STEP = 0;
+						replaceVNode(patchQ, prevVNode, newVNode, opts);
 					} else {
 
 						if (initCompare.isHasTag) {
@@ -2557,8 +2541,7 @@
 								if (initCompare.isEqFor) {
 
 									//replace
-									replaceVNode(patchQ, prevVNode, newVNode);
-									_this.STEP = 0;
+									replaceVNode(patchQ, prevVNode, newVNode, opts);
 								} else {
 
 									//insert
@@ -2567,7 +2550,7 @@
 										parentVNode : parentVNode,
 										vNode : [prevVNode, newVNode]
 									});
-									_this.STEP -= 1;
+									opts.step -= 1;
 								}
 							} else if (prevVNode.isFor) {
 
@@ -2576,12 +2559,11 @@
 									type : UpdateType.DELETE,
 									vNode : prevVNode
 								});
-								_this.STEP -= 1;
+								opts.step -= 1;
 							} else {
 
 								//replace
-								replaceVNode(patchQ, prevVNode, newVNode);
-								_this.STEP = 0;
+								replaceVNode(patchQ, prevVNode, newVNode, opts);
 							}
 						} else {
 
@@ -2601,7 +2583,7 @@
 									vNode : prevVNode
 								});
 							}
-							_this.STEP = 0;
+							opts.step = 0;
 						}
 					}
 				}
