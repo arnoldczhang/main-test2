@@ -9,11 +9,22 @@
         <link rel="stylesheet" type="text/css" href="./test/main.css">
     </head>
     <body>
+        <div id="for_inst">
+             <div class="for_div" :for="el in arr">
+               <label :text="el"></label>
+            </div>
+             <ul class="for_ul">
+               <li :for="el in arr">
+                    <label :text="el"></label>
+               </li>
+            </ul>
+        </div>
         <div id="tpl2">
             
         </div>
         <div id="tpl3">
-            <input type="text" :model="ddd" :on="input:getValue()">
+        <!--
+            <input type="text" :model="ddd" :on="keyup:getValue()">
             {{
             ddd
             +
@@ -34,6 +45,7 @@
             +
             1111
             }}
+        -->
             <div class="lvalert_show" 
                     lv-show="popHotelNum" 
                     lv-on="click: closePopNum(false)"
@@ -89,6 +101,24 @@
         <script src="./test/vue-2.0.3.js"></script>
         <script src="./resources/main-test2.js"></script>
         <script src="./test/test.js"></script>
+        <script type="text/javascript">
+            jsInst = JSpring([function ($scope, $, module) {
+                setTimeout(function () {
+                    $scope.arr.$set(1, 'bbb');
+                    setTimeout(function () {
+                        $scope.arr = ['aaa', 'bbbb'];
+                        setTimeout(function () {
+                            $scope.arr = ['a'];
+                            setTimeout(function () {
+                                $scope.arr = ['a', 'b', 'c', 'd'];
+                            }, 200);
+                        }, 200);
+                    }, 200);
+                }, 200);
+            }, {
+                    arr : ['aa', 'bb', 'cc']
+            }, '#for_inst']);
+        </script>
         <script type="text/javascript">
         </script>
     </body>
