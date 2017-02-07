@@ -68,7 +68,7 @@
 
 	var LOOP = {
 		INDEX : 0,
-		MAX_LOOP : 1000000,
+		MAX_LOOP : 100000,
 
 		init : function init () {
 			this.INDEX = 0;
@@ -625,7 +625,7 @@
 		},
 
 		isNode : function isNode (node) {
-			return !!(node && node.nodeType);
+			return this.toBool(node && node.nodeType);
 		},
 
 		parent : function parent (node) {
@@ -691,9 +691,9 @@
 		inArray: function inArray (arr, child) {
 
 			if (this.isArray(arr)) {
-				return !!~this.indexOf(arr, child);
+				return this.toBool(~this.indexOf(arr, child));
 			}
-			return !!~this.indexOf(this.toArray(arr), child);
+			return this.toBool(~this.indexOf(this.toArray(arr), child));
 		},
 
 		toArray : function toArray (arrayLikeObj) {
@@ -1099,14 +1099,19 @@
 	};
 
 	function childrenDiff (prevChildren, newChildren, prevVNode, inst, childOpts) {
-		if (prevChildren.length <= newChildren.length) {
-			_.each(newChildren, function diffEach (child, i) {
-				inst.diff(child, prevChildren[i + childOpts.step] || emptyDataObj, prevVNode, childOpts);
-			}), inst;
-		} else {
-			_.each(prevChildren, function diffEach (child, i) {
-				inst.diff(newChildren[i + childOpts.step] || emptyDataObj, child, prevVNode, childOpts);
-			}), inst;
+		var 
+			i = 0
+			, pLen = prevChildren.length
+			, nLen = newChildren.length
+			, isNewChildrenLonger = pLen < nLen
+			, len = isNewChildrenLonger ? nLen : pLen
+			, stepName = isNewChildrenLonger ? 'nStep' : 'pStep';
+
+		for ( ; i < len - childOpts[stepName]; ++i) {
+			inst.diff(newChildren[i + childOpts.nStep] || emptyDataObj
+				, prevChildren[i + childOpts.pStep] || emptyDataObj
+				, prevVNode
+				, childOpts);
 		}
 	};
 
@@ -1477,7 +1482,7 @@
 				}
 			});
 			res += '}';
-			res += ',"isFor":' + !!vObj.isFor;
+			res += ',"isFor":' + _.toBool(vObj.isFor);
 		}
 		res += '}';
 
@@ -1512,8 +1517,8 @@
 		}
 
 		vNode = new VNode(tag, data, {
-			isFor : !!data.isFor,
-			isNeedRender : !!data.isNeedRender,
+			isFor : _.toBool(data.isFor),
+			isNeedRender : _.toBool(data.isNeedRender),
 			isStatic : isStatic,
 			instance : _this
 		});
@@ -1645,7 +1650,7 @@
 			this.els = _.toArray(query(selector));
 			this.context = DOC;
 		}
-		this.exist = !!this.els.length;
+		this.exist = _.toBool(this.els.length);
 	};
 
 	Query.prototype = {
@@ -2277,7 +2282,7 @@
 			_this.el = query(_this.selector)[0];
 			_this.renderFn = opts.renderFn;
 			_this.parent = _this.el.parentNode;
-			_this._server_render = !!window.__INITIAL_STATE__;
+			_this._server_render = _.toBool(window.__INITIAL_STATE__);
 			_this.template = REGEXP.replace(_this.el.outerHTML, REGEXP.noteRE, STRING);
 		}
 		
@@ -2470,7 +2475,8 @@
 				, prevChildren
 				, newChildren
 				, childOpts = {
-					step : 0
+					pStep : 0,
+					nStep : 0
 				}
 				, nUKeys
 				, oUKeys
@@ -2504,7 +2510,7 @@
 				if (initCompare.isEqStaticTag) {
 
 					if (_.arrEqual(nUKeys, oUKeys)) {
-						_.each(nUKeys, function uKeysEach (ukey) {
+						nUKeys.length && _.each(nUKeys, function uKeysEach (ukey) {
 							var newValue = nUniq[ukey];
 
 							if (!_.proxyEqual(uniq[ukey], newValue)) {
@@ -2550,7 +2556,7 @@
 										parentVNode : parentVNode,
 										vNode : [prevVNode, newVNode]
 									});
-									opts.step -= 1;
+									opts.pStep -= 1;
 								}
 							} else if (prevVNode.isFor) {
 
@@ -2559,7 +2565,7 @@
 									type : UpdateType.DELETE,
 									vNode : prevVNode
 								});
-								opts.step -= 1;
+								opts.nStep -= 1;
 							} else {
 
 								//replace
@@ -2583,7 +2589,8 @@
 									vNode : prevVNode
 								});
 							}
-							opts.step = 0;
+							opts.pStep = 0;
+							opts.nStep = 0;
 						}
 					}
 				}
