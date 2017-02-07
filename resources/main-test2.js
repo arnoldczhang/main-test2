@@ -1104,14 +1104,31 @@
 			, pLen = prevChildren.length
 			, nLen = newChildren.length
 			, isNewChildrenLonger = pLen < nLen
-			, len = isNewChildrenLonger ? nLen : pLen
-			, stepName = isNewChildrenLonger ? 'nStep' : 'pStep';
+			, addLen
+			, len
+			, addStep = 0
+			, stepName
+			, addStepName
+			;
 
-		for ( ; i < len - childOpts[stepName]; ++i) {
+		if (isNewChildrenLonger) {
+			len = nLen;
+			addLen = pLen;
+			stepName = 'nStep';
+			addStepName = 'pStep';
+		} else {
+			len = pLen;
+			addLen = nLen;
+			stepName = 'pStep';
+			addStepName = 'nStep';
+		}
+
+		for ( ; i < len - childOpts[stepName] + 0; ++i) {
 			inst.diff(newChildren[i + childOpts.nStep] || emptyDataObj
 				, prevChildren[i + childOpts.pStep] || emptyDataObj
 				, prevVNode
 				, childOpts);
+			addStep = addLen - (i + childOpts[addStepName]) - 1;
 		}
 	};
 
@@ -2472,8 +2489,6 @@
 				, prevData = prevVNode.data || $create(null)
 				, newData = newVNode.data || $create(null)
 				, initCompare = isTheSameStaticVNode(newVNode, prevVNode)
-				, prevChildren
-				, newChildren
 				, childOpts = {
 					pStep : 0,
 					nStep : 0
@@ -2485,12 +2500,7 @@
 				;
 
 			if (initCompare.isEqStatic) {
-
-				if (!initCompare.isBothText) {
-					prevChildren = prevVNode.children;
-					newChildren = newVNode.children;
-					childrenDiff(prevChildren, newChildren, prevVNode, _this, childOpts)
-				}
+				!initCompare.isBothText && childrenDiff(prevVNode.children, newVNode.children, prevVNode, _this, childOpts)
 			} else {
 
 				if (initCompare.isBothText || initCompare.isBothCmt) {
@@ -2524,9 +2534,7 @@
 								uniq[ukey] = newValue;
 							}
 						});
-						prevChildren = prevVNode.children;
-						newChildren = newVNode.children;
-						childrenDiff(prevChildren, newChildren, prevVNode, _this, childOpts)
+						childrenDiff(prevVNode.children, newVNode.children, prevVNode, _this, childOpts)
 					} else {
 
 						//replace
@@ -2589,8 +2597,6 @@
 									vNode : prevVNode
 								});
 							}
-							opts.pStep = 0;
-							opts.nStep = 0;
 						}
 					}
 				}

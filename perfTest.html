@@ -33,7 +33,7 @@
             <li>2</li>
             <li>3</li>
          </ul>
-         <div class="for_div3" :for="el in arr[0].arr2">
+         <div class="for_div3" :for="el in arr2">
              <ul>
                 <li>1</li>
                 <li>2</li>
@@ -182,21 +182,29 @@
         <script type="text/javascript">
             var jsInst = JSpring([function ($scope, $, module) {
                 setTimeout(function () {
-                    $scope.arr[0].arr2.$set(0, 'aa');
-                    $scope.arr[1].arr2.$set(0, 'aaa');
-                    $scope.arr[2].arr2.$set(0, 'aaaa');
+                    $scope.arr = [
+                        {
+                            arr2 : ['aa']
+                        },
+                        {
+                            arr2 : ['aaa']
+                        },
+                        {
+                            arr2 : ['aaaa']
+                        }
+                    ];
                     setTimeout(function () {
                         $scope.arr = [
                             {
                                 arr2 : ['a', 'b', 'c', 'd', 'e']
                             }
                         ];
-                //         setTimeout(function () {
+                        setTimeout(function () {
                 //             $scope.arr = ['a'];
                 //             setTimeout(function () {
                 //                 $scope.arr = ['a', 'b', 'c', 'd'];
                 //             }, 2000);
-                //         }, 2000);
+                        }, 2000);
                     }, 200);
                 }, 200);
             }, {
@@ -204,17 +212,8 @@
                     getValue : function () {
                         console.log(this.ddd);
                     },
-                    arr : [
-                        {
-                            arr2 : ['a', 'b', 'c']
-                        },
-                        {
-                            arr2 : ['a']
-                        },
-                        {
-                            arr2 : ['a', 'b', 'c', 'd']
-                        }
-                    ]
+                    arr : [],
+                    arr2 : []
             }, '#for_inst']);
         </script>
         <script type="text/javascript">
