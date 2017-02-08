@@ -558,7 +558,7 @@ Dep.prototype.depend = function depend () {
 };
 
 Dep.prototype.notify = function notify () {
-  // console.time('vue-update')
+  console.time('vue-update')
   // stablize the subscriber list first
   var subs = this.subs.slice();
   for (var i = 0, l = subs.length; i < l; i++) {
@@ -1694,7 +1694,7 @@ function lifecycleMixin (Vue) {
     callHook(vm, 'beforeMount');
     vm._watcher = new Watcher(vm, function () {
       vm._update(vm._render(), hydrating);
-      // console.timeEnd('vue-update')
+      console.timeEnd('vue-update')
     }, noop);
     hydrating = false;
     // manually mounted instance, call mounted on self
