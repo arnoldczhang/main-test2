@@ -1101,35 +1101,47 @@
 	function childrenDiff (prevChildren, newChildren, prevVNode, inst, childOpts) {
 		var 
 			i = 0
-			, pLen = prevChildren.length
-			, nLen = newChildren.length
-			, isNewChildrenLonger = pLen < nLen
-			, addLen
-			, len
+			, prevLen = prevChildren.length
+			, newLen = newChildren.length
+			, isNewChildrenLonger = prevLen < newLen
+			, additionStepName
+			, additionLen
 			, addStep = 0
 			, stepName
-			, addStepName
+			, len
 			;
 
 		if (isNewChildrenLonger) {
-			len = nLen;
-			addLen = pLen;
+			len = newLen;
+			additionLen = prevLen;
 			stepName = 'nStep';
-			addStepName = 'pStep';
+			additionStepName = 'pStep';
 		} else {
-			len = pLen;
-			addLen = nLen;
+			len = prevLen;
+			additionLen = newLen;
 			stepName = 'pStep';
-			addStepName = 'nStep';
+			additionStepName = 'nStep';
 		}
 
-		for ( ; i < len - childOpts[stepName] + 0; ++i) {
+		for (; i < len - childOpts[stepName]; ++i) {
+			_diffProxy();
+		}
+
+		addStep = Math.max(additionLen - (i + childOpts[additionStepName]) - 1, 0);
+		
+		if (addStep) {
+
+			for (len = i; i < len + addStep + 1; ++i) {
+				_diffProxy();
+			}
+		}
+
+		function _diffProxy () {
 			inst.diff(newChildren[i + childOpts.nStep] || emptyDataObj
 				, prevChildren[i + childOpts.pStep] || emptyDataObj
 				, prevVNode
 				, childOpts);
-			addStep = addLen - (i + childOpts[addStepName]) - 1;
-		}
+		};
 	};
 
 	function setMapObjValue (scope, keyStr, value) {
@@ -1165,6 +1177,14 @@
 		return result;
 	};
 
+	function getStrValue (str) {
+
+		if (_.isVoid0(str)) {
+			return '';
+		}
+		return str;
+	};
+
 	function setTextContent (el, text) {
 		return el.textContent = text;
 	};
@@ -1174,7 +1194,7 @@
 		_.each(exprArr, function exprArrEach (expr) {
 			expr = expr.replace(REGEXP.lineRE, SPACE);
 			var exprVar = expr.substring(2, expr.length - 2);
-			template = template.replace(expr, '" + (' + exprVar + ') + "');
+			template = template.replace(expr, '" + __j._v(' + exprVar + ') + "');
 		});
 		return template;
 	};
@@ -1338,7 +1358,7 @@
 		};
 	};
 
-	function createVCommentObj (comment, parentVObj) {
+	function createVCommentObj (comment, parentVObj, inst) {
 		return {
 			isElem : false,
 			isStatic : false,
@@ -1348,8 +1368,9 @@
 		};
 	};
 
-	function createVTextObj (text, parentVObj) {
+	function createVTextObj (text, parentVObj, inst) {
 		var hasBrace = text.match(REGEXP.textBindRE) || false;
+		hasBrace && (inst.isStatic = false);
 		return {
 			isElem : false,
 			nodeType : 3,
@@ -2358,7 +2379,7 @@
 				}
 
 				if (parentTag) {
-					!REGEXP.test(REGEXP.onlySpaceRE, spaceOrNote) && appendVObjChildren(parentTag, createVTextObj(spaceOrNote, parentTag));
+					!REGEXP.test(REGEXP.onlySpaceRE, spaceOrNote) && appendVObjChildren(parentTag, createVTextObj(spaceOrNote, parentTag, _this));
 					!isEndTag && appendVObjChildren(parentTag, vObj);
 					parentTag = isEndTag 
 						? parentTag.parentVObj 
@@ -2534,72 +2555,61 @@
 								uniq[ukey] = newValue;
 							}
 						});
-						childrenDiff(prevVNode.children, newVNode.children, prevVNode, _this, childOpts)
-					} else {
-
-						//replace
-						replaceVNode(patchQ, prevVNode, newVNode, opts);
+						return childrenDiff(prevVNode.children, newVNode.children, prevVNode, _this, childOpts);
 					}
-				} else {
+				} else if (!initCompare.isEqTag) {
 
-					if (initCompare.isEqTag) {
-						
-						//replace
-						replaceVNode(patchQ, prevVNode, newVNode, opts);
+					if (initCompare.isHasTag) {
+
+						if (newVNode.isFor) {
+
+							if (!initCompare.isEqFor) {
+
+								//insert
+								_.push(patchQ, {
+									type : UpdateType.INSERT,
+									parentVNode : parentVNode,
+									vNode : [prevVNode, newVNode]
+								});
+								return opts.pStep -= 1;
+							}
+						} else if (prevVNode.isFor) {
+
+							//delete
+							_.push(patchQ, {
+								type : UpdateType.DELETE,
+								vNode : prevVNode
+							});
+							return opts.nStep -= 1;
+						}
 					} else {
 
-						if (initCompare.isHasTag) {
+						if (newVNode.tagName) {
 
-							if (newVNode.isFor) {
-
-								if (initCompare.isEqFor) {
-
-									//replace
-									replaceVNode(patchQ, prevVNode, newVNode, opts);
-								} else {
-
-									//insert
-									_.push(patchQ, {
-										type : UpdateType.INSERT,
-										parentVNode : parentVNode,
-										vNode : [prevVNode, newVNode]
-									});
-									opts.pStep -= 1;
-								}
-							} else if (prevVNode.isFor) {
-
-								//delete
-								_.push(patchQ, {
-									type : UpdateType.DELETE,
-									vNode : prevVNode
-								});
-								opts.nStep -= 1;
-							} else {
-
-								//replace
-								replaceVNode(patchQ, prevVNode, newVNode, opts);
-							}
+							//append
+							_.push(patchQ, {
+								type : UpdateType.APPEND,
+								parentVNode : parentVNode,
+								vNode : newVNode
+							});
 						} else {
 
-							if (newVNode.tagName) {
-
-								//append
-								_.push(patchQ, {
-									type : UpdateType.APPEND,
-									parentVNode : parentVNode,
-									vNode : newVNode
-								});
-							} else {
-
-								//delete
-								_.push(patchQ, {
-									type : UpdateType.DELETE,
-									vNode : prevVNode
-								});
-							}
+							//delete
+							_.push(patchQ, {
+								type : UpdateType.DELETE,
+								vNode : prevVNode
+							});
 						}
+						return _this;
 					}
 				}
+				
+				//replace
+				_.push(patchQ, {
+					type : UpdateType.REPLACE,
+					vNode : [prevVNode, newVNode]
+				});
+				opts.step = 0;
 			}
 			return _this;
 		},
@@ -2680,7 +2690,8 @@
 		_n : createVNode,
 		_tn : createVTextNode,
 		_cn : createVCommentObj,
-		_mp : getMapResult
+		_mp : getMapResult,
+		_v : getStrValue
 	});
 
 	function JSpring (propArr, opts) {

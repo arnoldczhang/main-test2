@@ -39,20 +39,40 @@ describe('for', function () {
                         <label :text="el"></label>
                    </li>
                 </ul>
+                <div class="for_div3" :for="el in arrObj trackBy key">
+                   <label>{{key}} : {{el}}</label>
+                </div>
+                <ul>
+                    
+                </ul>
                  <div class="for_div2" :for="el in arr">
                    <label>{{el}}xxx</label>
+                </div>
+                <ul>
+                    
+                </ul>
+                 <div class="for_div4" :for="el in arrStr trackBy i">
+                   <label>{{i}} : {{el}}</label>
                 </div>
             </div>
              */
         });
 
         jsInst = JSpring([function ($scope, $, module) {
-            done();
+            ;
         }, {
-                arr : ['aa', 'bb', 'cc']
+                arr : ['aa', 'bb', 'cc'],
+                arrStr : 'abc',
+                arrObj : {
+                    aa : 1,
+                    bb : 2,
+                    cc : 3
+                }
         }, '#for_inst']);
         container = document.getElementById('for_inst');
         var forDiv = document.getElementsByClassName('for_div');
+        var forDiv3 = document.getElementsByClassName('for_div3');
+        var forDiv4 = document.getElementsByClassName('for_div4');
         var forUl = document.getElementById('for_ul');
         var forLi = document.getElementsByTagName('li');
 
@@ -66,6 +86,16 @@ describe('for', function () {
         expect(forLi[0].querySelector('label').textContent).to.equal('aa');
         expect(forLi[1].querySelector('label').textContent).to.equal('bb');
         expect(forLi[2].querySelector('label').textContent).to.equal('cc');
+
+        expect(forDiv3[0].querySelector('label').textContent).to.equal('aa : 1');
+        expect(forDiv3[1].querySelector('label').textContent).to.equal('bb : 2');
+        expect(forDiv3[2].querySelector('label').textContent).to.equal('cc : 3');
+
+        expect(forDiv4[0].querySelector('label').textContent).to.equal('0 : a');
+        expect(forDiv4[1].querySelector('label').textContent).to.equal('1 : b');
+        expect(forDiv4[2].querySelector('label').textContent).to.equal('2 : c');
+
+        done();
     });
 
     it('简单for，多次更新数据', function (done) {
@@ -672,21 +702,28 @@ describe('for', function () {
                             arr2 : ['a', 'b', 'c', 'd', 'e']
                         }
                     ];
+
                     setTimeout(function () {
-                        $scope.arr[0] = {
-                            arr2 : []
-                        };
-                        $scope.arr[1] = {
-                            arr2 : ['a']
-                        };
-                        $scope.arr[2] = {
-                            arr2 : ['a', 'b', 'c', 'd']
-                        };
-                        $scope.arr[3] = {
-                            arr2 : ['a', 'b', 'c']
-                        };
+                        $scope.arr = [
+                            {
+                                arr2 : []
+                            },
+                            {
+                                arr2 : ['aa']
+                            },
+                            {
+                                arr2 : ['a', 'b', 'c', 'd']
+                            },
+                            {
+                                arr2 : ['a', 'b', 'c']
+                            }
+                        ];
                         setTimeout(function () {
-                            // $scope.arr = ['a', 'b', 'c', 'd'];
+                            $scope.arr = [
+                                {
+                                    arr2 : ['a', 'b', 'c', 'd', 'e', 'f', 'g'] 
+                                }
+                            ];
                         }, 200);
                     }, 200);
                 }, 200);
@@ -961,49 +998,198 @@ describe('for', function () {
 
                 setTimeout(function () {
         
-                    // var arr = jsInst.$scope.arr;
-                    // var sum = 0;
-                    // arr.forEach(function (el, i) {
-                    //     sum += el.arr2.length;
-                    // });
-                    // var sum2 = 0;
-                    // arr.forEach(function (el, i) {
-                    //     sum2 += el.arr2.length * el.arr2.length;
-                    // });
-                    // var ulLen = 1;
+                    var arr = jsInst.$scope.arr;
+                    var sum = 0;
+                    arr.forEach(function (el, i) {
+                        sum += el.arr2.length;
+                    });
+                    var sum2 = 0;
+                    arr.forEach(function (el, i) {
+                        sum2 += el.arr2.length * el.arr2.length;
+                    });
+                    var ulLen = 1;
 
-                    // expect(forDiv.length).to.equal(arr.length);
-                    // expect(forDiv2.length).to.equal(sum);
-                    // expect(forDiv3.length).to.equal(arr[0].arr2.length);
-                    // expect(forUl[0].children.length).to.equal(arr.length + ulLen);
-                    // expect(forDiv4.length).to.equal(arr.length);
-                    // expect(forUl2.length).to.equal(arr.length);
-                    // expect(forUl2[0].children.length).to.equal(arr[0].arr2.length + arr.length + ulLen);
-                    // expect(forUl3.length).to.equal(sum2);
-                    // expect(forDiv5.length).to.equal(arr.length);
+                    expect(forDiv.length).to.equal(arr.length);
+                    expect(forDiv2.length).to.equal(sum);
+                    expect(forDiv3.length).to.equal(arr[0].arr2.length);
+                    expect(forUl[0].children.length).to.equal(arr.length + ulLen);
+                    expect(forDiv4.length).to.equal(arr.length);
+                    expect(forUl2.length).to.equal(arr.length);
+                    expect(forUl2[0].children.length).to.equal(arr[0].arr2.length + arr.length + ulLen);
+                    expect(forUl3.length).to.equal(sum2);
+                    expect(forDiv5.length).to.equal(arr.length);
+
+                    expect(forDiv[0].querySelector('label').textContent).to.equal('');
+                    expect(forDiv[1].querySelector('label').textContent).to.equal('aa');
+                    expect(forDiv[2].querySelector('label').textContent).to.equal('a');
+                    expect(forDiv[3].querySelector('label').textContent).to.equal('a');
+
+                    expect(forDiv2[0].querySelector('span b').textContent).to.equal('aa');
+                    expect(forDiv2[1].querySelector('span b').textContent).to.equal('a');
+                    expect(forDiv2[2].querySelector('span b').textContent).to.equal('b');
+                    expect(forDiv2[3].querySelector('span b').textContent).to.equal('c');
+                    expect(forDiv2[4].querySelector('span b').textContent).to.equal('d');
+                    expect(forDiv2[5].querySelector('span b').textContent).to.equal('a');
+                    expect(forDiv2[6].querySelector('span b').textContent).to.equal('b');
+                    expect(forDiv2[7].querySelector('span b').textContent).to.equal('c');
+
+                    expect(forUl[0].children[0].querySelector('label').textContent).to.equal('');
+                    expect(forUl[0].children[1].querySelector('label').textContent).to.equal('aa');
+                    expect(forUl[0].children[2].querySelector('label').textContent).to.equal('a');
+                    expect(forUl[0].children[3].querySelector('label').textContent).to.equal('a');
+
+                    expect(forUl[0].children[1].querySelectorAll('div')[0].querySelector('label').textContent).to.equal('aa');
+                    expect(forUl[0].children[2].querySelectorAll('div')[0].querySelector('label').textContent).to.equal('a');
+                    expect(forUl[0].children[2].querySelectorAll('div')[1].querySelector('label').textContent).to.equal('b');
+                    expect(forUl[0].children[2].querySelectorAll('div')[2].querySelector('label').textContent).to.equal('c');
+                    expect(forUl[0].children[2].querySelectorAll('div')[3].querySelector('label').textContent).to.equal('d');
+                    expect(forUl[0].children[3].querySelectorAll('div')[0].querySelector('label').textContent).to.equal('a');
+                    expect(forUl[0].children[3].querySelectorAll('div')[1].querySelector('label').textContent).to.equal('b');
+                    expect(forUl[0].children[3].querySelectorAll('div')[2].querySelector('label').textContent).to.equal('c');
+
+                    expect(forDiv4[0].querySelector('label').textContent).to.equal('xxx');
+                    expect(forDiv4[1].querySelector('label').textContent).to.equal('aaxxx');
+                    expect(forDiv4[2].querySelector('label').textContent).to.equal('axxx');
+                    expect(forDiv4[3].querySelector('label').textContent).to.equal('axxx');
+
+                    expect(forUl2[1].children[0].querySelector('label').textContent).to.equal('aa');
+                    expect(forUl2[2].children[0].querySelector('label').textContent).to.equal('a');
+                    expect(forUl2[2].children[1].querySelector('label').textContent).to.equal('b');
+                    expect(forUl2[2].children[2].querySelector('label').textContent).to.equal('c');
+                    expect(forUl2[2].children[3].querySelector('label').textContent).to.equal('d');
+                    expect(forUl2[3].children[0].querySelector('label').textContent).to.equal('a');
+                    expect(forUl2[3].children[1].querySelector('label').textContent).to.equal('b');
+                    expect(forUl2[3].children[2].querySelector('label').textContent).to.equal('c');
+
+                    expect(forUl3[0].querySelector('li b').textContent).to.equal('aa');
+                    expect(forUl3[1].querySelector('li b').textContent).to.equal('a');
+                    expect(forUl3[2].querySelector('li b').textContent).to.equal('b');
+                    expect(forUl3[3].querySelector('li b').textContent).to.equal('c');
+                    expect(forUl3[4].querySelector('li b').textContent).to.equal('d');
+                    expect(forUl3[5].querySelector('li b').textContent).to.equal('a');
+                    expect(forUl3[6].querySelector('li b').textContent).to.equal('b');
+                    expect(forUl3[7].querySelector('li b').textContent).to.equal('c');
+                    expect(forUl3[8].querySelector('li b').textContent).to.equal('d');
+                    expect(forUl3[9].querySelector('li b').textContent).to.equal('a');
+                    expect(forUl3[10].querySelector('li b').textContent).to.equal('b');
+                    expect(forUl3[11].querySelector('li b').textContent).to.equal('c');
+                    expect(forUl3[12].querySelector('li b').textContent).to.equal('d');
+                    expect(forUl3[13].querySelector('li b').textContent).to.equal('a');
+                    expect(forUl3[14].querySelector('li b').textContent).to.equal('b');
+                    expect(forUl3[15].querySelector('li b').textContent).to.equal('c');
+                    expect(forUl3[16].querySelector('li b').textContent).to.equal('d');
+                    expect(forUl3[17].querySelector('li b').textContent).to.equal('a');
+                    expect(forUl3[18].querySelector('li b').textContent).to.equal('b');
+                    expect(forUl3[19].querySelector('li b').textContent).to.equal('c');
+                    expect(forUl3[20].querySelector('li b').textContent).to.equal('a');
+                    expect(forUl3[21].querySelector('li b').textContent).to.equal('b');
+                    expect(forUl3[22].querySelector('li b').textContent).to.equal('c');
+                    expect(forUl3[23].querySelector('li b').textContent).to.equal('a');
+                    expect(forUl3[24].querySelector('li b').textContent).to.equal('b');
+                    expect(forUl3[25].querySelector('li b').textContent).to.equal('c');
+
+                    expect(forUl2[0].children[1].querySelector('label').textContent).to.equal('');
+                    expect(forUl2[0].children[2].querySelector('label').textContent).to.equal('aa');
+                    expect(forUl2[0].children[3].querySelector('label').textContent).to.equal('a');
+                    expect(forUl2[0].children[4].querySelector('label').textContent).to.equal('a');
+                    expect(forUl2[1].children[2].querySelector('label').textContent).to.equal('');
+                    expect(forUl2[1].children[3].querySelector('label').textContent).to.equal('aa');
+                    expect(forUl2[1].children[4].querySelector('label').textContent).to.equal('a');
+                    expect(forUl2[1].children[5].querySelector('label').textContent).to.equal('a');
+                    expect(forUl2[2].children[5].querySelector('label').textContent).to.equal('');
+                    expect(forUl2[2].children[6].querySelector('label').textContent).to.equal('aa');
+                    expect(forUl2[2].children[7].querySelector('label').textContent).to.equal('a');
+                    expect(forUl2[2].children[8].querySelector('label').textContent).to.equal('a');
+
+                    expect(forDiv5[0].querySelector('label').textContent).to.equal('yyy');
+                    expect(forDiv5[1].querySelector('label').textContent).to.equal('aayyy');
+                    expect(forDiv5[2].querySelector('label').textContent).to.equal('ayyy');
+                    expect(forDiv5[3].querySelector('label').textContent).to.equal('ayyy');
 
                     setTimeout(function () {
-                        // var arr = jsInst.$scope.arr;
-                        // var sum = 0;
-                        // arr.forEach(function (el, i) {
-                        //     sum += el.arr2.length;
-                        // });
-                        // var sum2 = 0;
-                        // arr.forEach(function (el, i) {
-                        //     sum2 += el.arr2.length * el.arr2.length;
-                        // });
-                        // var ulLen = 1;
+                        var arr = jsInst.$scope.arr;
+                        var sum = 0;
+                        arr.forEach(function (el, i) {
+                            sum += el.arr2.length;
+                        });
+                        var sum2 = 0;
+                        arr.forEach(function (el, i) {
+                            sum2 += el.arr2.length * el.arr2.length;
+                        });
+                        var ulLen = 1;
 
-                        // expect(forDiv.length).to.equal(arr.length);
-                        // expect(forDiv2.length).to.equal(sum);
-                        // expect(forDiv3.length).to.equal(arr[0].arr2.length);
-                        // expect(forUl[0].children.length).to.equal(arr.length + ulLen);
-                        // expect(forDiv4.length).to.equal(arr.length);
-                        // expect(forUl2.length).to.equal(arr.length);
-                        // expect(forUl2[0].children.length).to.equal(arr[0].arr2.length + arr.length + ulLen);
-                        // expect(forUl3.length).to.equal(sum2);
-                        // expect(forDiv5.length).to.equal(arr.length);
+                        expect(forDiv.length).to.equal(arr.length);
+                        expect(forDiv2.length).to.equal(sum);
+                        expect(forDiv3.length).to.equal(arr[0].arr2.length);
+                        expect(forUl[0].children.length).to.equal(arr.length + ulLen);
+                        expect(forDiv4.length).to.equal(arr.length);
+                        expect(forUl2.length).to.equal(arr.length);
+                        expect(forUl2[0].children.length).to.equal(arr[0].arr2.length + arr.length + ulLen);
+                        expect(forUl3.length).to.equal(sum2);
+                        expect(forDiv5.length).to.equal(arr.length);
 
+                        expect(forDiv[0].querySelector('label').textContent).to.equal('a');
+
+                        expect(forDiv2[0].querySelector('span b').textContent).to.equal('a');
+                        expect(forDiv2[1].querySelector('span b').textContent).to.equal('b');
+                        expect(forDiv2[2].querySelector('span b').textContent).to.equal('c');
+                        expect(forDiv2[3].querySelector('span b').textContent).to.equal('d');
+                        expect(forDiv2[4].querySelector('span b').textContent).to.equal('e');
+                        expect(forDiv2[5].querySelector('span b').textContent).to.equal('f');
+                        expect(forDiv2[6].querySelector('span b').textContent).to.equal('g');
+
+                        expect(forDiv3[0].querySelector('span label').textContent).to.equal('a');
+                        expect(forDiv3[1].querySelector('span label').textContent).to.equal('b');
+                        expect(forDiv3[2].querySelector('span label').textContent).to.equal('c');
+                        expect(forDiv3[3].querySelector('span label').textContent).to.equal('d');
+                        expect(forDiv3[4].querySelector('span label').textContent).to.equal('e');
+                        expect(forDiv3[5].querySelector('span label').textContent).to.equal('f');
+                        expect(forDiv3[6].querySelector('span label').textContent).to.equal('g');
+
+                        expect(forUl[0].children[0].querySelector('label').textContent).to.equal('a');
+
+                        expect(forUl[0].children[0].querySelectorAll('div')[0].querySelector('label').textContent).to.equal('a');
+                        expect(forUl[0].children[0].querySelectorAll('div')[1].querySelector('label').textContent).to.equal('b');
+                        expect(forUl[0].children[0].querySelectorAll('div')[2].querySelector('label').textContent).to.equal('c');
+                        expect(forUl[0].children[0].querySelectorAll('div')[3].querySelector('label').textContent).to.equal('d');
+                        expect(forUl[0].children[0].querySelectorAll('div')[4].querySelector('label').textContent).to.equal('e');
+                        expect(forUl[0].children[0].querySelectorAll('div')[5].querySelector('label').textContent).to.equal('f');
+                        expect(forUl[0].children[0].querySelectorAll('div')[6].querySelector('label').textContent).to.equal('g');
+
+                        expect(forDiv4[0].querySelector('label').textContent).to.equal('axxx');
+
+                        expect(forUl2[0].children[0].querySelector('label').textContent).to.equal('a');
+                        expect(forUl2[0].children[1].querySelector('label').textContent).to.equal('b');
+                        expect(forUl2[0].children[2].querySelector('label').textContent).to.equal('c');
+                        expect(forUl2[0].children[3].querySelector('label').textContent).to.equal('d');
+                        expect(forUl2[0].children[4].querySelector('label').textContent).to.equal('e');
+                        expect(forUl2[0].children[5].querySelector('label').textContent).to.equal('f');
+                        expect(forUl2[0].children[6].querySelector('label').textContent).to.equal('g');
+
+                        expect(forUl3[0].querySelector('li b').textContent).to.equal('a');
+                        expect(forUl3[1].querySelector('li b').textContent).to.equal('b');
+                        expect(forUl3[2].querySelector('li b').textContent).to.equal('c');
+                        expect(forUl3[3].querySelector('li b').textContent).to.equal('d');
+                        expect(forUl3[4].querySelector('li b').textContent).to.equal('e');
+                        expect(forUl3[5].querySelector('li b').textContent).to.equal('f');
+                        expect(forUl3[6].querySelector('li b').textContent).to.equal('g');
+                        expect(forUl3[7].querySelector('li b').textContent).to.equal('a');
+                        expect(forUl3[8].querySelector('li b').textContent).to.equal('b');
+                        expect(forUl3[9].querySelector('li b').textContent).to.equal('c');
+                        expect(forUl3[10].querySelector('li b').textContent).to.equal('d');
+                        expect(forUl3[11].querySelector('li b').textContent).to.equal('e');
+                        expect(forUl3[12].querySelector('li b').textContent).to.equal('f');
+                        expect(forUl3[13].querySelector('li b').textContent).to.equal('g');
+
+                        expect(forUl2[0].children[0].querySelector('label').textContent).to.equal('a');
+                        expect(forUl2[0].children[1].querySelector('label').textContent).to.equal('b');
+                        expect(forUl2[0].children[2].querySelector('label').textContent).to.equal('c');
+                        expect(forUl2[0].children[3].querySelector('label').textContent).to.equal('d');
+                        expect(forUl2[0].children[4].querySelector('label').textContent).to.equal('e');
+                        expect(forUl2[0].children[5].querySelector('label').textContent).to.equal('f');
+                        expect(forUl2[0].children[6].querySelector('label').textContent).to.equal('g');
+
+                        expect(forDiv5[0].querySelector('label').textContent).to.equal('ayyy');
                         done();
                     }, 200);
                 }, 200);
