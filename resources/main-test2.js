@@ -198,6 +198,7 @@
 		textBindRE : /\{\{((?!\{\{)[\s\S])+\}\}/g,
 		// textBindRE : /\{\{([^{\}]+)\}\}/g,
 		uniqColonRE : /[^\s]+\s*\:\s*/,
+		sUniqRE : /text|show|hide|toggle|html/,
 		forExpRE : /(?:let\s+|var\s+|)([^\.\s]+)\s+(?:in|of)\s+([^\s]+)(?:\s+trackBy\s+([^\s]+)|)/,
 		onExpRE : /['"]?([^'"{}:()\s,]+)['"]?\s*\:\s*([^():]+)\s*\(([^()]*)\)/g,
 		lineRE : /\\n|\\r|\\t|\s/g,
@@ -1444,7 +1445,8 @@
 			isStatic : isBothStaticNode(vNode1, vNode2),
 			isHasTag : isHasTagName(vNode1, vNode2),
 			isEqFor : isBothForNode(vNode1, vNode2),
-			isEqStaticAttr : _.proxyEqual(vNode1.data.static, vNode2.data.static)
+			isEqStaticAttr : vNode1.data && vNode2.data 
+				&& _.proxyEqual(vNode1.data.static, vNode2.data.static)
 		};
 
 		if (!result.isHasTag) {
@@ -1666,13 +1668,13 @@
 
 		instance.pending = true;
 		setTimeout(function () {
-			console.time('update');
+			console.time('diff');
 			var newVNode = optimizeCb(instance.renderFn, instance, instance);
 			instance.diff(newVNode);
+			console.timeEnd('diff');
 			instance.update().nextTick().collectGb();
 			instance.pending = false;
 			newVNode = null;
-			console.timeEnd('update');
 		});
 	};
 
@@ -2542,9 +2544,14 @@
 
 					if (_.arrEqual(nUKeys, oUKeys)) {
 						nUKeys.length && _.each(nUKeys, function uKeysEach (ukey) {
-							var newValue = nUniq[ukey];
+							var 
+								newValue = nUniq[ukey]
+								, prevValue = uniq[ukey]
+								, isSimpleKey = REGEXP.test(REGEXP.sUniqRE, ukey)
+								;
 
-							if (!_.proxyEqual(uniq[ukey], newValue)) {
+							if (isSimpleKey ? prevValue !== newValue 
+								: !_.proxyEqual(prevValue, newValue)) {
 
 								//update
 								_.push(patchQ, {
