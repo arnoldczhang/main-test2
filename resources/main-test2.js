@@ -62,6 +62,7 @@
 
 		, $stringify = JSON.stringify
 		, emptyDataObj = $create(null)
+
 		;
 	
 	emptyDataObj.data = $create(null);
@@ -190,7 +191,7 @@
 		squareRE : /\[([^\[\]]+)\]/,
 		boolClassRE : /\{(?:true|false)\s*:[^{}]+\}\[[^\[\]]+\]/,
 		objRE : /\{['"]?([^:()]+['"]?\s*\:\s*[^,],?\s*)+\}/,
-		styleRE : /([a-zA-Z]+):([^:;]+)/g,
+		styleRE : /([a-zA-Z]+)\s*:\s*([^:;]+)/g,
 		forRE : /(?:lv-|:)for/g,
 		ifRE : /(?:lv-|:)if/g,
 		onRE : /(?:lv-|:)on/g,
@@ -204,6 +205,7 @@
 		lineRE : /\\n|\\r|\\t|\s/g,
 		trimRE : /^\s*|\s*$/g,
 		spaceRE : /\s+/g,
+		capital : /[A-Z]/g,
 
 		exec : function exec (regExp, word) {
 		  var result = regExp.exec(word);
@@ -291,6 +293,12 @@
 	 * _
 	 **/
 	var _ = {
+
+		capitalLower : function (str) {
+			return REGEXP.replace(str, REGEXP.capital, function (match) {
+				return '-' + $lower.call(match);
+			});
+		},
 
 		getChildNodes : function getChildNodes (el) {
 			return this.isElement(el)
@@ -789,6 +797,10 @@
 
 			if (isBothObjOrArr(v1, v2)) {
 
+				if (v2.__isDiff) {
+					return false;
+				}
+
 				if (_.isArray(v1)) {
 					l1 = v1.length;
 					l2 = v2.length;
@@ -1091,58 +1103,24 @@
 			+ ')\\b', 'g');
 	};
 
-	function replaceVNode (patchQ, prevVNode, newVNode, opts) {
-		_.push(patchQ, {
-			type : UpdateType.REPLACE,
-			vNode : [prevVNode, newVNode]
-		});
-		opts.step = 0;
-	};
-
 	function childrenDiff (prevChildren, newChildren, prevVNode, inst, childOpts) {
 		var 
 			i = 0
 			, prevLen = prevChildren.length
 			, newLen = newChildren.length
 			, isNewChildrenLonger = prevLen < newLen
-			, additionStepName
-			, additionLen
-			, addStep = 0
-			, stepName
+			, prevEnd = isNewChildrenLonger ? 1 : 0
+			, newEnd = prevEnd ? 0 : 1
 			, len
 			;
 
-		if (isNewChildrenLonger) {
-			len = newLen;
-			additionLen = prevLen;
-			stepName = 'nStep';
-			additionStepName = 'pStep';
-		} else {
-			len = prevLen;
-			additionLen = newLen;
-			stepName = 'pStep';
-			additionStepName = 'nStep';
-		}
-
-		for (; i < len - childOpts[stepName]; ++i) {
-			_diffProxy();
-		}
-
-		addStep = Math.max(additionLen - (i + childOpts[additionStepName]) - 1, 0);
-		
-		if (addStep) {
-
-			for (len = i; i < len + addStep + 1; ++i) {
-				_diffProxy();
-			}
-		}
-
-		function _diffProxy () {
+		while (i + childOpts.nStep < newLen + newEnd || i + childOpts.pStep < prevLen + prevEnd) {
 			inst.diff(newChildren[i + childOpts.nStep] || emptyDataObj
 				, prevChildren[i + childOpts.pStep] || emptyDataObj
 				, prevVNode
 				, childOpts);
-		};
+			i++;
+		}
 	};
 
 	function setMapObjValue (scope, keyStr, value) {
@@ -1443,19 +1421,20 @@
 	function isTheSameStaticVNode (vNode1, vNode2) {
 		var result = {
 			isStatic : isBothStaticNode(vNode1, vNode2),
-			isHasTag : isHasTagName(vNode1, vNode2),
-			isEqFor : isBothForNode(vNode1, vNode2),
-			isEqStaticAttr : vNode1.data && vNode2.data 
-				&& _.proxyEqual(vNode1.data.static, vNode2.data.static)
+			isHasTag : isHasTagName(vNode1, vNode2)	
 		};
 
 		if (!result.isHasTag) {
 			result.isBothText = isBothTextNode(vNode1, vNode2);
 			result.isBothCmt = isBothCommentNode(vNode1, vNode2);
+			result.isEqStatic = result.isStatic && (result.isBothText || result.isBothCmt);
+		} else {
+			result.isEqFor = isBothForNode(vNode1, vNode2);
+			result.isEqStaticAttr = vNode1.data && vNode2.data && _.proxyEqual(vNode1.data.static, vNode2.data.static);
+			result.isEqTag = result.isHasTag && isTheSameTagName(vNode1, vNode2);
+			result.isEqStatic = result.isStatic && result.isEqTag && result.isEqStaticAttr;
+			result.isEqStaticTag = result.isEqTag && result.isEqStaticAttr;
 		}
-		result.isEqTag = result.isHasTag && isTheSameTagName(vNode1, vNode2);
-		result.isEqStatic = result.isStatic && (result.isBothText || result.isEqTag && result.isEqStaticAttr);
-		result.isEqStaticTag = result.isEqTag && result.isEqStaticAttr;
 		return result;
 	};
 
@@ -1552,7 +1531,7 @@
 
 		if (uniq) {
 			data.uKeys = $keys(uniq).sort(function uKeysSort (a, b) {
-				return prio[a] - prio[b];
+				return prio[b] - prio[a];
 			});
 		}
 
@@ -1632,6 +1611,7 @@
 			});
 		} else if (_.isObject(value)) {
 			defineProp.call(instance, value, defKey);
+			defVal(value, '__isDiff', true);
 		}
 	};
 
@@ -1950,6 +1930,10 @@
 		return value;
 	};
 
+	function getIfElem (el, vNode) {
+		return vNode.ifEl || el;
+	};
+
 	var  
 		genText = publicGen 
 		, genHtml = publicGen
@@ -2020,7 +2004,8 @@
 		return WARN.format('for'), STRING;
 	};
 
-	function vText (el, value) {
+	function vText (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		_.push(this.cach.tickQ, function textTick () {
 			if (!_.isObject(value)) {
 				return el.textContent = value;
@@ -2030,7 +2015,8 @@
 		});
 	};
 
-	function vHtml (el, value) {
+	function vHtml (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		
 		if (!_.isObject(value)) {
 			return el.innerHTML = value;
@@ -2039,17 +2025,20 @@
 		}
 	};
 
-	function vShow (el, value) {
+	function vShow (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		el.style.display = value ? 'block' : 'none';
 	};
 
-	function vHide (el, value) {
+	function vHide (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		el.style.display = value ? 'none' : 'block';
 	};
 
 	var vToggle = vShow;
 
 	function vOn (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		var _this = this;
 
 		if (!vNode.evtObj) {
@@ -2095,6 +2084,7 @@
 	};
 
 	function vModel (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		el.value = value[1];
 
 		if (!vNode.updateFn) {
@@ -2115,6 +2105,7 @@
 	};
 
 	function vClass (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		var 
 			reg
 			, classReg = vNode.classReg || STRING
@@ -2131,6 +2122,7 @@
 	};
 
 	function vStyle (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		var 
 			styleArr = vNode.styleArr
 			, keyArr
@@ -2161,6 +2153,7 @@
 	};
 
 	function vAttr (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		var 
 			keyArr
 			, attrArr = vNode.attrArr
@@ -2184,14 +2177,38 @@
 	};
 
 	function vSrc (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		el.src = value;
 	};
 
 	function vHref (el, value, vNode) {
+		el = getIfElem(el, vNode);
 		el.href = value;
 	};
 
-	var vData = vAttr;
+	function vData (el, value, vNode) {
+		el = getIfElem(el, vNode);
+		var 
+			keyArr
+			, dataArr = vNode.dataArr
+			;
+
+		if (dataArr) {
+			_.each(dataArr, function styleArrEach (key) {
+				el.removeAttribute('data-' + _.capitalLower(key));
+			});
+		}
+
+		if (!_.isObject(value)) {
+			value = convertStyleStrToObj(value);
+		}
+
+		keyArr = $keys(value);
+		_.each(keyArr, function keyArrEach (key, i) {
+			el.dataset[key] =  value[key];
+		});
+		vNode.dataArr = keyArr;
+	};
 
 	//自定义属性
 	var attr = JSpring.attr = {
@@ -2522,102 +2539,102 @@
 				, uniq
 				;
 
-			if (initCompare.isEqStatic) {
-				!initCompare.isBothText && childrenDiff(prevVNode.children, newVNode.children, prevVNode, _this, childOpts)
-			} else {
+			if (initCompare.isBothText || initCompare.isBothCmt) {
 
-				if (initCompare.isBothText || initCompare.isBothCmt) {
-
-					if (hasDiffText(prevVNode, newVNode)) {
-						setTextContent(prevVNode.el, newVNode.textContent);
-						setTextContent(prevVNode, newVNode.textContent);
-					}
-					return _this;
+				if (hasDiffText(prevVNode, newVNode)) {
+					setTextContent(prevVNode.el, newVNode.textContent);
+					setTextContent(prevVNode, newVNode.textContent);
 				}
-
+				return _this;
+			} else if (initCompare.isEqStatic) {
+				return _childrenDiffProxy();
+			} else if (initCompare.isEqStaticTag) {
 				nUKeys = newData.uKeys;
 				nUniq = newData.uniq;
 				oUKeys = prevData.uKeys;
 				uniq = prevData.uniq;
 
-				if (initCompare.isEqStaticTag) {
+				if (_.arrEqual(nUKeys, oUKeys)) {
+					nUKeys.length && _.each(nUKeys, function uKeysEach (ukey) {
+						var 
+							newValue = nUniq[ukey]
+							, prevValue = uniq[ukey]
+							, isSimpleKey = REGEXP.test(REGEXP.sUniqRE, ukey)
+							;
 
-					if (_.arrEqual(nUKeys, oUKeys)) {
-						nUKeys.length && _.each(nUKeys, function uKeysEach (ukey) {
-							var 
-								newValue = nUniq[ukey]
-								, prevValue = uniq[ukey]
-								, isSimpleKey = REGEXP.test(REGEXP.sUniqRE, ukey)
-								;
+						if (isSimpleKey ? prevValue !== newValue 
+							: !_.proxyEqual(prevValue, newValue)) {
 
-							if (isSimpleKey ? prevValue !== newValue 
-								: !_.proxyEqual(prevValue, newValue)) {
-
-								//update
-								_.push(patchQ, {
-									type : UpdateType.UPDATE,
-									attr : ukey,
-									vNode : prevVNode
-								});
-								uniq[ukey] = newValue;
-							}
-						});
-						return childrenDiff(prevVNode.children, newVNode.children, prevVNode, _this, childOpts);
-					}
-				} else if (!initCompare.isEqTag) {
-
-					if (initCompare.isHasTag) {
-
-						if (newVNode.isFor) {
-
-							if (!initCompare.isEqFor) {
-
-								//insert
-								_.push(patchQ, {
-									type : UpdateType.INSERT,
-									parentVNode : parentVNode,
-									vNode : [prevVNode, newVNode]
-								});
-								return opts.pStep -= 1;
-							}
-						} else if (prevVNode.isFor) {
-
-							//delete
+							//update
 							_.push(patchQ, {
-								type : UpdateType.DELETE,
+								type : UpdateType.UPDATE,
+								attr : ukey,
 								vNode : prevVNode
 							});
-							return opts.nStep -= 1;
+							uniq[ukey] = newValue;
 						}
-					} else {
-
-						if (newVNode.tagName) {
-
-							//append
-							_.push(patchQ, {
-								type : UpdateType.APPEND,
-								parentVNode : parentVNode,
-								vNode : newVNode
-							});
-						} else {
-
-							//delete
-							_.push(patchQ, {
-								type : UpdateType.DELETE,
-								vNode : prevVNode
-							});
-						}
-						return _this;
-					}
+					});
+					return _childrenDiffProxy();
 				}
-				
-				//replace
-				_.push(patchQ, {
-					type : UpdateType.REPLACE,
-					vNode : [prevVNode, newVNode]
-				});
-				opts.step = 0;
+			} else if (!initCompare.isEqTag) {
+
+				if (initCompare.isHasTag) {
+
+					if (newVNode.isFor) {
+
+						if (!initCompare.isEqFor) {
+
+							//insert
+							_.push(patchQ, {
+								type : UpdateType.INSERT,
+								parentVNode : parentVNode,
+								vNode : [prevVNode, newVNode]
+							});
+							return opts.pStep -= 1;
+						}
+					} else if (prevVNode.isFor) {
+
+						//delete
+						_.push(patchQ, {
+							type : UpdateType.DELETE,
+							vNode : prevVNode
+						});
+						return opts.nStep -= 1;
+					}
+				} else if (newVNode.tagName) {
+
+					//append
+					return _.push(patchQ, {
+						type : UpdateType.APPEND,
+						parentVNode : parentVNode,
+						vNode : newVNode
+					});
+				} else if (prevVNode.tagName) {
+
+					//delete
+					return _.push(patchQ, {
+						type : UpdateType.DELETE,
+						vNode : prevVNode
+					});
+				} else {
+					return _this;
+				}
 			}
+			
+			//replace
+			_.push(patchQ, {
+				type : UpdateType.REPLACE,
+				vNode : [prevVNode, newVNode]
+			});
+			opts.step = 0;
+
+			function _childrenDiffProxy () {
+				return childrenDiff(prevVNode.children
+					, newVNode.children
+					, prevVNode
+					, _this
+					, childOpts);
+			};
 			return _this;
 		},
 

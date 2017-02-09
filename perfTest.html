@@ -9,10 +9,29 @@
         <link rel="stylesheet" type="text/css" href="./test/main.css">
     </head>
     <body>
-        <div id="tpl2">
-            <div v-for="el in arr">
-                <label>a{{el.name}}a</label>
-            </div>
+        <div id="for_inst">
+              <div class="for_div"
+                     :show="el > 1"
+                     :if="el > 0"
+                     :data="dataFn(el)"
+                     :for="el in arr"
+                     :class="{'aa bb' : el == 1, 'cc dd' : el == 2, 'ee' : el == 3, 'ff' : el > 0 }"
+                     :attr="{true : 'name:my name is ' + el, false : 'name : your name is ' + el}[el > 1]"
+                     :style="styleObj"
+                     >
+                <label>{{el}}</label>
+                <ul>
+                    <li>{{$index}}</li>
+                </ul>
+             </div>
+             <ul>
+                 <li>1111</li>
+             </ul>
+              <ul id="for_ul">
+                <li :for="el in arr">
+                     <label :text="el"></label>
+                </li>
+             </ul>
         </div>
         <div id="tpl3">
             <div class="lvalert_show" 
@@ -93,8 +112,35 @@
         <script src="./test/benchmark.js"></script>
         <script src="./test/vue-2.0.3.js"></script>
         <script src="./resources/main-test2.js"></script>
-        <script src="./test/test.js"></script>
+        <!-- <script src="./test/test.js"></script> -->
         <script type="text/javascript">
+        var jsInst = JSpring([function ($scope, $, module) {
+            ;
+        }, {
+                arr : [1, 2, 3],
+                dataFn : function (el) {
+                    return {
+                        id : el + 'aaa',
+                        cityId : el + 'shanghai'
+                    }
+                },
+                styleObj : {
+                    backgroundColor : 'red'
+                },
+                classFn : function (el) {
+                    return {
+                        'aa bb' : el == 1,
+                        'cc dd' : el == 2,
+                        'ee' : el ==3,
+                        'ff' : el > 0
+                    };
+                },
+                attrFn : function (el) {
+                    return {
+                        name : 'name is ' + el 
+                    };
+                }
+        }, '#for_inst']);
         </script>
         <script type="text/javascript">
         </script>
