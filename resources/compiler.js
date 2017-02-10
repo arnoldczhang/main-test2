@@ -898,6 +898,14 @@ const getChildResult = (children) => {
 		: '[]';
 };
 
+const getStrValue = (str) => {
+
+	if (_.isVoid0(str)) {
+		return '';
+	}
+	return str;
+};
+
 const getMapResult = (arrObj, cb) => {
 	let 
 		result = []
@@ -928,7 +936,7 @@ const replaceExpr = (template, exprArr) => {
 	_.each(exprArr, (expr) => {
 		expr = expr.replace(REGEXP.lineRE, SPACE);
 		let exprVar = expr.substring(2, expr.length - 2);
-		template = template.replace(expr, '" + (' + exprVar + ') + "');
+		template = template.replace(expr, '" + __j._v(' + exprVar + ') + "');
 	});
 	return template;
 };
@@ -969,7 +977,7 @@ const createVNode = (tag, data, children) => {
 	if (uniq) {
 		isStatic = false;
 		data.uKeys = $keys(uniq).sort((a, b) => {
-			return prio[a] - prio[b];
+			return prio[b] - prio[a];
 		});
 	}
 
@@ -1247,7 +1255,8 @@ _.extend(Compiler, {
 	_n : createVNode,
 	_tn : createVTextNode,
 	_cn : createVCommentObj,
-	_mp : getMapResult
+	_mp : getMapResult,
+	_v : getStrValue
 });
 
 module.exports = Compiler;

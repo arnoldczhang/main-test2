@@ -10,28 +10,30 @@
     </head>
     <body>
         <div id="for_inst">
-              <div class="for_div"
-                     :show="el > 1"
-                     :if="el > 0"
-                     :data="dataFn(el)"
-                     :for="el in arr"
-                     :class="{'aa bb' : el == 1, 'cc dd' : el == 2, 'ee' : el == 3, 'ff' : el > 0 }"
-                     :attr="{true : 'name:my name is ' + el, false : 'name : your name is ' + el}[el > 1]"
-                     :style="styleObj"
-                     >
-                <label>{{el}}</label>
-                <ul>
-                    <li>{{$index}}</li>
-                </ul>
-             </div>
-             <ul>
-                 <li>1111</li>
-             </ul>
-              <ul id="for_ul">
-                <li :for="el in arr">
-                     <label :text="el"></label>
-                </li>
-             </ul>
+               <div class="for_div"
+                      :show="el > 2"
+                      :if="el > 1"
+                      :data="dataFn(el)"
+                      :for="el in arr"
+                      :class="{'aa bb' : el == 1, 'cc dd' : el == 2, 'ee' : el == 3, 'ff' : el > 0 }"
+                      :attr="{true : 'name:my name is ' + el, false : 'name : your name is ' + el}[el > 2]"
+                      :style="styleObj"
+                      >
+                 <label>{{el}}</label>
+                 <!--@ dsfasfdaf @-->
+                 <ul>
+                     <li class="for_li1">{{$index}}</li>
+                 </ul>
+              </div>
+              <ul>
+                  <li>1111</li>
+              </ul>
+               <ul id="for_ul">
+                 <li class="for_li2" :for="el in arr">
+                      <label :text="el"></label>
+                 </li>
+              </ul>
+            <label>{{obj.name}}</label>
         </div>
         <div id="tpl3">
             <div class="lvalert_show" 
@@ -107,16 +109,76 @@
                 }}
                 <div id="aa"></div>
         </div>
-        <script src="./test/lodash.js"></script>
+        <script src="./resources/main-test2.js"></script>
+        <!-- <script src="./test/lodash.js"></script>
         <script src="./test/platform.js"></script>
         <script src="./test/benchmark.js"></script>
         <script src="./test/vue-2.0.3.js"></script>
-        <script src="./resources/main-test2.js"></script>
-        <!-- <script src="./test/test.js"></script> -->
+        <script src="./test/test.js"></script> -->
         <script type="text/javascript">
+        function aa () {
+            var work = new Worker('test/statistics.js');
+            // var work = new Worker('work.js');
+
+            work.onmessage = function(e) {
+                console.log(e.data)
+            };
+
+            work.postMessage({
+                statistics : 'start statistics'
+            });
+        };
+        </script>
+        <script type="text/javascript">
+        /*
         var jsInst = JSpring([function ($scope, $, module) {
-            ;
+            setTimeout(function () {
+                $scope.styleObj.backgroundColor = 'green';
+                $scope.arr = [3, 6, 9, 12, 15];
+                $scope.dataFn = function (el) {
+                    return {
+                        name : el + 'abc'
+                    };
+                };
+                setTimeout(function () {
+                    $scope.arr = [];
+                    setTimeout(function () {
+                        $scope.arr = [1, 1, 2, 2, 3, 6];
+                        $scope.styleObj = {
+                            color : 'red',
+                            fontSize : '14px'
+                        };
+                        $scope.dataFn = function (el) {
+                            return {
+                                pinyin : 'aoe-' + el
+                            };
+                        };
+                        setTimeout(function () {
+                            $scope.arr = [4, 1, 2];
+                            setTimeout(function () {
+                                $scope.arr = [];
+                                setTimeout(function () {
+                                    $scope.arr = [5, 6, 7, 8];
+                                    $scope.dataFn = function (el) {
+                                        return {
+                                            pinyin : 'aoe-' + el
+                                        };
+                                    };
+                                }, 200);
+                            }, 200);
+                        }, 200);
+                    }, 200);
+                }, 200);
+            }, 200);
         }, {
+                obj : {
+
+                },
+                aar : [{
+                    name : 'abc'
+                }, {
+                    name : 'abcd'
+                }],
                 arr : [1, 2, 3],
                 dataFn : function (el) {
                     return {
@@ -141,6 +203,7 @@
                     };
                 }
         }, '#for_inst']);
+        */
         </script>
         <script type="text/javascript">
         </script>

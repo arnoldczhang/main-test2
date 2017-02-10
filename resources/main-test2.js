@@ -197,7 +197,6 @@
 		onRE : /(?:lv-|:)on/g,
 		onlySpaceRE : /^\s*$/,
 		textBindRE : /\{\{((?!\{\{)[\s\S])+\}\}/g,
-		// textBindRE : /\{\{([^{\}]+)\}\}/g,
 		uniqColonRE : /[^\s]+\s*\:\s*/,
 		sUniqRE : /text|show|hide|toggle|html/,
 		forExpRE : /(?:let\s+|var\s+|)([^\.\s]+)\s+(?:in|of)\s+([^\s]+)(?:\s+trackBy\s+([^\s]+)|)/,
@@ -675,8 +674,8 @@
 
 				if (parent) {
 					parent.replaceChild(newNode, node);
-					return newNode;
 				}
+				return newNode;
 			}
 		},
 
@@ -1212,26 +1211,28 @@
 		return REGEXP.test(REGEXP.onRE, attribute);
 	};
 
+	function bindStaticAndUniqAttrs (vNode, el, statics, uniq, uKeys, instance) {
+		statics && _.each(statics, function staticEach (value, key) {
+			_.attr(el, key, value);
+		});
+		
+		uniq && _.each(uKeys, function uniqEach (key) {
+			optimizeCb(direct[key], instance, el, uniq[key], vNode);
+		});
+	};
+
 	function genElemFromVNode (vNode, instance) {
 		var 
 			el
 			, textCt
 			, children = vNode.children
 			, data = vNode.data
-			, nodeType = vNode.nodeType
-			, createFn = DOC[NodeFn[nodeType || 1]].bind(DOC)
+			, createFn = DOC[NodeFn[vNode.nodeType || 1]].bind(DOC)
 			;
 
 		if (vNode.isElem) {
 			el = createFn(vNode.tagName);
-			data.static && _.each(data.static, function staticEach (value, key) {
-				_.attr(el, key, value);
-			});
-			
-			data.uniq && _.each(data.uKeys, function uniqEach (key) {
-				optimizeCb(direct[key], instance, el, data.uniq[key], vNode);
-			});
-
+			bindStaticAndUniqAttrs(vNode, el, data.static, data.uniq, data.uKeys, instance);
 			children.length && _.each(children, function genElemFromVNodeEach (child) {
 				_.append(el, genElemFromVNode(child, instance));
 			});
@@ -1245,31 +1246,28 @@
 				el = createFn(textCt)
 			}
 		}
-		vNode.el = el;
-		return el;
+
+		if (!vNode.el) {
+			vNode.el = el;
+		}
+
+		return vNode.el || el;
 	};
 
 	function createElemAndAppend (vNode, instance, frag) {
 		var 
 			el
 			, data = vNode.data
-			, nodeType = vNode.nodeType
 			, parentVNode = vNode.parentVNode || frag
 			, ifEl = parentVNode.ifEl
 			, parentVEl = parentVNode.el || frag
-			, createFn = DOC[NodeFn[nodeType || 1]].bind(DOC)
+			, createFn = DOC[NodeFn[vNode.nodeType || 1]].bind(DOC)
 			;
 
 		if (vNode.isElem) {
 			el = createFn(vNode.tagName);
 			_.append(parentVEl, el, ifEl);
-			data.static && _.each(data.static, function staticEach (value, key) {
-				_.attr(el, key, value);
-			});
-			
-			data.uniq && _.each(data.uKeys, function uniqEach (key) {
-				optimizeCb(direct[key], instance, el, data.uniq[key], vNode);
-			});
+			bindStaticAndUniqAttrs(vNode, el, data.static, data.uniq, data.uKeys, instance);
 		} else {
 			var textCt = vNode.textContent;
 
@@ -1598,7 +1596,8 @@
 		return true;
 	};
 
-	function _defineProp (defKey, value, instance) {
+	function _defineProp (defKey, value, instance, defObj, key, keyValue) {
+		var keyObj = {};
 
 		if (_.isArray(value)) {
 			defVal(value, '__vm', instance);
@@ -1610,12 +1609,18 @@
 
 			});
 		} else if (_.isObject(value)) {
+			defKey = {};
 			defineProp.call(instance, value, defKey);
+
+			if (defObj && key) {
+				keyObj[key] = defKey;
+				defineProp.call(instance, keyObj, defObj);
+			}
 			defVal(value, '__isDiff', true);
 		}
 	};
 
-	function defineProp (data, defObj) {
+	function defineProp (data, defObj, skipFlag) {
 		var _this = this;
 		defObj = defObj || {};
 
@@ -1623,7 +1628,7 @@
 			def(defObj, key, function defSet (newVal) {
 
 				if (!_.proxyEqual(value, newVal)) {
-					_defineProp(defObj[key], value = newVal, _this);
+					_defineProp(defObj[key], value = newVal, _this, defObj, key);
 					optimizeCb(notifyChange, _this, key);
 				}
 
@@ -2346,7 +2351,7 @@
 		_this.data = (_.isFunction(_this.service)
 			? optimizeCb(_this.service, _this, [$, JSpring.module])
 			: _this.service) || {};
-		_this.$scope = defineProp.call(_this, _this.data);
+		_this.$scope = optimizeCb(defineProp, _this, _this.data);
 		_this.frag = DOC.createDocumentFragment();
 		_this.init();
 	};

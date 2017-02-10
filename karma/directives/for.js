@@ -208,7 +208,7 @@ describe('for', function () {
              */
         });
 
-        jsInst = JSpring([function ($scope, $, module) {
+        var jsInst2 = JSpring([function ($scope, $, module) {
             setTimeout(function () {
                 $scope.styleObj.backgroundColor = 'green';
                 $scope.arr = [3, 6, 9, 12, 15];
@@ -230,6 +230,20 @@ describe('for', function () {
                                 pinyin : 'aoe-' + el
                             };
                         };
+                        setTimeout(function () {
+                            $scope.arr = [4, 1, 2];
+                            setTimeout(function () {
+                                $scope.arr = [];
+                                setTimeout(function () {
+                                    $scope.arr = [5, 6, 7, 8];
+                                    $scope.dataFn = function (el) {
+                                        return {
+                                            pinyin : 'akb-' + el
+                                        };
+                                    };
+                                }, 200);
+                            }, 200);
+                        }, 200);
                     }, 200);
                 }, 200);
             }, 200);
@@ -284,6 +298,12 @@ describe('for', function () {
         expect(forLi2[2].querySelector('label').textContent).to.equal('3');
 
         setTimeout(function () {
+            var forDiv = document.getElementsByClassName('for_div');
+            var forUl = document.getElementById('for_ul');
+            var forLi = document.getElementsByTagName('li');
+            var forLi1 = document.getElementsByClassName('for_li1');
+            var forLi2 = document.getElementsByClassName('for_li2');
+
             expect(forDiv.length).to.equal(5);
             expect(forLi1.length).to.equal(5);
             expect(forLi2.length).to.equal(5);
@@ -342,16 +362,40 @@ describe('for', function () {
             expect(forLi2[4].querySelector('label').textContent).to.equal('15');
 
             setTimeout(function () {
+                var forDiv = document.getElementsByClassName('for_div');
+                var forUl = document.getElementById('for_ul');
+                var forLi = document.getElementsByTagName('li');
+                var forLi1 = document.getElementsByClassName('for_li1');
+                var forLi2 = document.getElementsByClassName('for_li2');
 
                 expect(forDiv.length).to.equal(0);
                 expect(forLi1.length).to.equal(0);
                 expect(forLi2.length).to.equal(0);
 
                 setTimeout(function () {
+                    var forDiv = document.getElementsByClassName('for_div');
+                    var forUl = document.getElementById('for_ul');
+                    var forLi = document.getElementsByTagName('li');
+                    var forLi1 = document.getElementsByClassName('for_li1');
+                    var forLi2 = document.getElementsByClassName('for_li2');
 
                     expect(forDiv.length).to.equal(4);
                     expect(forLi1.length).to.equal(4);
                     expect(forLi2.length).to.equal(6);
+
+                    expect(forDiv[0].dataset['id']).to.equal(void 0);
+                    expect(forDiv[0].dataset['cityId']).to.equal(void 0);
+                    expect(forDiv[1].dataset['id']).to.equal(void 0);
+                    expect(forDiv[1].dataset['cityId']).to.equal(void 0);
+                    expect(forDiv[2].dataset['id']).to.equal(void 0);
+                    expect(forDiv[2].dataset['cityId']).to.equal(void 0);
+                    expect(forDiv[3].dataset['id']).to.equal(void 0);
+                    expect(forDiv[3].dataset['cityId']).to.equal(void 0);
+
+                    expect(forDiv[0].dataset['name']).to.equal(void 0);
+                    expect(forDiv[1].dataset['name']).to.equal(void 0);
+                    expect(forDiv[2].dataset['name']).to.equal(void 0);
+                    expect(forDiv[3].dataset['name']).to.equal(void 0);
 
                     expect(forDiv[0].dataset['pinyin']).to.equal('aoe-2');
                     expect(forDiv[1].dataset['pinyin']).to.equal('aoe-2');
@@ -368,10 +412,10 @@ describe('for', function () {
                     expect(forDiv[2].className).to.equal('for_div ee ff');
                     expect(forDiv[3].className).to.equal('for_div ff');
 
-                    expect(forDiv[0].style.backgroundColor).to.equal(void 0);
-                    expect(forDiv[1].style.backgroundColor).to.equal(void 0);
-                    expect(forDiv[2].style.backgroundColor).to.equal(void 0);
-                    expect(forDiv[3].style.backgroundColor).to.equal(void 0);
+                    expect(forDiv[0].style.backgroundColor).to.equal('');
+                    expect(forDiv[1].style.backgroundColor).to.equal('');
+                    expect(forDiv[2].style.backgroundColor).to.equal('');
+                    expect(forDiv[3].style.backgroundColor).to.equal('');
 
                     expect(forDiv[0].style.color).to.equal('red');
                     expect(forDiv[1].style.color).to.equal('red');
@@ -388,12 +432,10 @@ describe('for', function () {
                     expect(forDiv[2].querySelector('label').textContent).to.equal('3');
                     expect(forDiv[3].querySelector('label').textContent).to.equal('6');
 
-                    expect(forLi1[0].textContent).to.equal('0');
-                    expect(forLi1[1].textContent).to.equal('1');
-                    expect(forLi1[2].textContent).to.equal('2');
-                    expect(forLi1[3].textContent).to.equal('3');
-                    expect(forLi1[4].textContent).to.equal('4');
-                    expect(forLi1[5].textContent).to.equal('5');
+                    expect(forLi1[0].textContent).to.equal('2');
+                    expect(forLi1[1].textContent).to.equal('3');
+                    expect(forLi1[2].textContent).to.equal('4');
+                    expect(forLi1[3].textContent).to.equal('5');
 
                     expect(forLi2[0].querySelector('label').textContent).to.equal('1');
                     expect(forLi2[1].querySelector('label').textContent).to.equal('1');
@@ -402,7 +444,142 @@ describe('for', function () {
                     expect(forLi2[4].querySelector('label').textContent).to.equal('3');
                     expect(forLi2[5].querySelector('label').textContent).to.equal('6');
 
-                    done();
+                    setTimeout(function () {
+                        var forDiv = document.getElementsByClassName('for_div');
+                        var forUl = document.getElementById('for_ul');
+                        var forLi = document.getElementsByTagName('li');
+                        var forLi1 = document.getElementsByClassName('for_li1');
+                        var forLi2 = document.getElementsByClassName('for_li2');
+
+                        expect(forDiv.length).to.equal(2);
+                        expect(forLi1.length).to.equal(2);
+                        expect(forLi2.length).to.equal(3);
+
+                        expect(forDiv[0].dataset['id']).to.equal(void 0);
+                        expect(forDiv[0].dataset['cityId']).to.equal(void 0);
+                        expect(forDiv[1].dataset['id']).to.equal(void 0);
+                        expect(forDiv[1].dataset['cityId']).to.equal(void 0);
+
+                        expect(forDiv[0].dataset['name']).to.equal(void 0);
+                        expect(forDiv[1].dataset['name']).to.equal(void 0);
+
+                        expect(forDiv[0].dataset['pinyin']).to.equal('aoe-4');
+                        expect(forDiv[1].dataset['pinyin']).to.equal('aoe-2');
+
+                        expect(forDiv[0].getAttribute('name')).to.equal('my name is 4');
+                        expect(forDiv[1].getAttribute('name')).to.equal('your name is 2');
+
+                        expect(forDiv[0].className).to.equal('for_div ff');
+                        expect(forDiv[1].className).to.equal('for_div cc dd ff');
+
+                        expect(forDiv[0].style.backgroundColor).to.equal('');
+                        expect(forDiv[1].style.backgroundColor).to.equal('');
+
+                        expect(forDiv[0].style.color).to.equal('red');
+                        expect(forDiv[1].style.color).to.equal('red');
+
+                        expect(forDiv[0].style.fontSize).to.equal('14px');
+                        expect(forDiv[1].style.fontSize).to.equal('14px');
+
+                        expect(forDiv[0].style.display).to.equal('block');
+                        expect(forDiv[1].style.display).to.equal('none');
+
+                        expect(forDiv[0].querySelector('label').textContent).to.equal('4');
+                        expect(forDiv[1].querySelector('label').textContent).to.equal('2');
+
+                        expect(forLi1[0].textContent).to.equal('0');
+                        expect(forLi1[1].textContent).to.equal('2');
+
+                        expect(forLi2[0].querySelector('label').textContent).to.equal('4');
+                        expect(forLi2[1].querySelector('label').textContent).to.equal('1');
+                        expect(forLi2[2].querySelector('label').textContent).to.equal('2');
+
+                        setTimeout(function () {
+                            var forDiv = document.getElementsByClassName('for_div');
+                            var forUl = document.getElementById('for_ul');
+                            var forLi = document.getElementsByTagName('li');
+                            var forLi1 = document.getElementsByClassName('for_li1');
+                            var forLi2 = document.getElementsByClassName('for_li2');
+
+                            expect(forDiv.length).to.equal(0);
+                            expect(forLi1.length).to.equal(0);
+                            expect(forLi2.length).to.equal(0);
+
+                            setTimeout(function () {
+                                var forDiv = document.getElementsByClassName('for_div');
+                                var forUl = document.getElementById('for_ul');
+                                var forLi = document.getElementsByTagName('li');
+                                var forLi1 = document.getElementsByClassName('for_li1');
+                                var forLi2 = document.getElementsByClassName('for_li2');
+
+                                expect(forDiv.length).to.equal(4);
+                                expect(forLi1.length).to.equal(4);
+                                expect(forLi2.length).to.equal(4);
+
+                                expect(forDiv[0].dataset['id']).to.equal(void 0);
+                                expect(forDiv[0].dataset['cityId']).to.equal(void 0);
+                                expect(forDiv[1].dataset['id']).to.equal(void 0);
+                                expect(forDiv[1].dataset['cityId']).to.equal(void 0);
+                                expect(forDiv[2].dataset['id']).to.equal(void 0);
+                                expect(forDiv[2].dataset['cityId']).to.equal(void 0);
+                                expect(forDiv[3].dataset['id']).to.equal(void 0);
+                                expect(forDiv[3].dataset['cityId']).to.equal(void 0);
+
+                                expect(forDiv[0].dataset['name']).to.equal(void 0);
+                                expect(forDiv[1].dataset['name']).to.equal(void 0);
+                                expect(forDiv[2].dataset['name']).to.equal(void 0);
+                                expect(forDiv[3].dataset['name']).to.equal(void 0);
+
+                                expect(forDiv[0].dataset['pinyin']).to.equal('akb-5');
+                                expect(forDiv[1].dataset['pinyin']).to.equal('akb-6');
+                                expect(forDiv[2].dataset['pinyin']).to.equal('akb-7');
+                                expect(forDiv[3].dataset['pinyin']).to.equal('akb-8');
+
+                                expect(forDiv[0].getAttribute('name')).to.equal('my name is 5');
+                                expect(forDiv[1].getAttribute('name')).to.equal('my name is 6');
+                                expect(forDiv[2].getAttribute('name')).to.equal('my name is 7');
+                                expect(forDiv[3].getAttribute('name')).to.equal('my name is 8');
+
+                                expect(forDiv[0].className).to.equal('for_div ff');
+                                expect(forDiv[1].className).to.equal('for_div ff');
+                                expect(forDiv[2].className).to.equal('for_div ff');
+                                expect(forDiv[3].className).to.equal('for_div ff');
+
+                                expect(forDiv[0].style.backgroundColor).to.equal('');
+                                expect(forDiv[1].style.backgroundColor).to.equal('');
+                                expect(forDiv[2].style.backgroundColor).to.equal('');
+                                expect(forDiv[3].style.backgroundColor).to.equal('');
+
+                                expect(forDiv[0].style.color).to.equal('red');
+                                expect(forDiv[1].style.color).to.equal('red');
+
+                                expect(forDiv[0].style.fontSize).to.equal('14px');
+                                expect(forDiv[1].style.fontSize).to.equal('14px');
+
+                                expect(forDiv[0].style.display).to.equal('block');
+                                expect(forDiv[1].style.display).to.equal('block');
+                                expect(forDiv[2].style.display).to.equal('block');
+                                expect(forDiv[3].style.display).to.equal('block');
+
+                                expect(forDiv[0].querySelector('label').textContent).to.equal('5');
+                                expect(forDiv[1].querySelector('label').textContent).to.equal('6');
+                                expect(forDiv[2].querySelector('label').textContent).to.equal('7');
+                                expect(forDiv[3].querySelector('label').textContent).to.equal('8');
+
+                                expect(forLi1[0].textContent).to.equal('0');
+                                expect(forLi1[1].textContent).to.equal('1');
+                                expect(forLi1[2].textContent).to.equal('2');
+                                expect(forLi1[3].textContent).to.equal('3');
+
+                                expect(forLi2[0].querySelector('label').textContent).to.equal('5');
+                                expect(forLi2[1].querySelector('label').textContent).to.equal('6');
+                                expect(forLi2[2].querySelector('label').textContent).to.equal('7');
+                                expect(forLi2[3].querySelector('label').textContent).to.equal('8');
+                                
+                                done();
+                            }, 200);
+                        }, 200);
+                    }, 200);
                 }, 200);
             }, 200);
         }, 250)
@@ -1425,8 +1602,6 @@ describe('for', function () {
                 }, 200);
             }, 200);
         }, 250);
-    });
-
-    
+    });  
 
 });

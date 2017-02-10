@@ -3,7 +3,7 @@ var sprintInst = JSpring([function($scope) {
 	;
 }, function($) {
 	$.extend(__INITIAL_STATE__, {
-		toggleShow : function(evt, letter) {
+		toggleShow : function(letter, evt) {
 			this.letterShowObj[letter] = !this.letterShowObj[letter];
 		}
 	});
