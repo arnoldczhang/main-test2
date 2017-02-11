@@ -1120,9 +1120,12 @@ const createLink = (linkArr) => {
 
 const Compiler = {
 
-	render (url, model) {
+	render (url, model, opts) {
+		this.start = Date.now();
 		template = fs.readFileSync(url, 'utf8');
 		this.outerHTML = '';
+		this.redis = opts.redis;
+		this.vNodeTemplate = opts.vNodeTpl;
 		this.js = createScript(model.js || []);
 		this.css = createLink(model.css || []);
 		this.template = template.match(REGEXP.bodyRE)[2];
@@ -1153,6 +1156,11 @@ const Compiler = {
 			, scope
 			;
 
+		if (_this.vNodeTemplate) {
+			console.log('compile cach : ' + (Date.now() - this.start) + 'ms');
+			return _this;
+		}
+
 		while (match = REGEXP.startEndAngleRE.exec(_this.template)) {
 			tagAndSpaceHtml = match[0];
 			spaceOrNote = match[1];
@@ -1179,6 +1187,7 @@ const Compiler = {
 				parentTag = _this.vObj = vObj;
 			}
 		}
+		console.log('compile norm : ' + (Date.now() - this.start) + 'ms');
 		return _this;
 	},
 
@@ -1196,7 +1205,7 @@ const Compiler = {
 			;
 
 		try {
-			_this.vNodeTemplate = _this.analyzeTplStr();
+			_this.vNodeTemplate = _this.vNodeTemplate || _this.analyzeTplStr();
 			_this.renderFn = makeGetterFn(_this.vNodeTemplate);
 
 			if (_this.renderFn == noop) {
@@ -1227,6 +1236,14 @@ const Compiler = {
 	},
 
 	clearNoUseAttr () {
+
+		if (this.redis)  {
+			this.redis.set('mainPageVNodeTpl', this.vNodeTemplate, (err, reply) => {
+				console.log('redis has cach the mainPage vNode template');
+			});
+			this.redis.expire('mainPageVNodeTpl', 10);
+		}
+
 		delete this.vObj;
 		delete this.template;
 		delete this.vNodeTemplate;

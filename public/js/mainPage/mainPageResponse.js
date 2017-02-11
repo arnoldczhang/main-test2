@@ -35,9 +35,7 @@ exports.returnHtml = (req, res, opts) => {
 		res.writeHead(200, {
 			'Content-Type': 'text/html'
 		});
-		let start = Date.now();
-		let template = compiler.render(opts.url, model);
-		console.log('compile: ' + (Date.now() - start) + 'ms');
+		let template = compiler.render(opts.url, model, opts);
 		res.write(template);
 		res.end();
 	}

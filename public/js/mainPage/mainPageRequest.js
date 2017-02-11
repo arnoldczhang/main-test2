@@ -1,4 +1,5 @@
 'use strict'
+let redis = require("redis");
 let mainPageResponse = require('./mainPageResponse');
 let request = require("request");
 let Q = require('q');//异步 deffer
@@ -36,20 +37,37 @@ const get = (object = {}, req) => {
 };
 
 exports.requestData = (req, res) => {
-	
-	get({
-		url : 'http://m.lvmama.com/api/router/rest.do?method=api.com.home.getStations&version=1.0.0&firstChannel=TOUCH&secondChannel=LVMM'
-	}, req).then((resp) => {
+        const client = redis.createClient();
+        const props = {
+            url : 'templates/mainPage.lv',
+            css : ['public/css/mainPage/mainPageService.css'],
+            js : ['public/js/mainPage/mainPageService.js'],
+        };
 
-		//http request
-		const cityData = resp.data;
-		const data = {cityData};
+        client.on("error", function(err) {
+            console.log("Error " + err);
+        });
 
-		mainPageResponse.returnHtml(req, res, {
-			url : 'templates/mainPage.lv',
-			css : ['public/css/mainPage/mainPageService.css'],
-			js : ['public/js/mainPage/mainPageService.js'],
-			data : data
-		});
-	});
+        client.on("connect", () => {
+            client.get("mainPageVNodeTpl", function(err, reply) {
+
+                if (reply) {
+                    console.log('use the redis cach')
+                    props.vNodeTpl = reply.toString();
+                } else {
+                    props.redis = client;
+                }
+
+                get({
+                    url : 'http://m.lvmama.com/api/router/rest.do?method=api.com.home.getStations&version=1.0.0&firstChannel=TOUCH&secondChannel=LVMM'
+                }, req).then((resp) => {
+                        const cityData = resp.data;
+                        const data = {
+                            cityData
+                        };
+                        props.data = data;
+                        mainPageResponse.returnHtml(req, res, props);
+                });
+            });
+        });
 };
