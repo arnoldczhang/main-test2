@@ -7,6 +7,7 @@ module.exports = {
     //页面入口
     entry: {
      "test": "./test/test.js",
+     "singleTest": "./test/singleTest.js",
     },
     //出口文件输出配置
     output: {
@@ -16,11 +17,11 @@ module.exports = {
     //source map 支持
     devtool: '',
     plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        }),
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false
+        //     }
+        // }),
         new webpack.optimize.DedupePlugin()
     ],
     //加载器

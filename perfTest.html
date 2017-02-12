@@ -10,6 +10,7 @@
     </head>
     <body>
         <div id="for_inst">
+              <my-component :component="obj" ></my-component>
                <div class="for_div"
                       :show="el > 2"
                       :if="el > 1"
@@ -116,63 +117,60 @@
         <script src="./test/vue-2.0.3.js"></script>
         <script src="./test/test.js"></script> -->
         <script type="text/javascript">
-        function aa () {
-            var work = new Worker('test/statistics.js');
-            // var work = new Worker('work.js');
 
-            work.onmessage = function(e) {
-                console.log(e.data)
-            };
-
-            work.postMessage({
-                statistics : 'start statistics'
-            });
+        JSpring.component['my-component'] = {
+            data : 'd',
+            template : ('<div>'
+                    + '<label>{{d.name}}</label>'
+                    + '<label>{{d.age}}</label>'
+                    + '<label>{{d.career}}</label>'
+                    + '</div>')
         };
-        </script>
-        <script type="text/javascript">
-        /*
+        
         var jsInst = JSpring([function ($scope, $, module) {
-            setTimeout(function () {
-                $scope.styleObj.backgroundColor = 'green';
-                $scope.arr = [3, 6, 9, 12, 15];
-                $scope.dataFn = function (el) {
-                    return {
-                        name : el + 'abc'
-                    };
-                };
-                setTimeout(function () {
-                    $scope.arr = [];
-                    setTimeout(function () {
-                        $scope.arr = [1, 1, 2, 2, 3, 6];
-                        $scope.styleObj = {
-                            color : 'red',
-                            fontSize : '14px'
-                        };
-                        $scope.dataFn = function (el) {
-                            return {
-                                pinyin : 'aoe-' + el
-                            };
-                        };
-                        setTimeout(function () {
-                            $scope.arr = [4, 1, 2];
-                            setTimeout(function () {
-                                $scope.arr = [];
-                                setTimeout(function () {
-                                    $scope.arr = [5, 6, 7, 8];
-                                    $scope.dataFn = function (el) {
-                                        return {
-                                            pinyin : 'aoe-' + el
-                                        };
-                                    };
-                                }, 200);
-                            }, 200);
-                        }, 200);
-                    }, 200);
-                }, 200);
-            }, 200);
+            // setTimeout(function () {
+            //     $scope.styleObj.backgroundColor = 'green';
+            //     $scope.arr = [3, 6, 9, 12, 15];
+            //     $scope.dataFn = function (el) {
+            //         return {
+            //             name : el + 'abc'
+            //         };
+            //     };
+            //     setTimeout(function () {
+            //         $scope.arr = [];
+            //         setTimeout(function () {
+            //             $scope.arr = [1, 1, 2, 2, 3, 6];
+            //             $scope.styleObj = {
+            //                 color : 'red',
+            //                 fontSize : '14px'
+            //             };
+            //             $scope.dataFn = function (el) {
+            //                 return {
+            //                     pinyin : 'aoe-' + el
+            //                 };
+            //             };
+            //             setTimeout(function () {
+            //                 $scope.arr = [4, 1, 2];
+            //                 setTimeout(function () {
+            //                     $scope.arr = [];
+            //                     setTimeout(function () {
+            //                         $scope.arr = [5, 6, 7, 8];
+            //                         $scope.dataFn = function (el) {
+            //                             return {
+            //                                 pinyin : 'aoe-' + el
+            //                             };
+            //                         };
+            //                     }, 200);
+            //                 }, 200);
+            //             }, 200);
+            //         }, 200);
+            //     }, 200);
+            // }, 200);
         }, {
                 obj : {
-
+                    name : 'abc',
+                    age : 123,
+                    career : 'tech'
                 },
                 aar : [{
                     name : 'abc'
@@ -203,7 +201,6 @@
                     };
                 }
         }, '#for_inst']);
-        */
         </script>
         <script type="text/javascript">
         </script>

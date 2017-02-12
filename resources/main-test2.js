@@ -176,7 +176,7 @@
 	 * REGEXP
 	 **/
 	var REGEXP = {
-		startEndAngleRE : /((?:\s|&[a-zA-Z]+;|<!\-\-@|[^<>]+)*)(<?(\/?)([^!<>\-\/\s]+)(?:\s*[^\s=\/>]+(?:="[^"]*"|='[^']*'|)|)+\s*>?)(?:\s*@\-\->)?/g,
+		startEndAngleRE : /((?:\s|&[a-zA-Z]+;|<!\-\-@|[^<>]+)*)(<?(\/?)([^!<>\/\s]+)(?:\s*[^\s=\/>]+(?:="[^"]*"|='[^']*'|)|)+\s*>?)(?:\s*@\-\->)?/g,
 		noEndRE : /^(?:input|br|img|link|hr|base|area|meta|embed|frame)$/,
 		attrsRE : /\s+([^\s=<>]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s<>]+))/g,
 		routeParamREG : /\:([^\:\-\.]+)/g,
@@ -193,6 +193,7 @@
 		objRE : /\{['"]?([^:()]+['"]?\s*\:\s*[^,],?\s*)+\}/,
 		styleRE : /([a-zA-Z]+)\s*:\s*([^:;]+)/g,
 		forRE : /(?:lv-|:)for/g,
+		compRE : /(?:lv-|:)component/g,
 		ifRE : /(?:lv-|:)if/g,
 		onRE : /(?:lv-|:)on/g,
 		onlySpaceRE : /^\s*$/,
@@ -1129,7 +1130,7 @@
 		}, scope);
 	};
 
-	function getMapResult (arrObj, cb) {
+	function getMapResult (arrObj, cb, inst) {
 		cb = cb || noop;
 		var 
 			result = []
@@ -1142,14 +1143,14 @@
 			length = arrObj.length;
 
 			while (++index < length) {
-				result[index] = cb(arrObj[index], index);
+				result[index] = cb(arrObj[index], index, inst);
 			}
 		} else if (_.isObject(arrObj)) {
 			arrKey = $keys(arrObj);
 			length = arrKey.length;
 
 			while (++index < length) {
-				result[index] = cb(arrObj[arrKey[index]], arrKey[index]);
+				result[index] = cb(arrObj[arrKey[index]], arrKey[index], inst);
 			}
 		}
 		return result;
@@ -1203,12 +1204,16 @@
 		return styleObj;
 	};
 
-	function isForAttr (attribute) {
-		return REGEXP.test(REGEXP.forRE, attribute);
+	function isForAttr (attr) {
+		return REGEXP.test(REGEXP.forRE, attr);
 	};
 
-	function isOnAttr (attribute) {
-		return REGEXP.test(REGEXP.onRE, attribute);
+	function isComponentAttr (attr) {
+		return REGEXP.test(REGEXP.compRE, attr);
+	}
+
+	function isOnAttr (attr) {
+		return REGEXP.test(REGEXP.onRE, attr);
 	};
 
 	function bindStaticAndUniqAttrs (vNode, el, statics, uniq, uKeys, instance) {
@@ -1217,7 +1222,7 @@
 		});
 		
 		uniq && _.each(uKeys, function uniqEach (key) {
-			optimizeCb(direct[key], instance, el, uniq[key], vNode);
+			optimizeCb(DIRECT[key], instance, el, uniq[key], vNode);
 		});
 	};
 
@@ -1297,6 +1302,7 @@
 			, attrValue
 			, uniqAttrs = $create(null)
 			, staticAttrs = $create(null)
+			, isComponent = false
 			, isStatic = true
 			, isFor = false
 			, match
@@ -1317,6 +1323,10 @@
 				if (isForAttr(attrKey)) {
 					isFor = attrValue;
 				}
+
+				if (isComponentAttr(attrKey)) {
+					isComponent = attrValue;
+				}
 			} else {
 				staticAttrs[attrKey] = attrValue;
 			}
@@ -1330,6 +1340,7 @@
 			children : [],
 			isElem : true,
 			isFor : isFor,
+			isComponent : isComponent,
 			isStatic : isStatic,
 			nodeType : 1
 		};
@@ -1436,13 +1447,13 @@
 		return result;
 	};
 
-	function getChildResult (children) {
+	function getChildResult (children, inst) {
 		return children.length 
-			? '[' + getMapResult(children, genVNodeExpr) + ']' 
+			? '[' + getMapResult(children, genVNodeExpr, inst) + ']' 
 			: '[]';
 	};
 
-	function genVNodeExpr (vObj) {
+	function genVNodeExpr (vObj, index, inst) {
 		var 
 			data = getVObjData(vObj)
 			, children = vObj.children
@@ -1452,12 +1463,12 @@
 		if (_.isElement(vObj)) {
 
 			if (!vObj.isStatic) {
-				return genUniqVNodeExpr(vObj);
+				return genUniqVNodeExpr(vObj, inst);
 			}
 			return '__j._n(\"'
 				+ vObj.tagName + '\", '
 				+ $stringify(data) + ', '
-				+ getChildResult(children)
+				+ getChildResult(children, inst)
 				+ ')';
 		} else {
 			text = data.textContent;
@@ -1474,7 +1485,7 @@
 		}	
 	};
 
-	function genUniqVNodeExpr (vObj) {
+	function genUniqVNodeExpr (vObj, inst) {
 		var 
 			children = vObj.children
 			, uniqKeys = vObj.uniqKeys
@@ -1494,8 +1505,8 @@
 			res += 'uniq:{';
 			_.each(uniqKeys, function uniqKeyEach (key) {
 
-				if (attr[key]) {
-					res += '\"' + key + '\" : ' + gen[key](vObj.uniqAttrs[key]) + ',';
+				if (ATTR[key]) {
+					res += '\"' + key + '\" : ' + GEN[key](vObj, vObj.uniqAttrs[key]) + ',';
 				}
 			});
 			res += '}';
@@ -1504,14 +1515,18 @@
 		res += '}';
 
 		if (vObj.isFor) {
-			return genFor(vObj, res);
+			return genFor(vObj, res, inst);
+		}
+
+		if (vObj.isComponent) {
+			return genComponent(vObj, res, inst);
 		}
 
 		return '__j._n(\"' 
 			+ vObj.tagName 
 			+ '\", ' 
 			+ res + ', '
-			+ getChildResult(children)
+			+ getChildResult(children, inst)
 			+ ')';
 	};
 
@@ -1529,7 +1544,7 @@
 
 		if (uniq) {
 			data.uKeys = $keys(uniq).sort(function uKeysSort (a, b) {
-				return prio[b] - prio[a];
+				return PRIO[b] - PRIO[a];
 			});
 		}
 
@@ -1606,7 +1621,6 @@
 				if (_.isObject(arrChild)) {
 					defineProp.call(instance, arrChild, defKey[index]);
 				}
-
 			});
 		} else if (_.isObject(value)) {
 			defKey = {};
@@ -1631,7 +1645,6 @@
 					_defineProp(defObj[key], value = newVal, _this, defObj, key);
 					optimizeCb(notifyChange, _this, key);
 				}
-
 			}, function defGet () {
 				return value;
 			});
@@ -1875,7 +1888,7 @@
 		},
 
 		update : function update (attr) {
-			return optimizeCb(direct[attr]
+			return optimizeCb(DIRECT[attr]
 				, this.instance
 				, this.el
 				, this.data.uniq[attr]
@@ -1929,26 +1942,26 @@
 
 
 	/**
-	 * JSpring
-	 **/
-	function publicGen (value) {
-		return value;
-	};
-
+	 * GEN
+	 */
 	function getIfElem (el, vNode) {
 		return vNode.ifEl || el;
 	};
 
+	function publicGen (vObj, value) {
+		return value;
+	};
+	
 	var  
 		genText = publicGen 
 		, genHtml = publicGen
 		;
 
-	function genModel (value) {
+	function genModel (vObj, value) {
 		return '[' + $stringify(value) + ', ' + value + ']';
 	};
 
-	function genIf (value) {
+	function genIf (vObj, value) {
 		return '!!(' + value + ')';
 	};
 
@@ -1958,7 +1971,7 @@
 		, genToggle = genIf
 		;
 
-	function genClass (value) {
+	function genClass (vObj, value) {
 
 		if (REGEXP.boolClassRE.test(value)) {
 			return value.replace(REGEXP.squareRE, "[!!($1)]");
@@ -1974,7 +1987,7 @@
 		, genHref = genClass
 		;
 
-	function genOn (value) {
+	function genOn (vObj, value) {
 		var 
 			match
 			, tmpArr = []
@@ -1992,7 +2005,7 @@
 			: (WARN.format('on'), STRING);
 	};
 
-	function genFor (vObj, attrStr) {
+	function genFor (vObj, attrStr, inst) {
 		var 
 			match
 			, children = vObj.children
@@ -2002,13 +2015,50 @@
 			return '__j._mp(' + match[2] + ', function(' + match[1] + ', '
 				+ (match[3] || '$index') + ') {'
 				+ 'return __j._n(\"' + vObj.tagName + '\", ' + attrStr + ', '
-				+ getChildResult(children)
+				+ getChildResult(children, inst)
 				+ ');'
 				+ '})';
 		}
 		return WARN.format('for'), STRING;
 	};
 
+	function genComponent (vObj, result, inst) {
+		var 
+			tagName = vObj.tagName
+			, component = JSpring.component[tagName]
+			, vNodeTemplate
+			;
+
+		if (component) {
+
+			if (vNodeTemplate = component.vNodeTemplate) {
+				return vNodeTemplate;
+			} else {
+				component.vObj = inst.analyzeHtml(component.template);
+				component.vNodeTemplate = genVNodeExpr(component.vObj, 0, inst);
+				_.push(vObj.children, component.vObj);
+			}
+			return '(function() {'
+				+ 'var '
+				+ component.data
+				+ ' = '
+				+ vObj.isComponent
+				+ ';return __j._n(\"' 
+				+ vObj.tagName 
+				+ '\", ' 
+				+ result + ', ['
+				+ component.vNodeTemplate
+				+ '])'
+				+ '}())';
+		}
+		return '__j._n("'
+			+ vObj.tagName
+			+ '")';
+	};
+
+	/**
+	 * DIRECT
+	 */
 	function vText (el, value, vNode) {
 		el = getIfElem(el, vNode);
 		_.push(this.cach.tickQ, function textTick () {
@@ -2215,8 +2265,12 @@
 		vNode.dataArr = keyArr;
 	};
 
+	function vComponent (el, value, vNode) {
+
+	};
+
 	//自定义属性
-	var attr = JSpring.attr = {
+	var ATTR = JSpring.attr = {
 		// 'for' : 1,
 		text : 1,
 		html : 1,
@@ -2231,11 +2285,12 @@
 		attr : 1,
 		src : 1,
 		data : 1,
-		href : 1
+		href : 1,
+		// component : 1
 	};
 
 	//自定义属性优先级
-	var prio = JSpring.priority = {
+	var PRIO = JSpring.priority = {
 		text : 200,
 		html : 200,
 		show : 200,
@@ -2249,11 +2304,12 @@
 		attr : 100,
 		src : 100,
 		data : 100,
-		href : 100
+		href : 100,
+		component : 400
 	};
 
 	//自定义属性字符串解析
-	var gen = JSpring.gen = {
+	var GEN = JSpring.gen = {
 		'for' : genFor,
 		text : genText,
 		html : genHtml,
@@ -2268,11 +2324,12 @@
 		attr : genAttr,
 		src : genSrc,
 		data : genData,
-		href : genHref
+		href : genHref,
+		component : genComponent
 	};
 
 	//自定义属性对应处理方法
-	var direct = JSpring.direct = {
+	var DIRECT = JSpring.direct = {
 		text : vText,
 		html : vHtml,
 		show : vShow,
@@ -2286,12 +2343,18 @@
 		attr : vAttr,
 		src : vSrc,
 		data : vData,
-		href : vHref
+		href : vHref,
+		component : vComponent
 	};
 
-	//Module
+	//module
 	JSpring.module = {
 
+	};
+
+	//component
+	JSpring.component = {
+	
 	};
 
 	//vm
@@ -2373,7 +2436,7 @@
 			}
 		},
 
-		analyzeHtml : function analyzeHtml () {
+		analyzeHtml : function analyzeHtml (html) {
 			var 
 				_this = this
 				, match
@@ -2384,11 +2447,12 @@
 				, isNoEndTag
 				, tagName
 				, parentTag = null
+				, lastParentTag = null
 				, vObj
 				, scope
 				;
 
-			while (match = REGEXP.startEndAngleRE.exec(_this.template)) {
+			while (match = REGEXP.startEndAngleRE.exec(html || _this.template)) {
 				tagAndSpaceHtml = match[0];
 				spaceOrNote = match[1];
 				tagHtml = match[2];
@@ -2405,16 +2469,22 @@
 				if (parentTag) {
 					!REGEXP.test(REGEXP.onlySpaceRE, spaceOrNote) && appendVObjChildren(parentTag, createVTextObj(spaceOrNote, parentTag, _this));
 					!isEndTag && appendVObjChildren(parentTag, vObj);
-					parentTag = isEndTag 
-						? parentTag.parentVObj 
-						: !isNoEndTag
-						? vObj
-						: parentTag;
+
+					if (isEndTag) {
+						lastParentTag = parentTag;
+						parentTag = parentTag.parentVObj;
+					} else {
+						parentTag = !isNoEndTag ? vObj : parentTag;
+					}
 				} else {
-					parentTag = _this.vObj = vObj;
+					parentTag = vObj;
+
+					if (!html) {
+						_this.vObj = vObj;
+					}
 				}
 			}
-			return _this;
+			return html ? lastParentTag : _this;
 		},
 
 		pushHook : function pushHook (cb) {
@@ -2502,10 +2572,11 @@
 				, this;
 		},
 
-		analyzeTplStr : function analyzeTplStr () {
+		analyzeTplStr : function analyzeTplStr (vObj) {
+			vObj = vObj || this.vObj;
 			return 'with(this.$scope){ return ' 
-				+ (this.vObj
-				? genVNodeExpr(this.vObj)
+				+ (vObj
+				? genVNodeExpr(vObj, 0, this)
 				: "__j._n('div')") 
 				+ ';}';
 		},
@@ -2711,6 +2782,7 @@
 				, _this.$scope
 				, $
 				, JSpring.module
+				, _this
 				)//, console.timeEnd('JSpring');
 		}
 	};
@@ -3168,5 +3240,15 @@
 
 	JSpring.module['$location'] = $location;
 	window.JSpring = JSpring;
+	window.JSpringComponent = function () {
+		return this.render.call(this, arguments);
+	};
+
+	JSpringComponent.prototype = {
+		render : function (args) {
+			return JSpring(args);
+		}
+	};
+
 	return JSpring;
 }));

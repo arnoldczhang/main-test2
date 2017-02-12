@@ -1,0 +1,46 @@
+<!DOCTYPE html >
+<html>
+<head>
+<title>node_singlePage_es6</title>
+<meta charset="utf-8">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="max-age=7200" />
+<meta http-equiv="expires" content="0">
+<meta content="initial-scale=1.0,user-scalable=no,minimum-scale=1,maximum-scale=1,width=device-width" name="viewport">
+<link rel="alternate" type="application/vnd.wap.xhtml+xml" media="handheld" href="target"/>
+<link rel="stylesheet" type="text/css" href="public/css/mainPage/mainPageService.css">
+<meta http-equiv=Content-Type content="text/html;charset=utf-8"/>
+<style type="text/css"></style>
+</head>
+<body>
+<div id="for_inst">
+       <div class="for_div"
+              :show="el > 2"
+              :if="el > 1"
+              :data="dataFn(el)"
+              :for="el in arr"
+              :class="{'aa bb' : el == 1, 'cc dd' : el == 2, 'ee' : el == 3, 'ff' : el > 0 }"
+              :attr="{true : 'name:my name is ' + el, false : 'name : your name is ' + el}[el > 2]"
+              :style="styleObj"
+              >
+         <label>{{el}}</label>
+         <!--@ dsfasfdaf @-->
+         <ul>
+             <li class="for_li1">{{$index}}</li>
+         </ul>
+      </div>
+      <ul>
+          <li>1111</li>
+      </ul>
+       <ul id="for_ul">
+         <li class="for_li2" :for="el in arr">
+              <label :text="el"></label>
+         </li>
+      </ul>
+    <label :on="click:logObjName()">{{obj.name}}</label>
+</div>
+<script type="text/javascript" src="test/singleTest.min.js"> </script>
+<script type="text/javascript">
+</script>
+</body>
+</html>
