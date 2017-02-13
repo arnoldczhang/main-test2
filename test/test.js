@@ -6,7 +6,7 @@ var suite = new Benchmark.Suite;
 
 //Test 2
 
-
+/*
 
 console.time('vue')
 var vueInst = new Vue({
@@ -129,7 +129,7 @@ var vueInst = new Vue({
 
 
 console.timeEnd('vue')
-
+*/
 
 
 
@@ -138,6 +138,7 @@ console.timeEnd('vue')
 
 console.time('JSpring')
 
+/*
 
 var springInst = JSpring([function ($scope, $, module) {}, function ($, module) {
     return {
@@ -254,6 +255,78 @@ var springInst = JSpring([function ($scope, $, module) {}, function ($, module) 
     };
 }, '#tpl3']);
 
+  */
+
+/*var vueInst = new Vue({
+    el: '#tpl2',
+    data: {
+        arr : ['abc', 'ab']
+    }
+});*/
+
+JSpring.component['user'] = {
+    key : 'd',
+    parent : 'pp',
+    index : 'ii',
+    data : {
+        aba : 'aaaaaaaaaaaaaaaa'
+    },
+    template : '<div>'
+            + '<label>{{d.name}}</label>'
+            + '<label>{{d.age}}</label>'
+            + '<label>{{d.career}}</label>'
+            + '<label>{{aba}}</label>'
+            + '</div>'
+};
+        
+var jsInst = JSpring([function ($scope, $, module) {
+    // var evt = document.createEvent('Events');
+    // evt.initEvent('keypress', true, true);
+    // evt.view = document.defaultView;
+    // evt.altKey = false;
+    // evt.ctrlKey = false;
+    // evt.shiftKey = false;
+    // evt.metaKey = false;
+    // evt.keyCode = 85;
+    // evt.charCode = 85;
+
+    // var input = document.getElementsByTagName('user')[1].querySelector('input');
+    // input.dispatchEvent(evt);
+}, {
+        obj : {
+            name : 'abc',
+            age : 123,
+            career : 'tech'
+        },
+        aar : [{
+            name : 'abc'
+        }, {
+            name : 'abcd'
+        }],
+        arr : [1, 2, 3],
+        dataFn : function (el) {
+            return {
+                id : el + 'aaa',
+                cityId : el + 'shanghai'
+            }
+        },
+        styleObj : {
+            backgroundColor : 'red'
+        },
+        classFn : function (el) {
+            return {
+                'aa bb' : el == 1,
+                'cc dd' : el == 2,
+                'ee' : el ==3,
+                'ff' : el > 0
+            };
+        },
+        attrFn : function (el) {
+            return {
+                name : 'name is ' + el 
+            };
+        }
+}, '#tpl2']);
 
 console.timeEnd('JSpring')
 

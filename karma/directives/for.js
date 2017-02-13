@@ -1604,4 +1604,422 @@ describe('for', function () {
         }, 250);
     });  
 
+    it('简单for，结合component', function (done) {
+        JSpring.component['user'] = {
+            key : 'd',
+            data : {},
+            template : ('<div>'
+                    + '<label>{{d.name}}</label>'
+                    + '<label>{{d.age}}</label>'
+                    + '<label>{{d.career}}</label>'
+                    + '</div>')
+        };
+
+        body.innerHTML = heredoc(function () {
+            /*
+            <div id="for_inst">
+                 <div class="for_div" :for="el in arr">
+                   <user :component="el" ></user>
+                </div>
+            </div>
+             */
+        });
+
+        jsInst = JSpring([function ($scope, $, module) {
+            ;
+        }, {
+                arr : [{
+                    name : 'a',
+                    age : 1,
+                    career : 'worker'
+                }, {
+                    name : 'b',
+                    age : 2,
+                    career : 'farmer'
+                }, {
+                    name : 'c',
+                    age : 3,
+                    career : 'lier'
+                }],
+        }, '#for_inst']);
+        container = document.getElementById('for_inst');
+        var user = document.getElementsByTagName('user');
+
+        expect(user.length).to.equal(3);
+
+        expect(user[0].querySelectorAll('label')[0].textContent).to.equal('a');
+        expect(user[0].querySelectorAll('label')[1].textContent).to.equal('1');
+        expect(user[0].querySelectorAll('label')[2].textContent).to.equal('worker');
+        expect(user[1].querySelectorAll('label')[0].textContent).to.equal('b');
+        expect(user[1].querySelectorAll('label')[1].textContent).to.equal('2');
+        expect(user[1].querySelectorAll('label')[2].textContent).to.equal('farmer');
+        expect(user[2].querySelectorAll('label')[0].textContent).to.equal('c');
+        expect(user[2].querySelectorAll('label')[1].textContent).to.equal('3');
+        expect(user[2].querySelectorAll('label')[2].textContent).to.equal('lier');
+
+        done();
+    });
+
+    it('简单for，结合component，多次更新', function (done) {
+        JSpring.component['user'] = {
+            key : 'd',
+            data : {},
+            template : ('<div>'
+                    + '<label>{{d.name}}</label>'
+                    + '<label>{{d.age}}</label>'
+                    + '<label>{{d.career}}</label>'
+                    + '</div>')
+        };
+
+        body.innerHTML = heredoc(function () {
+            /*
+            <div id="for_inst">
+                 <div class="for_div" :for="el in arr">
+                   <user :component="el" ></user>
+                </div>
+            </div>
+             */
+        });
+
+        jsInst = JSpring([function ($scope, $, module) {
+            setTimeout(() => {
+                $scope.arr = [{
+                    name : 'aa',
+                    age : 10,
+                    career : 'worker0'
+                }];
+                setTimeout(() => {
+                    $scope.arr = [{
+                        name : 'aa',
+                        age : 1,
+                        career : 'worker1'
+                    }, {
+                        name : 'bb',
+                        age : 2,
+                        career : 'farmer2'
+                    }, {
+                        name : 'cc',
+                        age : 3,
+                        career : 'lier3'
+                    }, {
+                        name : 'dd',
+                        age : 4,
+                        career : 'farmer4'
+                    }, {
+                        name : 'ee',
+                        age : 5,
+                        career : 'lier5'
+                    }];
+                    setTimeout(() => {
+                        $scope.arr = [];
+                        setTimeout(() => {
+                            $scope.arr = [{
+                                name : 'arnold',
+                                age : 10,
+                                career : 'programer'
+                            }];
+                        }, 200);
+                    }, 200);
+                }, 200);
+            }, 200);
+        }, {
+                arr : [{
+                    name : 'a',
+                    age : 1,
+                    career : 'worker'
+                }, {
+                    name : 'b',
+                    age : 2,
+                    career : 'farmer'
+                }, {
+                    name : 'c',
+                    age : 3,
+                    career : 'lier'
+                }],
+        }, '#for_inst']);
+        container = document.getElementById('for_inst');
+        var user = document.getElementsByTagName('user');
+
+        expect(user.length).to.equal(3);
+
+        expect(user[0].querySelectorAll('label')[0].textContent).to.equal('a');
+        expect(user[0].querySelectorAll('label')[1].textContent).to.equal('1');
+        expect(user[0].querySelectorAll('label')[2].textContent).to.equal('worker');
+        expect(user[1].querySelectorAll('label')[0].textContent).to.equal('b');
+        expect(user[1].querySelectorAll('label')[1].textContent).to.equal('2');
+        expect(user[1].querySelectorAll('label')[2].textContent).to.equal('farmer');
+        expect(user[2].querySelectorAll('label')[0].textContent).to.equal('c');
+        expect(user[2].querySelectorAll('label')[1].textContent).to.equal('3');
+        expect(user[2].querySelectorAll('label')[2].textContent).to.equal('lier');
+
+        setTimeout(() => {
+            expect(user.length).to.equal(1);
+
+            expect(user[0].querySelectorAll('label')[0].textContent).to.equal('aa');
+            expect(user[0].querySelectorAll('label')[1].textContent).to.equal('10');
+            expect(user[0].querySelectorAll('label')[2].textContent).to.equal('worker0');
+            
+            setTimeout(() => {
+                expect(user.length).to.equal(5);
+
+                expect(user[0].querySelectorAll('label')[0].textContent).to.equal('aa');
+                expect(user[0].querySelectorAll('label')[1].textContent).to.equal('1');
+                expect(user[0].querySelectorAll('label')[2].textContent).to.equal('worker1');
+
+                expect(user[1].querySelectorAll('label')[0].textContent).to.equal('bb');
+                expect(user[1].querySelectorAll('label')[1].textContent).to.equal('2');
+                expect(user[1].querySelectorAll('label')[2].textContent).to.equal('farmer2');
+
+                expect(user[2].querySelectorAll('label')[0].textContent).to.equal('cc');
+                expect(user[2].querySelectorAll('label')[1].textContent).to.equal('3');
+                expect(user[2].querySelectorAll('label')[2].textContent).to.equal('lier3');
+
+                expect(user[3].querySelectorAll('label')[0].textContent).to.equal('dd');
+                expect(user[3].querySelectorAll('label')[1].textContent).to.equal('4');
+                expect(user[3].querySelectorAll('label')[2].textContent).to.equal('farmer4');
+
+                expect(user[4].querySelectorAll('label')[0].textContent).to.equal('ee');
+                expect(user[4].querySelectorAll('label')[1].textContent).to.equal('5');
+                expect(user[4].querySelectorAll('label')[2].textContent).to.equal('lier5');
+                
+                setTimeout(() => {
+                    expect(user.length).to.equal(0);
+                    setTimeout(() => {
+                        expect(user.length).to.equal(1);
+
+                        expect(user[0].querySelectorAll('label')[0].textContent).to.equal('arnold');
+                        expect(user[0].querySelectorAll('label')[1].textContent).to.equal('10');
+                        expect(user[0].querySelectorAll('label')[2].textContent).to.equal('programer');
+
+                        done();
+                    }, 200);
+                }, 200);
+            }, 200);
+        }, 250);
+    });
+
+it('简单for，结合component，结合lv-model，多次更新', function (done) {
+    JSpring.component['user'] = {
+        key : 'd',
+        parent : 'pp',
+        index : 'ii',
+        data : {},
+        template : ('<div>'
+                + '<label>{{d.name}}</label>'
+                + '<label>{{d.age}}</label>'
+                + '<label>{{d.career}}</label>'
+                + '<input type="text" :model="d.name" :parent="pp" :index="ii"/>'
+                + '</div>')
+    };
+
+    body.innerHTML = heredoc(function () {
+        /*
+        <div id="for_inst">
+           <user :for="el in arr" :component="el" ></user>
+        </div>
+         */
+    });
+
+    jsInst = JSpring([function ($scope, $, module) {
+        setTimeout(() => {
+            $scope.arr[0].name = 'aaa';
+            $scope.arr[0].age = '';
+            setTimeout(() => {
+                $scope.arr = [{
+                    name : 'aa',
+                    age : 2,
+                    career : 'worker2'
+                }];
+                setTimeout(() => {
+                    $scope.arr = [];
+                    setTimeout(() => {
+                        $scope.arr = [{
+                            name : 'a',
+                            age : 1,
+                            career : 'worker'
+                        }, {
+                            name : 'b',
+                            age : 2,
+                            career : 'farmer'
+                        }, {
+                            name : 'c',
+                            age : 3,
+                            career : 'lier'
+                        }, {
+                            name : 'd',
+                            age : 4,
+                            career : 'citizen'
+                        }, {
+                            name : 'e',
+                            age : 5,
+                            career : 'player'
+                        }];
+                        setTimeout(() => {
+                            
+                        }, 200);
+                    }, 200);
+                }, 200);
+            }, 200);
+        }, 200);
+    }, {
+            arr : [{
+                name : 'a',
+                age : 1,
+                career : 'worker'
+            }, {
+                name : 'b',
+                age : 2,
+                career : 'farmer'
+            }, {
+                name : 'c',
+                age : 3,
+                career : 'lier'
+            }],
+    }, '#for_inst']);
+    container = document.getElementById('for_inst');
+    var user = document.getElementsByTagName('user');
+
+    expect(user.length).to.equal(3);
+
+    expect(user[0].querySelector('input').value).to.equal('a');
+    expect(user[0].querySelectorAll('label')[0].textContent).to.equal('a');
+    expect(user[0].querySelectorAll('label')[1].textContent).to.equal('1');
+    expect(user[0].querySelectorAll('label')[2].textContent).to.equal('worker');
+
+    expect(user[1].querySelector('input').value).to.equal('b');
+    expect(user[1].querySelectorAll('label')[0].textContent).to.equal('b');
+    expect(user[1].querySelectorAll('label')[1].textContent).to.equal('2');
+    expect(user[1].querySelectorAll('label')[2].textContent).to.equal('farmer');
+
+    expect(user[2].querySelector('input').value).to.equal('c');
+    expect(user[2].querySelectorAll('label')[0].textContent).to.equal('c');
+    expect(user[2].querySelectorAll('label')[1].textContent).to.equal('3');
+    expect(user[2].querySelectorAll('label')[2].textContent).to.equal('lier');
+
+    setTimeout(() => {
+        expect(user.length).to.equal(3);
+
+        expect(user[0].querySelector('input').value).to.equal('aaa');
+        expect(user[0].querySelectorAll('label')[0].textContent).to.equal('aaa');
+        expect(user[0].querySelectorAll('label')[1].textContent).to.equal('');
+        expect(user[0].querySelectorAll('label')[2].textContent).to.equal('worker');
+
+        setTimeout(() => {
+            expect(user.length).to.equal(1);
+
+            expect(user[0].querySelector('input').value).to.equal('aa');
+            expect(user[0].querySelectorAll('label')[0].textContent).to.equal('aa');
+            expect(user[0].querySelectorAll('label')[1].textContent).to.equal('2');
+            expect(user[0].querySelectorAll('label')[2].textContent).to.equal('worker2');
+
+            setTimeout(() => {
+                expect(user.length).to.equal(0);
+                setTimeout(() => {
+                    expect(user.length).to.equal(5);
+
+                    expect(user[0].querySelector('input').value).to.equal('a');
+                    expect(user[0].querySelectorAll('label')[0].textContent).to.equal('a');
+                    expect(user[0].querySelectorAll('label')[1].textContent).to.equal('1');
+                    expect(user[0].querySelectorAll('label')[2].textContent).to.equal('worker');
+
+                    expect(user[1].querySelector('input').value).to.equal('b');
+                    expect(user[1].querySelectorAll('label')[0].textContent).to.equal('b');
+                    expect(user[1].querySelectorAll('label')[1].textContent).to.equal('2');
+                    expect(user[1].querySelectorAll('label')[2].textContent).to.equal('farmer');
+
+                    expect(user[2].querySelector('input').value).to.equal('c');
+                    expect(user[2].querySelectorAll('label')[0].textContent).to.equal('c');
+                    expect(user[2].querySelectorAll('label')[1].textContent).to.equal('3');
+                    expect(user[2].querySelectorAll('label')[2].textContent).to.equal('lier');
+
+                    expect(user[3].querySelector('input').value).to.equal('d');
+                    expect(user[3].querySelectorAll('label')[0].textContent).to.equal('d');
+                    expect(user[3].querySelectorAll('label')[1].textContent).to.equal('4');
+                    expect(user[3].querySelectorAll('label')[2].textContent).to.equal('citizen');
+
+                    expect(user[4].querySelector('input').value).to.equal('e');
+                    expect(user[4].querySelectorAll('label')[0].textContent).to.equal('e');
+                    expect(user[4].querySelectorAll('label')[1].textContent).to.equal('5');
+                    expect(user[4].querySelectorAll('label')[2].textContent).to.equal('player');
+    
+                        setTimeout(() => {
+
+                            done();
+                        }, 200);
+                    }, 200);
+                }, 200);
+            }, 200);
+        }, 250);
+    });
+
+    it('简单for，结合component，私有域变量，多次更新', function (done) {
+        JSpring.component['user'] = {
+            key : 'd',
+            data : {
+                word : 'abc'
+            },
+            template : ('<div>'
+                    + '<label>{{d.name}}</label>'
+                    + '<label>{{d.age}}</label>'
+                    + '<label>{{d.career}}</label>'
+                    + '<label>{{word}}</label>'
+                    + '</div>')
+        };
+
+        body.innerHTML = heredoc(function () {
+            /*
+            <div id="for_inst">
+                 <div class="for_div" :for="el in arr">
+                   <user :component="el" ></user>
+                </div>
+            </div>
+             */
+        });
+
+        jsInst = JSpring([function ($scope, $, module) {
+            setTimeout(() => {
+                JSpring.component['user'].$scope.word = 'aaa';
+            }, 200);
+        }, {
+                arr : [{
+                    name : 'a',
+                    age : 1,
+                    career : 'worker'
+                }, {
+                    name : 'b',
+                    age : 2,
+                    career : 'farmer'
+                }, {
+                    name : 'c',
+                    age : 3,
+                    career : 'lier'
+                }],
+        }, '#for_inst']);
+        container = document.getElementById('for_inst');
+        var user = document.getElementsByTagName('user');
+
+        expect(user.length).to.equal(3);
+
+        expect(user[0].querySelectorAll('label')[0].textContent).to.equal('a');
+        expect(user[0].querySelectorAll('label')[1].textContent).to.equal('1');
+        expect(user[0].querySelectorAll('label')[2].textContent).to.equal('worker');
+        expect(user[0].querySelectorAll('label')[3].textContent).to.equal('abc');
+        expect(user[1].querySelectorAll('label')[0].textContent).to.equal('b');
+        expect(user[1].querySelectorAll('label')[1].textContent).to.equal('2');
+        expect(user[1].querySelectorAll('label')[2].textContent).to.equal('farmer');
+        expect(user[1].querySelectorAll('label')[3].textContent).to.equal('abc');
+        expect(user[2].querySelectorAll('label')[0].textContent).to.equal('c');
+        expect(user[2].querySelectorAll('label')[1].textContent).to.equal('3');
+        expect(user[2].querySelectorAll('label')[2].textContent).to.equal('lier');
+        expect(user[2].querySelectorAll('label')[3].textContent).to.equal('abc');
+
+        setTimeout(() => {
+            expect(user[0].querySelectorAll('label')[3].textContent).to.equal('aaa');
+            expect(user[1].querySelectorAll('label')[3].textContent).to.equal('aaa');
+            expect(user[2].querySelectorAll('label')[3].textContent).to.equal('aaa');
+
+            done();
+        }, 250);
+    });
+
 });

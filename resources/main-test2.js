@@ -191,6 +191,7 @@
 		squareRE : /\[([^\[\]]+)\]/,
 		boolClassRE : /\{(?:true|false)\s*:[^{}]+\}\[[^\[\]]+\]/,
 		objRE : /\{['"]?([^:()]+['"]?\s*\:\s*[^,],?\s*)+\}/,
+		objParentRE : /[^\[\]\.]+/,
 		styleRE : /([a-zA-Z]+)\s*:\s*([^:;]+)/g,
 		forRE : /(?:lv-|:)for/g,
 		compRE : /(?:lv-|:)component/g,
@@ -1522,7 +1523,7 @@
 			return genComponent(vObj, res, inst);
 		}
 
-		return '__j._n(\"' 
+		return '__j._n(\"'
 			+ vObj.tagName 
 			+ '\", ' 
 			+ res + ', '
@@ -1623,18 +1624,18 @@
 				}
 			});
 		} else if (_.isObject(value)) {
-			defKey = {};
-			defineProp.call(instance, value, defKey);
 
 			if (defObj && key) {
+				defKey = {};
 				keyObj[key] = defKey;
 				defineProp.call(instance, keyObj, defObj);
 			}
+			defineProp.call(instance, value, defKey);
 			defVal(value, '__isDiff', true);
 		}
 	};
 
-	function defineProp (data, defObj, skipFlag) {
+	function defineProp (data, defObj, inst) {
 		var _this = this;
 		defObj = defObj || {};
 
@@ -1643,7 +1644,7 @@
 
 				if (!_.proxyEqual(value, newVal)) {
 					_defineProp(defObj[key], value = newVal, _this, defObj, key);
-					optimizeCb(notifyChange, _this, key);
+					optimizeCb(notifyChange, inst || _this, key);
 				}
 			}, function defGet () {
 				return value;
@@ -1955,6 +1956,8 @@
 	var  
 		genText = publicGen 
 		, genHtml = publicGen
+		, genIndex = publicGen
+		, genParent = publicGen
 		;
 
 	function genModel (vObj, value) {
@@ -2009,20 +2012,32 @@
 		var 
 			match
 			, children = vObj.children
+			, str
+			, parent
+			, index
 			;
 				
 		if (match = vObj.isFor.match(REGEXP.forExpRE)) {
-			return '__j._mp(' + match[2] + ', function(' + match[1] + ', '
-				+ (match[3] || '$index') + ') {'
-				+ 'return __j._n(\"' + vObj.tagName + '\", ' + attrStr + ', '
-				+ getChildResult(children, inst)
-				+ ');'
-				+ '})';
+			index = match[3];
+			parent = match[2];
+			str = '__j._mp(' + parent + ', function(' + match[1] + ', '
+				+ (index || '$index') + ') {';
+
+			if (!vObj.isComponent) {
+				str += 'return __j._n(\"' + vObj.tagName + '\", ' + attrStr + ', '
+					+ getChildResult(children, inst)
+					+ ');';
+			} else {
+				str += 'return ' 
+					+ genComponent(vObj, attrStr, inst, parent, index || '$index');
+			}
+			str += '})';
+			return str;
 		}
 		return WARN.format('for'), STRING;
 	};
 
-	function genComponent (vObj, result, inst) {
+	function genComponent (vObj, attrStr, inst, parent, index) {
 		var 
 			tagName = vObj.tagName
 			, component = JSpring.component[tagName]
@@ -2030,26 +2045,46 @@
 			;
 
 		if (component) {
+			parent = parent || vObj.isComponent;
+			vNodeTemplate = component.vTpl;
 
-			if (vNodeTemplate = component.vNodeTemplate) {
+			if (vNodeTemplate) {
 				return vNodeTemplate;
 			} else {
 				component.vObj = inst.analyzeHtml(component.template);
-				component.vNodeTemplate = genVNodeExpr(component.vObj, 0, inst);
+				component.vTpl = genVNodeExpr(component.vObj, 0, inst);
+				component.data = component.data || {};
+				component.$scope = optimizeCb(defineProp
+					, component
+					, component.data
+					, {}
+					, inst);
 				_.push(vObj.children, component.vObj);
 			}
-			return '(function() {'
-				+ 'var '
-				+ component.data
-				+ ' = '
-				+ vObj.isComponent
-				+ ';return __j._n(\"' 
+			return component.vTpl = '(function('
+				+ component.key
+				+ ', '
+				+ (component.index || '$index')
+				+ ', '
+				+ (component.parent || '$parent')
+				+ ') {'
+				+ 'with(__j._cp["'
+				+ tagName
+				+ '"].$scope) {'
+				+ 'return __j._n(\"' 
 				+ vObj.tagName 
 				+ '\", ' 
-				+ result + ', ['
-				+ component.vNodeTemplate
+				+ attrStr + ', ['
+				+ component.vTpl
 				+ '])'
-				+ '}())';
+				+ '}'
+				+ '} ('
+				+ vObj.isComponent
+				+ ', '
+				+ index
+				+ ', "'
+				+ parent
+				+ '"))';
 		}
 		return '__j._n("'
 			+ vObj.tagName
@@ -2138,22 +2173,38 @@
 		}
 	};
 
+	function vIndex (el, value, vNode) {
+
+	};
+
+	function vParent (el, value, vNode) {
+
+	};
+
 	function vModel (el, value, vNode) {
 		el = getIfElem(el, vNode);
 		el.value = value[1];
-
+		var 
+			uniq = vNode.data.uniq
+			, expression
+			;
+		
 		if (!vNode.updateFn) {
+			expression = !uniq.parent
+				? value[0]
+				: REGEXP.replace(value[0], REGEXP.objParentRE, uniq.parent 
+					+ (_.isVoid0(uniq.index) ? '' : '[' + uniq.index + ']'));
 			vNode.triggable = true;
-			vNode.updateFn = new Function ('$scope', 'value', 'return $scope.' + value[0] + ' = value;');
-			el.addEventListener('compositionstart', vNode.twoWayEvt = function keyupCallback ($event) {
+			vNode.updateFn = new Function ('$scope', 'value', 'return $scope.' + expression + ' = value;');
+			el.addEventListener('compositionstart', vNode.CompositionstartEvt = function compositionstartCb ($event) {
 				vNode.triggable = false;
 			}, false);
 
-			el.addEventListener('compositionend', vNode.twoWayEvt = function keyupCallback ($event) {
+			el.addEventListener('compositionend', vNode.compositionendEvt = function compositionendCb ($event) {
 				vNode.triggable = true;
 			}, false);
 
-			el.addEventListener('input', vNode.twoWayEvt = function keyupCallback ($event) {
+			el.addEventListener('input', vNode.inputEvt = function inputCb ($event) {
 				vNode.triggable && vNode.updateFn(vNode.scope, this.value);
 			}, false);
 		}
@@ -2265,10 +2316,6 @@
 		vNode.dataArr = keyArr;
 	};
 
-	function vComponent (el, value, vNode) {
-
-	};
-
 	//自定义属性
 	var ATTR = JSpring.attr = {
 		// 'for' : 1,
@@ -2286,6 +2333,8 @@
 		src : 1,
 		data : 1,
 		href : 1,
+		index : 1,
+		parent : 1
 		// component : 1
 	};
 
@@ -2305,7 +2354,9 @@
 		src : 100,
 		data : 100,
 		href : 100,
-		component : 400
+		component : 400,
+		index : 500,
+		parent : 500
 	};
 
 	//自定义属性字符串解析
@@ -2325,7 +2376,9 @@
 		src : genSrc,
 		data : genData,
 		href : genHref,
-		component : genComponent
+		component : genComponent,
+		index : genIndex,
+		parent : genParent
 	};
 
 	//自定义属性对应处理方法
@@ -2344,7 +2397,8 @@
 		src : vSrc,
 		data : vData,
 		href : vHref,
-		component : vComponent
+		index : vIndex,
+		parent : vParent
 	};
 
 	//module
@@ -2792,7 +2846,8 @@
 		_tn : createVTextNode,
 		_cn : createVCommentObj,
 		_mp : getMapResult,
-		_v : getStrValue
+		_v : getStrValue,
+		_cp : JSpring.component
 	});
 
 	function JSpring (propArr, opts) {
