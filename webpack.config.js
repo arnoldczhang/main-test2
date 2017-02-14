@@ -7,8 +7,7 @@ module.exports = {
     //页面入口
     entry: {
      "test": "./test/test.js",
-     "singleTest": "./test/singleTest.js",
-     'main-test2' : "./resources/main-test2.js"
+     "singleTest": "./test/singleTest.js"
     },
     //出口文件输出配置
     output: {
