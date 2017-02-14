@@ -265,20 +265,30 @@ var springInst = JSpring([function ($scope, $, module) {}, function ($, module) 
 });*/
 
 JSpring.component['user'] = {
-    key : 'd',
-    parent : 'pp',
-    index : 'ii',
-    data : {
-        aba : 'aaaaaaaaaaaaaaaa'
+    data : 'u',
+    parent : 'p',
+    index : 'i',
+    props : {
+        description : 'a good user'
     },
     template : '<div>'
-            + '<label>{{d.name}}</label>'
-            + '<label>{{d.age}}</label>'
-            + '<label>{{d.career}}</label>'
-            + '<label>{{aba}}</label>'
+            + '<label>name : {{u.name}}</label><br />'
+            + '<label>age : {{u.age}}</label><br />'
+            + '<label>career : {{u.career}}</label><br />'
+            + '<label>desc : {{description}}</label>'
             + '</div>'
 };
+
+JSpring.component['userlist'] = {
+    data : 'arrayList',
+    template : '<user :for="el in arrayList" :component="el" ></user>'
+};
         
+
+
+
+
+
 var jsInst = JSpring([function ($scope, $, module) {
     // var evt = document.createEvent('Events');
     // evt.initEvent('keypress', true, true);
@@ -294,16 +304,23 @@ var jsInst = JSpring([function ($scope, $, module) {
     // input.dispatchEvent(evt);
 }, {
         obj : {
-            name : 'abc',
-            age : 123,
+            name : 'a',
+            age : 1,
             career : 'tech'
         },
-        aar : [{
-            name : 'abc'
+        arr : [{
+            name : 'a',
+            age : 1,
+            career : 'tech'
         }, {
-            name : 'abcd'
+            name : 'b',
+            age : 2,
+            career : 'tech2'
+        }, {
+            name : 'c',
+            age : 3,
+            career : 'tech3'
         }],
-        arr : [1, 2, 3],
         dataFn : function (el) {
             return {
                 id : el + 'aaa',

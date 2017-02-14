@@ -294,8 +294,8 @@
 	 * _
 	 **/
 	var _ = {
-
-		capitalLower : function (str) {
+		
+		capitalLower : function capitalLower (str) {
 			return REGEXP.replace(str, REGEXP.capital, function (match) {
 				return '-' + $lower.call(match);
 			});
@@ -2053,16 +2053,16 @@
 			} else {
 				component.vObj = inst.analyzeHtml(component.template);
 				component.vTpl = genVNodeExpr(component.vObj, 0, inst);
-				component.data = component.data || {};
+				component.props = component.props || {};
 				component.$scope = optimizeCb(defineProp
 					, component
-					, component.data
+					, component.props
 					, {}
 					, inst);
 				_.push(vObj.children, component.vObj);
 			}
 			return component.vTpl = '(function('
-				+ component.key
+				+ component.data
 				+ ', '
 				+ (component.index || '$index')
 				+ ', '
