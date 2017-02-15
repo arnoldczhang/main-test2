@@ -5,21 +5,22 @@
  *
  * ==Initialize==
  * Create `$scope` to watch modify
- * Generate Virtual DOM, analyze the expression
- * Extend the `$scope` as `scope` on Virtual DOM from the instance in sequence
- * Generate DOM from Virtual DOM
- * Mount the DOM
+ * Analyze the html template and generate the vObj
+ * Convert vObj to a generating function with expressions
+ * Generate Virtual DOM and extend the `$scope` as `scope` on Virtual DOM from the instance in sequence
+ * Transfer Virtual DOM to DOM
+ * Mount the generated DOM
  *
  * ==Update==
  * Check the modify
- * Regenerate Virtual DOM according to the updates
+ * Regenerate Virtual DOM according to the generating function
  * Contrast the two Virtual DOM trees and add patch to the batch queue
  * Update DOM in sequence base on the batch queue
  * Garbage collection
  *
  * @author Arnold.Zhang
  *
- */
+ **/
 ;(function (global, factory) {
 	typeof exports === 'object' 
 		&& typeof module !== 'undefined' 
@@ -371,12 +372,14 @@
 		},
 
 		createLoadingImg : function createLoadingImg () {
-			var str = '<div class="dataLoading">' +
-				'<i></i><i></i>' +
-				'<span>加载中...</span>' +
-				'</div>' +
-				'<div class="loadingMask"></div>',
-				div = $createEl('div');
+			var 
+				str = '<div class="dataLoading">'
+					+ '<i></i><i></i>' 
+					+ '<span>加载中...</span>' 
+					+ '</div>' 
+					+ '<div class="loadingMask"></div>'
+				, div = $createEl('div')
+				;
 
 			div.innerHTML = str;
 			div.ontouchmove = function (e) {
@@ -598,7 +601,7 @@
 			return arr;
 		},
 
-		arrPush : function (arr, list, arrFlag) {
+		arrPush : function arrPush (arr, list, arrFlag) {
 			var 
 				_this = this
 				;
@@ -954,7 +957,7 @@
 
 	Promise.prototype = {
 		constructor: Promise,
-		init : function init(callback, opts) {
+		init : function init (callback, opts) {
 			opts = opts || {};
 			var inst = opts.inst;
 			inst.define(opts.inst);
@@ -963,7 +966,7 @@
 			}
 		},
 
-		define : function define(inst) {
+		define : function define (inst) {
 			var pId = inst.promiseId;
 			inst.pushQById(pId);
 
@@ -1061,7 +1064,7 @@
 			return this;
 		},
 
-		'finally' : function _finally(callback) {
+		'finally' : function _finally (callback) {
 			return this.then(callback);
 		}
 	};
@@ -1136,13 +1139,6 @@
 				, childOpts);
 			i++;
 		}
-	};
-
-	function setMapObjValue (scope, keyStr, value) {
-		var keyArr = keyStr.split('.');
-		keyArr.reduce(function reduceFn (a, b) {
-
-		}, scope);
 	};
 
 	function getMapResult (arrObj, cb, inst) {
@@ -1818,8 +1814,8 @@
 
 		addClass : function addClass (className) {
 			var classArr = $split.call(className, REGEXP.spaceRE);
-			this.each(function (el) {
-				classArr.forEach(function addClassEach (cls) {
+			this.each(function addClassEach (el) {
+				classArr.forEach(function addClassArrEach (cls) {
 					el.classList.add(cls);
 				});
 			});
@@ -1828,8 +1824,8 @@
 
 		removeClass : function removeClass (className) {
 			var classArr = $split.call(className, REGEXP.spaceRE);
-			this.each(function (el) {
-				classArr.forEach(function removeClassEach (cls) {
+			this.each(function removeClassEach (el) {
+				classArr.forEach(function removeClassArrEach (cls) {
 					el.classList.remove(cls);
 				});
 			});
@@ -2185,14 +2181,6 @@
 		}
 	};
 
-	function vIndex (el, value, vNode) {
-
-	};
-
-	function vParent (el, value, vNode) {
-
-	};
-
 	function vModel (el, value, vNode) {
 		el = getIfElem(el, vNode);
 		el.value = value[1];
@@ -2251,7 +2239,6 @@
 				el.style[key] = STRING;
 			});
 		}
-
 		value = !_.isObject(value) && convertStyleStrToObj(value) || value;
 		keyArr = $keys(value);
 
@@ -2266,7 +2253,6 @@
 				el.style[key] = value[key];
 			});
 		}
-		
 		vNode.styleArr = keyArr;
 	};
 
@@ -2408,9 +2394,7 @@
 		attr : vAttr,
 		src : vSrc,
 		data : vData,
-		href : vHref,
-		index : vIndex,
-		parent : vParent
+		href : vHref
 	};
 
 	//module
@@ -3262,13 +3246,16 @@
 	  * $location
 	  **/
 	function getUrl (pathname, search) {
-		return (!JSpring.router.html5Mode ? location.pathname + '#/' : '') + pathname + search;
+		return (!JSpring.router.html5Mode 
+			? location.pathname + '#/' 
+			: '') + pathname + search;
 	};
 
 	var 
 		$location = $create(null)
 		, lastPathName
 		;
+		
 	_.extend($location, location);
 
 	_.extend($location, {
