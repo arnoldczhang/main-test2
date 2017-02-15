@@ -317,6 +317,20 @@
 			}
 		},
 
+		child : function child (el, index) {
+			if (this.isElement(el)) {
+				return el.children[index];
+			}
+		},
+
+		html : function html (el, str) {
+
+			if (this.isElement(el)) {
+				el.innerHTML = str;
+				return el;
+			}
+		},
+
 		uniqPush: function uniqPush (arr, child) {
 			if (_.isArray(arr)) {
 				return !_.inArray(arr, child) && _.push(arr, child);
@@ -2040,7 +2054,7 @@
 	function genComponent (vObj, attrStr, inst, parent, index) {
 		var 
 			tagName = vObj.tagName
-			, component = JSpring.component[tagName]
+			, component = JSpring.component[tagName || 'div']
 			, vNodeTemplate
 			;
 
@@ -2071,9 +2085,7 @@
 				+ 'with(__j._cp["'
 				+ tagName
 				+ '"].$scope) {'
-				+ 'return __j._n(\"' 
-				+ vObj.tagName 
-				+ '\", ' 
+				+ 'return __j._n(\"div\", ' 
 				+ attrStr + ', ['
 				+ component.vTpl
 				+ '])'
@@ -2411,6 +2423,10 @@
 	
 	};
 
+	JSpring.addComponent = function (key, value) {
+		JSpring.component[_.lower(key)] = value;
+	};
+
 	//vm
 	JSpring.vm = {
 
@@ -2447,8 +2463,8 @@
 			_.each(propArr, function propEach (prop, i) {
 				_this[_this.routeAttrs[i]] = prop;
 			});
-			_this.route = JSpring.routeCach[_this.uniqId] || $oCreate(null);
-			_this.parent = JSpring.container;
+			_this.route = JSpring.routeCach[_this.uniqId] || $create(null);
+			_this.parent = JSpring.container.eq(0);
 			_this._single_page = true;
 			_this.template = _this.route.template;
 		
@@ -2619,6 +2635,10 @@
 				_this.frag.appendChild(_.clone(_this.el));
 			}
 			_this.bootstrap();
+		},
+
+		renderFromCach : function () {
+			return _.append(_.html(this.parent, ''), this.el);
 		},
 
 		genVNode : function genVNode () {
@@ -2822,7 +2842,8 @@
 			_this.nextTick();
 			
 			if (_this._single_page) {
-				_this.parent.html('').append(_this.frag);
+				_.append(_.html(_this.parent, ''), _this.frag);
+				_this.el = _.child(_this.parent, 0);
 				JSpring.vm[_this.uniqId || (_this.uniqId = _.makeHashCode())] = _this;
 			} else {
 				_.beforeNode(_this.frag, _this.el);
@@ -2867,6 +2888,9 @@
 	//文件缓存
 	JSpring.fileCach = $create(null);
 
+	//是否是返回
+	JSpring.backViewPort = false;
+
 	JSpring.router = function router (container, routes, cm) {
 		container = $(container);
 		var 
@@ -2895,11 +2919,11 @@
 		_.each(routeKeys, function routeKeysEach(r) {
 			if (REGEXP.test(REGEXP.colonREG, r)) {
 				matchRoute[r] = [];
+				matchRoute[r][1] = [];
 				matchRoute[r][0] = new RegExp($replace($replace(r, REGEXP.routeParamREG, function(match, $1) {
 					_.push(matchRoute[r][1], $1);
 					return '(\\w+)';
 				}), reserveREG, '\\$1'));
-				matchRoute[r][1] = [];
 			} else {
 				_.push(realRoute, r);
 			}
@@ -3117,7 +3141,7 @@
 						hash: hash,
 						uniqId: route.uniqId,
 						template: tpl,
-						readyTransition: route.readyTransition,
+						readyTransition: route.readyTransition || '',
 						transition: route.transition || 'fadeIn',
 						transitionLeave: route.transitionLeave || '',
 						cach: route.cach || false,
@@ -3152,7 +3176,8 @@
 
 				if (webpackFlag) {
 					return js(function(res) {
-						return res(cm || {}), onHashChanging = false;
+						var key = $keys(res)[0];
+						return new res[key](route.uniqId), onHashChanging = false;
 					});
 				}
 			};
@@ -3190,7 +3215,7 @@
 
 				if (matchArr = REGEXP.exec(expr, route)) {
 					matchArr = $slice.call(matchArr, 1);
-					routeParam = module.$routeParam = {};
+					routeParam = JSpring.module.$routeParam = {};
 					_.each(rootKey, function rootKeyEach(m) {
 						routeParam[m] = $shift.call(matchArr);
 					});
