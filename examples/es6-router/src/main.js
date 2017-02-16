@@ -23,7 +23,7 @@ JSpring.router('#container', {
     'visaList/:cityId' : {
         uniqId : 'visaList', 
         templateUrl : BASE + 'templates/visaList.tpl',
-        controllerFn : function (resolve) {
+        controllerFn : (resolve) => {
           require([BASE + 'visaList/visaList.js'
             , BASE + 'visaList/visaList.css']
             , resolve);
@@ -35,7 +35,7 @@ JSpring.router('#container', {
     'visaDetail/:goodsId' : {
         uniqId : 'visaDetail', 
         templateUrl : BASE + 'templates/visaDetail.tpl',
-        controllerFn : function (resolve) {
+        controllerFn : (resolve) => {
           require([BASE + 'visaDetail/visaDetail.js'
             , BASE + 'visaDetail/visaDetail.css']
             , resolve);
