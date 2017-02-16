@@ -3,22 +3,5 @@
 
 简介
 ----
-> webapp
-
-WHY
-------
-
-REQUIREMENT
--------------------
-
-TODO
--------
-
-EXAMPLE 
------------
-
-HOWTO
-----------
-
-DISCUSS
+> an example based on es2015
 -----------
