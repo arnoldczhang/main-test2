@@ -80,7 +80,9 @@
 
 			if (this.end()) {
 				return true;
-			} else {
+			} 
+
+			else {
 				this.INDEX += 1;
 			}
 		},
@@ -319,6 +321,7 @@
 		},
 
 		child : function child (el, index) {
+
 			if (this.isElement(el)) {
 				return el.children[index];
 			}
@@ -333,6 +336,7 @@
 		},
 
 		uniqPush: function uniqPush (arr, child) {
+
 			if (_.isArray(arr)) {
 				return !_.inArray(arr, child) && _.push(arr, child);
 			}
@@ -364,7 +368,9 @@
 				if (!_.isUndefined(obj[key])) {
 					!_.isArray(obj[key]) && (obj[key] = [obj[key]]);
 					_.push(obj[key], value);
-				} else {
+				} 
+
+				else {
 					obj[key] = vArr[1];
 				}
 			});
@@ -389,19 +395,26 @@
 		},
 
 		'delete' : function _delete (url, data, opts) {
-			return _.ajax(url, 'delete', _.isObject(data) ? data : {}, opts);
+			return _.proxyAjax('delete', url, data, opts);
 		},
 
 		put : function put (url, data, opts) {
-			return _.ajax(url, 'put', _.isObject(data) ? data : {}, opts);
+			return _.proxyAjax('put', url, data, opts);
 		},
 
 		post : function post (url, data, opts) {
-			return _.ajax(url, 'post', _.isObject(data) ? data : {}, opts);
+			return _.proxyAjax('post', url, data, opts);
 		},
 
 		get : function get (url, data, opts) {
-			return _.ajax(url, 'get', _.isObject(data) ? data : {}, opts);
+			return _.proxyAjax('get', url, data, opts);
+		},
+
+		proxyAjax : function proxyAjax (method, url, data, opts) {
+			return _.ajax(url || ''
+				, this.lower(method || 'GET')
+				, _.isObject(data) ? data : {}
+				, opts || {});
 		},
 
 		/**
@@ -444,7 +457,8 @@
 
 		getText : function getText (url, data, opts) {
 			opts = opts || {};
-			return _.ajax(url, 'get', _.isObject(data) ? data : {}, {
+			data = data || {};
+			return _.ajax(url, 'get', data, {
 				resType: 'text',
 				version: opts.version
 			});
@@ -459,7 +473,7 @@
 
 			data = _.serialize(data);
 			return new Promise(function(resolve, reject) {
-				return _.http(url, $lower.call(method), data, opts, resolve, reject);
+				return _.http(url, method, data, opts, resolve, reject);
 			}, opts);
 		},
 
@@ -496,7 +510,9 @@
 						_.isString(response) && (response = JSON.parse(response));
 					}
 					resolve(response);
-				} else {
+				} 
+
+				else {
 					reject(new Error(this.statusText));
 				}
 			};
@@ -507,18 +523,27 @@
 			if (_.isObject(data)) {
 				_.each($keys(data), function seriKeyEach(key) {
 					var value;
+
 					if (_.isArray(value = data[key])) {
 						_.each(value, function seriValueEach(val) {
+
 							if (!_.isVoid0(val)) {
 								result += key + '=' + encodeURIComponent(val) + '&';
-							} else {
+							} 
+
+							else {
 								result += key + '=&';
 							}
 						});
-					} else {
+					} 
+
+					else {
+
 						if (!_.isVoid0(value)) {
 							result += key + '=' + encodeURIComponent(value) + '&';
-						} else {
+						} 
+
+						else {
 							result += key + '=&';
 						}
 					}
@@ -536,16 +561,24 @@
 			if (_.isApp && _.isIOS) {
 				firstChannel = "IPHONE";
 				secondChannel = "AppStore";
-			} else if (_.isApp && _.isAndroid) {
+			} 
+
+			else if (_.isApp && _.isAndroid) {
 				firstChannel = "ANDROID";
 				secondChannel = UA.substring(UA.indexOf("ANDROID_") + 8, UA.lastIndexOf("LVMM") - 1);
-			} else if (_.isApp && _.isPad) {
+			} 
+
+			else if (_.isApp && _.isPad) {
 				firstChannel = "IPAD";
 				secondChannel = "AppStore";
-			} else if (_.isWp && _.isWebview) {
+			} 
+
+			else if (_.isWp && _.isWebview) {
 				firstChannel = "WP";
 				secondChannel = "WPStore";
-			} else {
+			} 
+
+			else {
 				firstChannel = "TOUCH";
 				secondChannel = "LVMM";
 			}
@@ -564,6 +597,7 @@
 
 		inDOC : function inDOC (node, ct) {
 			ct = ct || DOC;
+
 			if (!ct || !ct.contains) {
 				return false;
 			}
@@ -656,6 +690,7 @@
 		},
 
 		parent : function parent (node) {
+
 			if (!this.isNode(node)) {
 				return false;
 			}
@@ -706,7 +741,9 @@
 				while (i--) {
 					if (arr[i] == obj) return i;
 				}
-			} else {
+			} 
+
+			else {
 
 				while (i--) {
 					if (arr[i] === obj) return i;
@@ -822,7 +859,9 @@
 				if (_.isArray(v1)) {
 					l1 = v1.length;
 					l2 = v2.length;
-				} else {
+				} 
+
+				else {
 					l1 = $keys(v1).length;
 					l2 = $keys(v2).length;
 				}
@@ -855,7 +894,9 @@
 					if (!_this.isArray(el)) {
 						cb(el);
 						_this.push(tmpArr, el || {}, true);
-					} else {
+					} 
+
+					else {
 						_this.arrPush(tmpArr, _this.flattenArr(el, cb));
 						// $push.apply(tmpArr, _this.flattenArr(el));
 					}
@@ -867,7 +908,9 @@
 		append : function append (parent, child, backParent) {
 			if (this.isElement(parent) || this.isDocumentFragment(parent)) {
 				return parent.appendChild(child);
-			} else if (backParent) {
+			} 
+
+			else if (backParent) {
 				return backParent.appendChild(child);
 			}
 		},
@@ -957,16 +1000,17 @@
 
 	Promise.prototype = {
 		constructor: Promise,
-		init : function init (callback, opts) {
+		init : function init(callback, opts) {
 			opts = opts || {};
 			var inst = opts.inst;
 			inst.define(opts.inst);
+
 			if (_.isFunction(callback)) {
 				callback.call(inst, inst.cb, inst.fb);
 			}
 		},
 
-		define : function define (inst) {
+		define : function define(inst) {
 			var pId = inst.promiseId;
 			inst.pushQById(pId);
 
@@ -1018,7 +1062,9 @@
 				if (!Promise.$q.length && !Promise.inProcess) {
 					Promise.inProcess = true;
 					Promise.stopProcess(this);
-				} else {
+				} 
+
+				else {
 					Promise.stopProcess(this);
 				}
 			}
@@ -1156,7 +1202,9 @@
 			while (++index < length) {
 				result[index] = cb(arrObj[index], index, inst);
 			}
-		} else if (_.isObject(arrObj)) {
+		} 
+
+		else if (_.isObject(arrObj)) {
 			arrKey = $keys(arrObj);
 			length = arrKey.length;
 
@@ -1252,13 +1300,17 @@
 			children.length && _.each(children, function genElemFromVNodeEach (child) {
 				_.append(el, genElemFromVNode(child, instance));
 			});
-		} else {
+		} 
+
+		else {
 			textCt = vNode.textContent;
 
 			if (_.isText(vNode)) {
 				el = _.clone(textNode);
 				el.textContent = textCt;
-			} else {
+			} 
+
+			else {
 				el = createFn(textCt)
 			}
 		}
@@ -1284,14 +1336,18 @@
 			el = createFn(vNode.tagName);
 			_.append(parentVEl, el, ifEl);
 			bindStaticAndUniqAttrs(vNode, el, data.static, data.uniq, data.uKeys, instance);
-		} else {
+		} 
+
+		else {
 			var textCt = vNode.textContent;
 
 			if (_.isText(vNode)) {
 				el = _.clone(textNode);
 				el.textContent = textCt;
 				_.append(parentVEl, el, ifEl);
-			} else {
+			} 
+
+			else {
 				_.append(parentVEl, createFn(textCt));
 			}
 		}
@@ -1338,7 +1394,9 @@
 				if (isComponentAttr(attrKey)) {
 					isComponent = attrValue;
 				}
-			} else {
+			} 
+
+			else {
 				staticAttrs[attrKey] = attrValue;
 			}
 		}
@@ -1448,7 +1506,9 @@
 			result.isBothText = isBothTextNode(vNode1, vNode2);
 			result.isBothCmt = isBothCommentNode(vNode1, vNode2);
 			result.isEqStatic = result.isStatic && (result.isBothText || result.isBothCmt);
-		} else {
+		} 
+
+		else {
 			result.isEqFor = isBothForNode(vNode1, vNode2);
 			result.isEqStaticAttr = vNode1.data && vNode2.data && _.proxyEqual(vNode1.data.static, vNode2.data.static);
 			result.isEqTag = result.isHasTag && isTheSameTagName(vNode1, vNode2);
@@ -1481,7 +1541,9 @@
 				+ $stringify(data) + ', '
 				+ getChildResult(children, inst)
 				+ ')';
-		} else {
+		} 
+
+		else {
 			text = data.textContent;
 
 			if (_.isText(vObj)) {
@@ -1490,7 +1552,9 @@
 					return '__j._tn(' + replaceExpr($stringify(text), vObj.hasBrace) +', true)';
 				}
 				return '__j._tn(' + $stringify(text) + ')';
-			} else if(_.isComment(vObj)) {
+			} 
+
+			else if(_.isComment(vObj)) {
 				return '__j._cn(\"' + text + '\")';
 			}
 		}	
@@ -1633,7 +1697,9 @@
 					defineProp.call(instance, arrChild, defKey[index]);
 				}
 			});
-		} else if (_.isObject(value)) {
+		} 
+
+		else if (_.isObject(value)) {
 
 			if (defObj && key) {
 				defKey = {};
@@ -1695,7 +1761,9 @@
 
 		if (typeof selector == 'object') {
 			this.els = _.isArrayLike(selector) ? _.toArray(selector) : [selector];
-		} else {
+		} 
+
+		else {
 			this.els = _.toArray(query(selector));
 			this.context = DOC;
 		}
@@ -1760,9 +1828,13 @@
 
 			if (child.length) {
 				children = _.toArray(child);
-			} else if (_.isDocumentFragment(child)) {
+			} 
+
+			else if (_.isDocumentFragment(child)) {
 				children = _.toArray(child.children);
-			} else {
+			} 
+
+			else {
 				frag.innerHTML = child;
 				children = _.toArray(frag.childNodes);
 			}
@@ -1777,17 +1849,22 @@
 
 		css : function css (cssHtml, value) {
 			var _this = this;
+
 			if (typeof cssHtml == 'object') {
 				$keys(cssHtml).forEach(function cssEach (cssName) {
 					_this.each(function cssElEach (el) {
 						el.style[cssName] = cssHtml[cssName];
 					});
 				});
-			} else if (typeof cssHtml == 'string' && !_.isVoid0(value)) {
+			} 
+
+			else if (typeof cssHtml == 'string' && !_.isVoid0(value)) {
 				this.each(function cssEach (el) {
 					el.style[cssHtml] = value;
 				});
-			} else {
+			} 
+
+			else {
 				return getComputedStyle(this.els[0], null).getPropertyValue(cssHtml);
 			}
 			return this;
@@ -1860,6 +1937,7 @@
 	};
 
 	function $ (selector) {
+
 		if (_.isUndefined(selector)) {
 			return LOG.warn('Query need a selector');
 		}
@@ -2013,6 +2091,7 @@
 			match[0] = '"' + match[0] + '"';
 			_.push(tmpArr, '[' + match.toString() + ']');
 		}
+
 		return formatFlag
 			? '[' + tmpArr.join(', ') + ']'
 			: (WARN.format('on'), STRING);
@@ -2037,7 +2116,9 @@
 				str += 'return __j._n(\"' + vObj.tagName + '\", ' + attrStr + ', '
 					+ getChildResult(children, inst)
 					+ ');';
-			} else {
+			} 
+
+			else {
 				str += 'return ' 
 					+ genComponent(vObj, attrStr, inst, parent, index || '$index');
 			}
@@ -2060,7 +2141,9 @@
 
 			if (vNodeTemplate) {
 				return vNodeTemplate;
-			} else {
+			} 
+
+			else {
 				component.vObj = inst.analyzeHtml(component.template);
 				component.vTpl = genVNodeExpr(component.vObj, 0, inst);
 				component.props = component.props || {};
@@ -2077,16 +2160,13 @@
 				+ (component.index || '$index')
 				+ ', '
 				+ (component.parent || '$parent')
-				+ ') {'
-				+ 'with(__j._cp["'
+				+ ') { with(__j._cp["'
 				+ tagName
 				+ '"].$scope) {'
 				+ 'return __j._n(\"div\", ' 
 				+ attrStr + ', ['
 				+ component.vTpl
-				+ '])'
-				+ '}'
-				+ '} ('
+				+ '])}} ('
 				+ vObj.isComponent
 				+ ', '
 				+ index
@@ -2105,9 +2185,12 @@
 	function vText (el, value, vNode) {
 		el = getIfElem(el, vNode);
 		_.push(this.cach.tickQ, function textTick () {
+
 			if (!_.isObject(value)) {
 				return el.textContent = value;
-			} else {
+			} 
+
+			else {
 				el.textContent = convertObjToValue(value, '');
 			}
 		});
@@ -2118,7 +2201,9 @@
 		
 		if (!_.isObject(value)) {
 			return el.innerHTML = value;
-		} else {
+		} 
+
+		else {
 			el.innerHTML = convertObjToValue(value, '');
 		}
 	};
@@ -2171,7 +2256,9 @@
 				vNode.ifComment = el;
 				vNode.el = _.replaceNode(vNode.ifEl, el);
 			}
-		} else {
+		} 
+
+		else {
 
 			if (!_.isComment(el)) {
 				var comment = vNode.ifComment || DOC.createComment(el.outerHTML);
@@ -2239,6 +2326,7 @@
 				el.style[key] = STRING;
 			});
 		}
+
 		value = !_.isObject(value) && convertStyleStrToObj(value) || value;
 		keyArr = $keys(value);
 
@@ -2253,6 +2341,7 @@
 				el.style[key] = value[key];
 			});
 		}
+		
 		vNode.styleArr = keyArr;
 	};
 
@@ -2452,8 +2541,10 @@
 			_this._single_page = true;
 			_this.template = _this.route.template;
 		
+		} 
+
 		//nodejs server Or singleton
-		} else {
+		else {
 			_.each(propArr, function propEach (prop, i) {
 				_this[_this.propsAttrs[i]] = prop;
 			});
@@ -2484,7 +2575,9 @@
 
 			if (!_this._server_render) {
 				return _this.analyzeHtml().render();
-			} else {
+			} 
+
+			else {
 				console.time('server render')
 				_this.genVNode().serverRender();
 			}
@@ -2527,10 +2620,14 @@
 					if (isEndTag) {
 						lastParentTag = parentTag;
 						parentTag = parentTag.parentVObj;
-					} else {
+					} 
+
+					else {
 						parentTag = !isNoEndTag ? vObj : parentTag;
 					}
-				} else {
+				} 
+
+				else {
 					parentTag = vObj;
 
 					if (!html) {
@@ -2589,7 +2686,9 @@
 				if (!child.isNeedRender) {
 					child.el = collect;
 					_this.bindElement(_.getChildNodes(child.el), child.children);
-				} else {
+				} 
+
+				else {
 					child.el = genElemFromVNode(child, _this);
 					_.replaceNode(child.el, collect);
 				}
@@ -2615,7 +2714,9 @@
 				}
 				// console.time('JSpring-createEl')
 				_this.initNode();
-			} else {
+			} 
+
+			else {
 				_this.frag.appendChild(_.clone(_this.el));
 			}
 			_this.bootstrap();
@@ -2680,9 +2781,13 @@
 					setTextContent(prevVNode, newVNode.textContent);
 				}
 				return _this;
-			} else if (initCompare.isEqStatic) {
+			} 
+
+			else if (initCompare.isEqStatic) {
 				return _childrenDiffProxy();
-			} else if (initCompare.isEqStaticTag) {
+			} 
+
+			else if (initCompare.isEqStaticTag) {
 				nUKeys = newData.uKeys;
 				nUniq = newData.uniq;
 				oUKeys = prevData.uKeys;
@@ -2710,7 +2815,9 @@
 					});
 					return _childrenDiffProxy();
 				}
-			} else if (!initCompare.isEqTag) {
+			} 
+
+			else if (!initCompare.isEqTag) {
 
 				if (initCompare.isHasTag) {
 
@@ -2726,7 +2833,9 @@
 							});
 							return opts.pStep -= 1;
 						}
-					} else if (prevVNode.isFor) {
+					} 
+
+					else if (prevVNode.isFor) {
 
 						//delete
 						_.push(patchQ, {
@@ -2735,7 +2844,9 @@
 						});
 						return opts.nStep -= 1;
 					}
-				} else if (newVNode.tagName) {
+				} 
+
+				else if (newVNode.tagName) {
 
 					//append
 					return _.push(patchQ, {
@@ -2743,14 +2854,18 @@
 						parentVNode : parentVNode,
 						vNode : newVNode
 					});
-				} else if (prevVNode.tagName) {
+				} 
+
+				else if (prevVNode.tagName) {
 
 					//delete
 					return _.push(patchQ, {
 						type : UpdateType.DELETE,
 						vNode : prevVNode
 					});
-				} else {
+				} 
+
+				else {
 					return _this;
 				}
 			}
@@ -2829,7 +2944,9 @@
 				_.append(_.html(_this.parent, ''), _this.frag);
 				_this.el = _.child(_this.parent, 0);
 				JSpring.vm[_this.uniqId || (_this.uniqId = _.makeHashCode())] = _this;
-			} else {
+			} 
+
+			else {
 				_.beforeNode(_this.frag, _this.el);
 				_.removeNode(_this.el);
 				// _.replaceNode(_this.frag, _this.el);
@@ -2908,7 +3025,9 @@
 					_.push(matchRoute[r][1], $1);
 					return '(\\w+)';
 				}), reserveREG, '\\$1'));
-			} else {
+			} 
+
+			else {
 				_.push(realRoute, r);
 			}
 		});
@@ -2999,7 +3118,9 @@
 				}
 			});
 			JSpring.container = container;
-		} else {
+		} 
+
+		else {
 			LOG.warn(WARN.container);
 		}
 
@@ -3086,11 +3207,15 @@
 				route = routes[hash];
 				oldhash = hash;
 
-			} else if (route = isMatchRoute(hash)) {
+			} 
+
+			else if (route = isMatchRoute(hash)) {
 				route = routes[route];
 				oldhash = hash;
 
-			} else {
+			} 
+
+			else {
 				toDefault = true;
 				oldhash = defaultRoute;
 				route = routes[defaultRoute || routeKeys[0]];
@@ -3112,7 +3237,9 @@
 						JSpring.fileCach[route.templateUrl] = tplFile;
 						instanceInit(tplFile, route.controllerFn, true);
 					});
-				} else {
+				} 
+
+				else {
 					instanceInit(tplFile, route.controllerFn, true);
 				}
 			}
@@ -3142,7 +3269,9 @@
 					JSpring.routeCach[oldhash || routeKeys[0]] = routeInfo;
 					history.replaceState(null, route.title || '', (!h5Mode ? location.pathname + '#/' : '') + oldhash);
 					!opts.noStack && _.push(stack, oldhash);
-				} else {
+				} 
+
+				else {
 					JSpring.routeCach[routeInfo.uniqId] = routeInfo;
 					_.push(stack, hash);
 				}
@@ -3160,8 +3289,17 @@
 
 				if (webpackFlag) {
 					return js(function(res) {
-						var key = $keys(res)[0];
-						return new res[key](route.uniqId), onHashChanging = false;
+
+						if (_.isFunction(res)) {
+							res(cm || {});
+						} 
+
+						else if (_.isObject(res)) {
+							var key = $keys(res)[0];
+							new res[key](route.uniqId);
+						}
+
+						return onHashChanging = false;
 					});
 				}
 			};
@@ -3221,7 +3359,9 @@
 				case 'input':
 					if ((deviceIsIOS && el.type === 'file') || el.disabled) {
 						return true;
-					} else {
+					} 
+
+					else {
 						return false;
 					}
 					break;
@@ -3267,7 +3407,9 @@
 				setTimeout(function() {
 					lastPathName = null;
 				}, 300);
-			} else {
+			} 
+
+			else {
 				return;
 			}
 
