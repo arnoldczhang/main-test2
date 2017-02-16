@@ -1,0 +1,240 @@
+body * {
+    box-sizing: border-box;
+    font-family: Microsoft yahei,Lucida Grande,Helvetica Neue,Helvetica,Arial,Hiragino Sans GB,Hiragino Sans GB W3,WenQuanYi Micro Hei,sans-serif;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+html {
+	height: 100%;
+	background-color: #f8f8f8;
+}
+h1,h2,h3 {
+	font-weight: normal;
+	margin: 0;
+}
+li {
+	list-style: none;
+}
+i {
+	font-style: normal;
+}
+.f10 {font-size: 10px;}
+.f12 {font-size: 12px;}
+.f19 {font-size: 19px;}
+body, input {
+    color: #000;
+    margin: 0;
+    font-size: 14px;
+}
+p {
+	margin: 0;
+}
+ul {
+	padding-left: 0;
+}
+body img {
+    -webkit-transition:.5s;
+    transition:.5s;
+}
+input {
+    -webkit-appearance: none;
+    outline: none;
+}
+input {
+    border: none;
+    width: 60%;
+    height: 25px;
+}
+a, button, div, input, li, optgroup, select, span, textarea, ul {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    tap-highlight-color: transparent;
+}
+.f12{font-size: 12px;}
+.fr {float: right;}
+.pink{color:#d30775;}
+.white{background-color:#fff;}
+.lh19 {line-height: 19px;}
+header .title {
+    line-height: 44px;
+    text-align: center;
+    font-size: 19px;
+    margin: 0;
+}
+header {
+    height: 44px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #fafafa;
+    z-index: 80;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+}
+.visa-detail {
+    overflow-x: hidden;
+    margin-top: 45px;
+    opacity: 0;
+}
+.visaDetail .bottom {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	height: 48px;
+	width: 100%;
+	background-color: #d30775;
+	overflow: hidden;
+}
+.visaDetail-body {
+	margin-top: 48px;
+	margin-bottom: 48px;
+	width: 100%;
+	opacity: 0;
+}
+.visaDetail-body-head {
+	width: 100%;
+	height: 100px;
+	padding: 10px;
+	border-bottom:1px solid #ddd;
+}
+.visaDetail-body-head-left {
+	width: 100px;
+	display: inline-block;
+}
+.visaDetail-body-head-left img {
+	height: 100%;
+	width: 100%;
+	display: block;
+}
+.visaDetail-body-head-right {
+	display: inline-block;
+	position: absolute;
+	padding: 0 10px;
+}
+
+.visaDetail-body-body {
+	margin-top: 10px;
+}
+.visaDetail-body-body-tab {
+
+}
+.visaDetail-body-body-tab nav {
+	width: 100%;
+	height: 46px;
+	line-height: 44px;
+	border-bottom: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+}
+.visaDetail-body-body-tab nav li {
+	width: 25%;
+	float: left;
+	text-align: center;
+	color: #666;
+}
+.visaDetail-body-body-tabInfo {
+	margin-top: 1px;
+}
+.visaDetail .bottom > span {
+	width: 33%;
+	height: 48px;
+	float: left;
+	text-align: center;
+	position: relative;
+	color:white;
+}
+.visaDetail .bottom > span > img{
+	width: 18px;
+	height: 14px;
+	display: block;
+    	margin: 10px auto 0 auto;
+}
+.visa-grey {
+	color:#aaa;
+}
+.visa-grey2 {
+	color:#666;
+}
+.back-btn {
+	position: absolute;
+	left: 10px;
+	top: 15px;
+	height: 15px;
+	width: 15px;
+	border-left: 1px solid #d30775;
+	border-top: 1px solid #d30775;
+	-webkit-transform:rotate(-45deg);
+	transform:rotate(-45deg);
+}
+.hightlight {
+	color: #d30775!important;
+	border-bottom: 2px solid #d30775;
+}
+.visaDetail-ct section {
+	border-bottom: 1px solid #ddd;
+	padding: 10px;
+}
+.visaDetail-ct section:nth-child(1) i {
+	color: #666;
+}
+.accept-area {
+	font-size: 14px;
+	padding: 2px;
+}
+.visa-prompt {
+	padding: 0 10px;
+	background-color: #f8f8f8;
+}
+.visa-prompt-info {
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}
+.visaDetail .bottom  span {
+	display:inline-block;
+	text-align: center;
+}
+.visaDetail .bottom .book-intime {
+	color: #fff;
+	line-height: 48px;
+	width: 60%;
+}
+.visaDetail .bottom .favor {
+	width: 20%;
+	background-color:#fff;
+	color: #666;
+}
+.visaDetail .bottom .favor-collect {
+}
+.visaDetail .bottom .favor-collect:after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 9px;
+	height: 30px;
+	border-left: 1px solid #ddd;
+}
+.needInfo-ct {
+	padding: 0 10px;
+}
+.needInfo-ct > p{
+	position: relative;
+	height: 45px;
+	line-height: 45px;
+	margin: auto;
+	border-bottom: 1px solid #ddd;
+	color: #666;
+	width: 100%;
+}
+.needInfo-ct > p:after {
+	content: '';
+	position: absolute;
+	right: 15px;
+	top: 15px;
+	height: 15px;
+	width: 15px;
+	border-right: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+	-webkit-transform:rotate(45deg);
+	transform:rotate(45deg);
+}
+.reserve-ct {
+	padding: 10px;
+}
