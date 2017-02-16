@@ -1619,7 +1619,7 @@ describe('for', function () {
             /*
             <div id="for_inst">
                  <div class="for_div" :for="el in arr">
-                   <user :component="el" ></user>
+                   <user :component="el" class="user"></user>
                 </div>
             </div>
              */
@@ -1643,7 +1643,7 @@ describe('for', function () {
                 }],
         }, '#for_inst']);
         container = document.getElementById('for_inst');
-        var user = document.getElementsByTagName('user');
+        var user = document.getElementsByClassName('user');
 
         expect(user.length).to.equal(3);
 
@@ -1675,7 +1675,7 @@ describe('for', function () {
             /*
             <div id="for_inst">
                  <div class="for_div" :for="el in arr">
-                   <user :component="el" ></user>
+                   <user :component="el" class="user2"></user>
                 </div>
             </div>
              */
@@ -1738,7 +1738,7 @@ describe('for', function () {
                 }],
         }, '#for_inst']);
         container = document.getElementById('for_inst');
-        var user = document.getElementsByTagName('user');
+        var user = document.getElementsByClassName('user2');
 
         expect(user.length).to.equal(3);
 
@@ -1815,7 +1815,7 @@ it('简单for，结合component，结合lv-model，多次更新', function (done
     body.innerHTML = heredoc(function () {
         /*
         <div id="for_inst">
-           <user :for="el in arr" :component="el" ></user>
+           <user :for="el in arr" :component="el" class="user3" />
         </div>
          */
     });
@@ -1877,7 +1877,7 @@ it('简单for，结合component，结合lv-model，多次更新', function (done
             }],
     }, '#for_inst']);
     container = document.getElementById('for_inst');
-    var user = document.getElementsByTagName('user');
+    var user = document.getElementsByClassName('user3');
 
     expect(user.length).to.equal(3);
 
@@ -1970,7 +1970,7 @@ it('简单for，结合component，结合lv-model，多次更新', function (done
             /*
             <div id="for_inst">
                  <div class="for_div" :for="el in arr">
-                   <user :component="el" ></user>
+                   <user :component="el" class="user4"></user>
                 </div>
             </div>
              */
@@ -1996,7 +1996,7 @@ it('简单for，结合component，结合lv-model，多次更新', function (done
                 }],
         }, '#for_inst']);
         container = document.getElementById('for_inst');
-        var user = document.getElementsByTagName('user');
+        var user = document.getElementsByClassName('user4');
 
         expect(user.length).to.equal(3);
 
@@ -2040,13 +2040,17 @@ it('简单for，结合component，结合lv-model，多次更新', function (done
 
         JSpring.component['userlist'] = {
             data : 'arrayList',
-            template : '<user :for="el in arrayList" :component="el" ></user>'
+            template : '<div>'
+                + '<user :for="el in arrayList" :component="el" class="user5 aauser" ></user>'
+                + '<user :for="el in arrayList" :component="el" class="user5 bbuser" ></user>'
+                + '</div>'
         };
 
         body.innerHTML = heredoc(function () {
             /*
             <div id="for_inst">
-                 <userlist :component="arr"></userlist>
+                 <userlist :component="arr" class="userlist aauserlist"></userlist>
+                 <userlist :component="arr" class="userlist bbuserlist"></userlist>
             </div>
              */
         });
@@ -2071,11 +2075,19 @@ it('简单for，结合component，结合lv-model，多次更新', function (done
                 }],
         }, '#for_inst']);
         container = document.getElementById('for_inst');
-        var userlist = document.getElementsByTagName('userlist');
-        var user = document.getElementsByTagName('user');
+        var userlist = document.getElementsByClassName('userlist');
+        var user = document.getElementsByClassName('user5');
+        var useraa = document.getElementsByClassName('aauser');
+        var userbb = document.getElementsByClassName('bbuser');
+        var useraalist = document.getElementsByClassName('aauserlist');
+        var userbblist = document.getElementsByClassName('bbuserlist');
 
-        expect(userlist.length).to.equal(1);
-        expect(user.length).to.equal(3);
+        expect(userlist.length).to.equal(2);
+        expect(user.length).to.equal(12);
+        expect(useraa.length).to.equal(6);
+        expect(userbb.length).to.equal(6);
+        expect(useraalist.length).to.equal(1);
+        expect(userbblist.length).to.equal(1);
 
         expect(user[0].querySelectorAll('label')[0].textContent).to.equal('a');
         expect(user[0].querySelectorAll('label')[1].textContent).to.equal('1');

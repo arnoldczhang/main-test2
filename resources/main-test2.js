@@ -179,7 +179,7 @@
 	 * REGEXP
 	 **/
 	var REGEXP = {
-		startEndAngleRE : /((?:\s|&[a-zA-Z]+;|<!\-\-@|[^<>]+)*)(<?(\/?)([^!<>\/\s]+)(?:\s*[^\s=\/>]+(?:="[^"]*"|='[^']*'|)|)+\s*>?)(?:\s*@\-\->)?/g,
+		startEndAngleRE : /((?:\s|&[a-zA-Z]+;|<!\-\-@|[^<>]+)*)(<?(\/?)([^!<>\/\s]+)(?:\s*[^\s=\/>]+(?:="[^"]*"|='[^']*'|)|)+\s*\/?>?)(?:\s*@\-\->)?/g,
 		noEndRE : /^(?:input|br|img|link|hr|base|area|meta|embed|frame)$/,
 		attrsRE : /\s+([^\s=<>]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s<>]+))/g,
 		routeParamREG : /\:([^\:\-\.]+)/g,
@@ -198,6 +198,7 @@
 		styleRE : /([a-zA-Z]+)\s*:\s*([^:;]+)/g,
 		forRE : /(?:lv-|:)for/g,
 		compRE : /(?:lv-|:)component/g,
+		compSetRE : /<[^\/]+\/>/,
 		ifRE : /(?:lv-|:)if/g,
 		onRE : /(?:lv-|:)on/g,
 		onlySpaceRE : /^\s*$/,
@@ -772,12 +773,34 @@
 			return arr;
 		},
 
-		extend : function extend (source ,target) {
+		extend : function extend (target , source, excepts) {
 
-			for (var key in target) {
-				source[key] = target[key];
+			if (!excepts) {
+
+				for (var key in source) {
+					target[key] = source[key];
+				}
 			}
-			return source;
+
+			else if (this.isArray(excepts)) {
+				for (var key in source) {
+
+					if (!this.inArray(excepts, key)) {
+						target[key] = source[key];
+					}
+				}
+			}
+
+			else if (this.isString(excepts)) {
+				for (var key in source) {
+
+					if (excepts !== key) {
+						target[key] = source[key];
+					}
+				}
+			}
+			
+			return target;
 		},
 
 		isVoid0 : function isVoid0 (value) {
@@ -1358,8 +1381,52 @@
 	};
 
 	function appendVObjChildren (parent, vObj) {
-		_.push(parent.children, vObj);
+		var children = parent.children;
+		_.push(children, vObj);
 		vObj.parentVObj = parent;
+		vObj.index = children.length - 1;
+	};
+
+	function extendStaticAndUniqAttrs (target, source) {
+		var 
+			tData = target.data
+			, sData = source.data
+			, tStatic = tData.static
+			, sStatic = sData.static
+			, tUniq = tData.uniq
+			, sUniq = sData.uniq
+			;
+		
+		if (sStatic) {
+
+			if (!tStatic) {
+				tStatic = tData.static = $create(null);
+			}
+
+			for (var key in sStatic) {
+
+				if (key != 'class' && key != 'style') {
+					tStatic[key] = sStatic[key];
+				}
+
+				else {
+					tStatic[key] = tStatic[key] || '';
+					tStatic[key] += (tStatic[key] ? key == 'class' ? ' ' : ';' : '')
+						+ sStatic[key];
+				}
+			}
+		}
+		
+		if (sUniq) {
+
+			if (!tUniq) {
+				tUniq = tData.tUniq = $create(null);
+			}
+			_.extend(tUniq, sUniq || {});
+			tData.uKeys = $keys(tUniq);
+		}
+
+		return target;
 	};
 
 	function createVObj (tagName, html, inst) {
@@ -1605,7 +1672,7 @@
 			+ ')';
 	};
 
-	function createVNode (tag, data, children) {
+	function createVNode (tag, data, children, isComponent) {
 		data = data || {};
 		
 		var 
@@ -1615,6 +1682,7 @@
 			, cach = _this.cach
 			, key
 			, isStatic = !uniq
+			, compVNode
 			;
 
 		if (uniq) {
@@ -1633,6 +1701,13 @@
 		vNode.children = _.flattenArr(children || [], function vNChildCb (child) {
 			child.parentVNode = vNode;
 		});
+
+		if (isComponent) {
+			compVNode = vNode.children[0];
+			extendStaticAndUniqAttrs(compVNode, vNode);
+			return compVNode;
+		}
+
 		return vNode;
 	};
 
@@ -1690,6 +1765,11 @@
 		var keyObj = {};
 
 		if (_.isArray(value)) {
+			
+			if (defObj && key) {
+				keyObj[key] = value;
+				defineProp.call(instance, keyObj, defObj);
+			}
 			defVal(value, '__vm', instance);
 			_.each(value, function valueArrEach (arrChild, index) {
 
@@ -2129,31 +2209,28 @@
 	};
 
 	function genComponent (vObj, attrStr, inst, parent, index) {
+		// vObj.children = [];
 		var 
 			tagName = vObj.tagName
 			, component = JSpring.component[tagName || 'div']
-			, vNodeTemplate
+			, componentData
 			;
 
 		if (component) {
-			parent = parent || vObj.isComponent;
-			vNodeTemplate = component.vTpl;
+			componentData = vObj.isComponent;
+			parent = parent || componentData;
+			component.vObj = inst.analyzeHtml(component.template);
+			// extendStaticAndUniqAttrs(component.vObj, vObj);
+			component.vTpl = genVNodeExpr(component.vObj, 0, inst);
+			component.props = component.props || {};
+			component.$scope = optimizeCb(defineProp
+				, component
+				, component.props
+				, {}
+				, inst);
+			_.push(vObj.children, component.vObj);
+			// $splice.call(vObj.parentVObj.children, vObj.index, 1, component.vObj);
 
-			if (vNodeTemplate) {
-				return vNodeTemplate;
-			} 
-
-			else {
-				component.vObj = inst.analyzeHtml(component.template);
-				component.vTpl = genVNodeExpr(component.vObj, 0, inst);
-				component.props = component.props || {};
-				component.$scope = optimizeCb(defineProp
-					, component
-					, component.props
-					, {}
-					, inst);
-				_.push(vObj.children, component.vObj);
-			}
 			return component.vTpl = '(function('
 				+ component.data
 				+ ', '
@@ -2163,11 +2240,15 @@
 				+ ') { with(__j._cp["'
 				+ tagName
 				+ '"].$scope) {'
-				+ 'return __j._n(\"div\", ' 
-				+ attrStr + ', ['
+				+ 'return __j._n(\"'
+				+ vObj.tagName
+				+ '\", '
+				+ attrStr
+				+ ', ['
 				+ component.vTpl
-				+ '])}} ('
-				+ vObj.isComponent
+				+ '], true)'
+				+ '}} ('
+				+ componentData
 				+ ', '
 				+ index
 				+ ', "'
@@ -2309,7 +2390,7 @@
 			value = convertObjToValue(value, ' ');
 		}
 
-		className = classReg && className.replace(classReg, STRING) || className;
+		className = classReg ? className.replace(classReg, STRING) : className;
 		el.className = _.trim(className + ' ' + value + ' ');
 		vNode.classReg = getNonMatchReg(value);
 	};
@@ -2403,6 +2484,15 @@
 		vNode.dataArr = keyArr;
 	};
 
+	function vParent () {
+
+	};
+
+	function vIndex () {
+
+	};
+
+
 	//自定义属性
 	var ATTR = JSpring.attr = {
 		// 'for' : 1,
@@ -2483,7 +2573,9 @@
 		attr : vAttr,
 		src : vSrc,
 		data : vData,
-		href : vHref
+		href : vHref,
+		parent : vParent,
+		index : vIndex
 	};
 
 	//module
@@ -2592,6 +2684,7 @@
 				, spaceOrNote
 				, isEndTag
 				, isNoEndTag
+				, isComponentEndTag
 				, tagName
 				, parentTag = null
 				, lastParentTag = null
@@ -2604,7 +2697,8 @@
 				spaceOrNote = match[1];
 				tagHtml = match[2];
 				tagName = _.lower(match[4]);
-				isEndTag = _.toBool(match[3]);
+				isComponentEndTag = REGEXP.compSetRE.test(tagHtml);
+				isEndTag = _.toBool(match[3]) || isComponentEndTag;
 				isNoEndTag = REGEXP.noEndRE.test(tagName);
 				vObj = createVObj(tagName, tagHtml, _this);
 
@@ -2614,16 +2708,26 @@
 				}
 
 				if (parentTag) {
-					!REGEXP.test(REGEXP.onlySpaceRE, spaceOrNote) && appendVObjChildren(parentTag, createVTextObj(spaceOrNote, parentTag, _this));
-					!isEndTag && appendVObjChildren(parentTag, vObj);
 
-					if (isEndTag) {
-						lastParentTag = parentTag;
-						parentTag = parentTag.parentVObj;
+					if (!REGEXP.test(REGEXP.onlySpaceRE, spaceOrNote)) {
+						appendVObjChildren(parentTag, createVTextObj(spaceOrNote, parentTag, _this));
 					} 
 
-					else {
+					if (!isEndTag) {
+						appendVObjChildren(parentTag, vObj);
 						parentTag = !isNoEndTag ? vObj : parentTag;
+					}
+
+					else {
+						lastParentTag = parentTag;
+
+						if (!isComponentEndTag) {
+							parentTag = parentTag.parentVObj;
+						}
+
+						else {
+							appendVObjChildren(parentTag, vObj);
+						}
 					}
 				} 
 
@@ -2635,7 +2739,7 @@
 					}
 				}
 			}
-			return html ? lastParentTag : _this;
+			return html ? parentTag || lastParentTag : _this;
 		},
 
 		pushHook : function pushHook (cb) {
@@ -2719,6 +2823,7 @@
 			else {
 				_this.frag.appendChild(_.clone(_this.el));
 			}
+
 			_this.bootstrap();
 		},
 
