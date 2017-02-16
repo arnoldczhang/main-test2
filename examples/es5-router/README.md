@@ -3,5 +3,5 @@
 
 简介
 ----
-> an example based on es2015
+> an example based on es5
 -----------
