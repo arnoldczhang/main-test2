@@ -1,7 +1,8 @@
 /**
   * router config
   **/
-var JSpring = require('../lib/main-test2');
+var JSpring = require('../../../resources/main-test2');
+require('../../../resources/main.css');
 var 
             BASE = './'
             , DEST = BASE + 'dist/'
