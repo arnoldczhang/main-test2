@@ -1,0 +1,24 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "nodejs",
+  "main": "test.js",
+  "dependencies": {
+    "fs": "0.0.2",
+    "http": "0.0.0",
+    "q": "^1.4.1",
+    "redis": "^2.6.5",
+    "request": "^2.79.0"
+  },
+  "devDependencies": {
+
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "city"
+  ],
+  "author": "Arnold",
+  "license": "ISC"
+}
