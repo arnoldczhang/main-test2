@@ -87,18 +87,18 @@ const
  			;
 
  		if (uL) {
- 			_.each(uniqKeys, function uKEach (key) {
+ 			_.each(uniqKeys, (key) => {
  				var attr = vObj.uniqAttrs[key];
 
  				if (isOnAttr(key)) {
  					attr = attr.replace(REGEXP.uniqColonRE, STRING);
  				}
- 				makeGetterFn(attr, function (expr) {
+ 				makeGetterFn(attr, (expr) => {
  					_.push(_this.$errQ, 'unexpected expression : ' + expr);
  				});
  			});
  		}
- 		children.length && _.each(children, function childrenEach (child) {
+ 		children.length && _.each(children, (child) => {
  			LOG.pushStack(child, scope);
  		});
  		return _this;
@@ -203,7 +203,7 @@ const _ = {
 	},
 
 	capitalLower (str) {
-		return REGEXP.replace(str, REGEXP.capital, function (match) {
+		return REGEXP.replace(str, REGEXP.capital, (match) => {
 			return '-' + $lower.call(match);
 		});
 	},
@@ -213,6 +213,7 @@ const _ = {
 	},
 
 	uniqPush (arr, child) {
+
 		if (_.isArray(arr)) {
 			return !_.inArray(arr, child) && _.push(arr, child);
 		}
@@ -281,11 +282,15 @@ const _ = {
 			while (i--) {
 				if (arr[i] == obj) return i;
 			}
-		} else {
+
+		} 
+
+		else {
 
 			while (i--) {
 				if (arr[i] === obj) return i;
 			}
+
 		}
 		return -1;
 	},
@@ -309,6 +314,7 @@ const _ = {
 			for (let i = 0; i < len; ++i) {
 				arr[i] = arrayLikeObj[i];
 			}
+
 		}
 		return arr;
 	},
@@ -318,6 +324,7 @@ const _ = {
 		for (let key in target) {
 			source[key] = target[key];
 		}
+
 		return source;
 	},
 
@@ -340,8 +347,12 @@ const _ = {
 				if (!this.isVoid0(result = callback(arr[i], i, arr))) {
 					return result;
 				}
+
 			}
-		} else if (this.isObject(arr)) {
+
+		} 
+
+		else if (this.isObject(arr)) {
 			attrArr = $keys(arr);
 			l = attrArr.length;
 
@@ -351,7 +362,9 @@ const _ = {
 				if (!this.isVoid0(result = callback(arr[key], key, arr))) {
 					return result;
 				}
+
 			}
+
 		}
 	},
 
@@ -366,9 +379,12 @@ const _ = {
 
 				if (_this.isArray(el)) {
 					$push.apply(tmpArr, _this.flattenArr(el));
-				} else {
+				} 
+
+				else {
 					_this.push(tmpArr, el || {});
 				}
+
 			});
 		}
 		return tmpArr;
@@ -440,6 +456,7 @@ const genOn = (value) => {
 		match[0] = '"' + match[0] + '"';
 		_.push(tmpArr, '[' + match.toString() + ']');
 	}
+
 	return formatFlag
 		? '[' + tmpArr.join(', ') + ']'
 		: (WARN.format('on'), STRING);
@@ -470,6 +487,7 @@ const genFor = (vObj, attrStr, inst) => {
 			str += 'return ' 
 				+ genComponent(vObj, attrStr, inst, parent, index || '$index');
 		}
+
 		str += '})';
 		return str;
 	}
@@ -490,13 +508,7 @@ const genComponent = (vObj, attrStr, inst, parent, index) => {
 		component.vTpl = genVNodeExpr(component.vObj, 0, inst);
 		component.props = component.props || {};
 		component.$scope = component.props;
-		// component.$scope = optimizeCb(defineProp
-		// 	, component
-		// 	, component.props
-		// 	, {}
-		// 	, inst);
 		_.push(vObj.children, component.vObj);
-		// $splice.call(vObj.parentVObj.children, vObj.index, 1, component.vObj);
 		return component.vTpl = '(function('
 			+ component.data
 			+ ', '
@@ -555,14 +567,21 @@ const vShow = (el, value) => {
 
 		if (matchArr = el.start.match(REGEXP.styleMRE)) {
 			el.start = el.start.replace(REGEXP.styleMRE, 'style="' + matchArr[1] + ';display:block;"');
-		} else {
+		} 
+
+		else {
 			el.start += ' style="display:block;"';
 		}
-	} else {
+
+	} 
+
+	else {
 
 		if (matchArr = el.start.match(REGEXP.styleMRE)) {
 			el.start = el.start.replace(REGEXP.styleMRE, 'style="' + matchArr[1] + ';display:none;"');
-		} else {
+		} 
+
+		else {
 			el.start += ' style="display:none;"';
 		}
 	}
@@ -595,7 +614,9 @@ const vClass = (el, value, vNode) => {
 
 	if (matchArr = el.start.match(REGEXP.classRE)) {
 		el.start = el.start.replace(REGEXP.classRE, 'class="' + matchArr[1] + ' ' + value + '"');
-	} else {
+	} 
+
+	else {
 		el.start += ' class="' + value + '"';
 	}
 };
@@ -617,7 +638,9 @@ const vStyle = (el, value, vNode) => {
 				keyArr = $keys(value);
 			}
 		}
-	} else {
+	} 
+
+	else {
 		value = convertStyleStrToObj(value);
 		keyArr = $keys(value);
 	}
@@ -628,7 +651,9 @@ const vStyle = (el, value, vNode) => {
 
 	if (matchArr = el.start.match(REGEXP.styleMRE)) {
 		el.start = el.start.replace(REGEXP.styleMRE, 'style="' + matchArr[1] + ';' + str + '"');
-	} else {
+	} 
+
+	else {
 		el.start += ' style="' + str + '"';
 	}
 };
@@ -658,22 +683,18 @@ const vHref = (el, value, vNode) => {
 
 const vOn = (el, value, vNode) => {
 	return;
-	// el.start += ' :on="' + value + '"';
 };
 
 const vText = (el, value) => {
 	el.content = value;
-	// el.start += ' :text="' + value + '"';
 };
 
 const vHtml = (el, value) => {
 	el.content = value;
-	// el.start += ' :html="' + value + '"';
 };
 
 const vModel = (el, value) => {
 	return;
-	// el.start += ' :model="' + value + '"';
 };
 
 const vData = (el, value) => {
@@ -862,7 +883,9 @@ const createVObj = (tagName, html) => {
 				isComponent = attrValue;
 			}
 
-		} else {
+		} 
+
+		else {
 			staticAttrs[attrKey] = attrValue;
 		}
 	}
@@ -919,7 +942,9 @@ const genVNodeExpr = (vObj, index, inst) => {
 			+ $stringify(data) + ', '
 			+ getChildResult(children, inst)
 			+ ')';
-	} else {
+	} 
+
+	else {
 		text = data.textContent;
 
 		if (_.isText(vObj)) {
@@ -928,7 +953,9 @@ const genVNodeExpr = (vObj, index, inst) => {
 				return '__j._tn(' + replaceExpr($stringify(text), vObj.hasBrace) +', true)';
 			}
 			return '__j._tn(' + $stringify(text) + ')';
-		} else if(_.isComment(vObj)) {
+		} 
+
+		else if(_.isComment(vObj)) {
 			return '__j._cn(\"' + text + '\")';
 		}
 	}	
@@ -1028,13 +1055,17 @@ const getMapResult = (arrObj, cb, inst) => {
 		while (++index < length) {
 			result[index] = cb(arrObj[index], index, inst);
 		}
-	} else if (_.isObject(arrObj)) {
+
+	} 
+
+	else if (_.isObject(arrObj)) {
 		arrKey = $keys(arrObj);
 		length = arrKey.length;
 
 		while (++index < length) {
 			result[index] = cb(arrObj[arrKey[index]], arrKey[index], inst);
 		}
+
 	}
 	return result;
 };
@@ -1049,7 +1080,7 @@ const replaceExpr = (template, exprArr) => {
 	return template;
 };
 
-function extendStaticAndUniqAttrs (target, source) {
+const extendStaticAndUniqAttrs = (target, source) => {
 	let 
 		tData = target.data
 		, sData = source.data
@@ -1091,7 +1122,7 @@ function extendStaticAndUniqAttrs (target, source) {
 	return target;
 };
 
-function makeGetterFn (body, callback) {
+const makeGetterFn = (body, callback) => {
 	try {
 		return new Function('__j', body + ';');
 	} catch (e) {
@@ -1164,12 +1195,14 @@ const createVTextNode = (text, hasBrace) => {
 
 const createElFn = (tagName) => {
 	let obj;
-	if (!REGEXP.noEndRE.test(_.lower(tagName))) {
+	if (!REGEXP.noEndRE.test(tagName)) {
 		obj = {
 			start : '<' + tagName,
 			end : '</' + tagName + '>'
 		};
-	} else {
+	} 
+
+	else {
 		obj = {
 			start : '<' + tagName,
 			end : ''
@@ -1209,13 +1242,17 @@ const createElem = (vNode, instance) => {
 				el.end += data.uniq['if'] ? '' : ' -->';
 			}
 		}
-		el.start += (!REGEXP.noEndRE.test(_.lower(vNode.tagName)) ? '>' : ' />') + (el.content || '');
-	} else {
+		el.start += (!REGEXP.noEndRE.test(vNode.tagName) ? '>' : ' />') + (el.content || '');
+	} 
+
+	else {
 		let textCt = vNode.textContent;
 
 		if (_.isText(vNode)) {
 			el = createTextFn(textCt);
-		} else {
+		} 
+
+		else {
 			el = createCommentFn(textCt);
 		}
 	}
@@ -1245,6 +1282,7 @@ const convertStyleStrToObj = (str) => {
 	while ((attrMatch = REGEXP.styleRE.exec(str)) != null) {
 		styleObj[attrMatch[1]] = attrMatch[2];
 	}
+
 	return styleObj;
 };
 
@@ -1327,10 +1365,10 @@ const Compiler = {
 			tagAndSpaceHtml = match[0];
 			spaceOrNote = match[1];
 			tagHtml = match[2];
-			tagName = match[4];
+			tagName = _.lower(match[4]);
 			isComponentEndTag = REGEXP.compSetRE.test(tagHtml);
 			isEndTag = _.toBool(match[3]) || isComponentEndTag;
-			isNoEndTag = REGEXP.noEndRE.test(_.lower(tagName));
+			isNoEndTag = REGEXP.noEndRE.test(tagName);
 			vObj = createVObj(tagName, tagHtml);
 
 			if (REGEXP.test(REGEXP.uniqLeftNoteRE, spaceOrNote)) {
@@ -1359,7 +1397,9 @@ const Compiler = {
 					else {
 						appendVObjChildren(parentTag, vObj);
 					}
+
 				}
+
 			} else {
 				parentTag = vObj;
 
@@ -1394,6 +1434,7 @@ const Compiler = {
 			}
 			_this.vNode = _this.renderFn.call(_this, _this);
 		} catch(err) {
+			console.log(_this.vNodeTemplate);
 			return LOG.warn('TIP : ' + err.message), _this;
 		}
 		return _this;
@@ -1420,10 +1461,13 @@ const Compiler = {
 
 		if (this.redis)  {
 			this.redis.set(this.key, this.vNodeTemplate, (err, reply) => {
-				console.log('redis has cach the ' + this.key + 'template');
+
+				if (!err) {
+					console.log('redis has cach the ' + this.key + 'template');
+				}
 			});
 			//一天缓存期限
-			this.redis.expire(this.key, 1);
+			this.redis.expire(this.key, 60 * 60 * 24);
 		}
 
 		delete this.vObj;
@@ -1433,24 +1477,22 @@ const Compiler = {
 
 	addComponent (key, value) {
 		value.template = fs.readFileSync(value.url, 'utf8');
-		this.component[key] = value;
+		value.key = key;
+		this.component[_.lower(key)] = value;
 	},
 
 	component : {},
 
 	renderTpl () {
-		// console.log(this.vNodeTemplate);
-		// console.log(this.outerHTML);
-		const comp = this.component;
-		for(let key in comp) {
+		const comp = {};
+		for(let key in this.component) {
 			const 
 				obj = {}
-				, cp = comp[key]
+				, cp = this.component[key]
 				;
 
-			obj.$scope = cp.$scope;
-			obj.template = cp.template;
-			comp[key] = obj;
+			_.extend(obj, cp);
+			comp[cp.key] = obj;
 		}
 
 		let tpl = template
@@ -1526,6 +1568,7 @@ module.exports = Compiler;
 // 	swiperList : [],
 // 	hotList : [],
 // 	word : '',
+// 	loadedFlag : false,
 // 	specialList : []
 // }, {});
 
