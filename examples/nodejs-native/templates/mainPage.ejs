@@ -1,0 +1,52 @@
+<div id="container">
+  <div id="viewport">
+    <div class="g-city-sct-container">
+        <div class="g-city-sct-bd">
+              <ul class="city-list">
+                <% letterArr.forEach(function (letter, $index) { %>
+                  <li id="<%= letter %>_title" data-key="<%= letter %>" >
+                        <h4 class="sc-letter-list sc-letter-list-open"><%=letter %></h4>
+                        <% if (letterShowObj[letter]) {%>
+                          <ul id="<%= letter %>_actTitle_UL" class="m-city-list">
+                            <% letterObj[letter].forEach(function (letterInfo, $index) { %>
+                              <li data-name="<%= letterInfo.name %>" 
+                                  data-id="<%= letterInfo.id %>"
+                                  data-shortPinyin="<%= letterInfo.shortPinyin %>"
+                                  data-pinyin="<%= letterInfo.pinyin %>"
+                                  data-index="<%= $index %>" 
+                                  data-render-id="<%= letter %>_actTitle_LI_<%= letterInfo.id %>" >
+                                <%= letterInfo.name %>
+                                </li>
+                            <% }); %>
+                          </ul>
+                        <% } else { %>
+                          <ul id="<%= letter %>_actTitle_UL" class="m-city-list" style="display:none;">
+                                <% letterObj[letter].forEach(function (letterInfo, $index) { %>
+                                  <li data-name="<%= letterInfo.name %>" 
+                                      data-id="<%= letterInfo.id %>"
+                                      data-shortPinyin="<%= letterInfo.shortPinyin %>"
+                                      data-pinyin="<%= letterInfo.pinyin %>"
+                                      data-index="<%= $index %>" 
+                                      data-render-id="<%= letter %>_actTitle_LI_<%= letterInfo.id %>" >
+                                    <%= letterInfo.name %>
+                                    </li>
+                                <% }); %>
+                          </ul>
+                        <% }%>
+                      </li>
+                <% });%>
+              </ul>
+        </div>
+        <ul class="g-letter-list" >
+            <li>
+                <% letterArr.forEach(function (letter, $index) { %>
+                  <a href="#<%= letter%>_title"><%= letter %></a>
+                <% }); %>
+            </li>
+        </ul>
+    </div>
+  </div>
+</div>
+
+
+
