@@ -17,6 +17,7 @@ export default ($, module) => {
 		},
 		keyword : '',
 		startSlide : 1,
+		loadedFlag : false,
 		swiperList : [],
 		hotList : [],
 		specialList : []

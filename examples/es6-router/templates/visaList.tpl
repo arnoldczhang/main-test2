@@ -3,7 +3,7 @@
 		<span class="back-btn" :on="click:goBack()"></span>
 		<h2 class="title">{{city}}签证</h2>
 	</header>
-	<article class="visaList-body">
+	<article class="visaList-body" :class="{'fadeIn' : loadedFlag}">
 		<ul>
 			<li :for="visa in visaList" class="visa-list" :on="click:goVisaDetail(visa.productBranchId, visa.goodsId)">
 				<p>{{visa.productName}}</p>

@@ -7,10 +7,7 @@ export default ($scope, $, module, _this) => {
 			productName : data.productName,
 			map : data.map
 		});
-
-		_this.pushHook(() => {
-			$('.visaDetail-body').addClass('fadeIn');
-		});
+		$scope.loadedFlag = true;
 	}).catch((err) => {
 
 	});

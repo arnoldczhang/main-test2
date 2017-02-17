@@ -9,6 +9,7 @@ export default ($, module) => {
 		paixu : true,
 		quanbu : true,
 		changzhu : true,
+		loadedFlag : false,
 		filterStyleFn (flag) {
 			return flag ? {
 

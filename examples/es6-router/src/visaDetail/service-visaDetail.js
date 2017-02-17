@@ -16,6 +16,7 @@ export default ($, module) => {
 		needInfoFlag : false,
 		reserveFlag : false,
 		commentFlag : false,
+		loadedFlag : false,
 		currentPage : 1,
 		pageSize : 10,
 		goodsId : localStorage.getItem('visa-goodsId'),

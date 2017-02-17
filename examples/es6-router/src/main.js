@@ -1,7 +1,8 @@
 /**
   * router config
   **/
-import '../lib/main-test2';
+import '../../../resources/main.css';
+import '../../../resources/main-test2';
 const 
             BASE = './'
             , DEST = BASE + 'dist/'

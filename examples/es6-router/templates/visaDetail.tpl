@@ -3,7 +3,7 @@
 		<span class="back-btn" :on="click:goBack()"></span>
 		<h2 class="title">签证详情</h2>
 	</header>
-	<article class="visaDetail-body">
+	<article class="visaDetail-body" :class="{'fadeIn' : loadedFlag}">
 		<section class="visaDetail-body-head white">
 			<span class="visaDetail-body-head-left">
 				<img :attr="{'src' : detail.imgUrl}" >

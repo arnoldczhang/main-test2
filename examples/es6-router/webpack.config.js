@@ -4,7 +4,7 @@ var version = updateVersion();
 var serverFlag = false;//open wepack-server flag
 var HOST = '.';
 var env = process.env.NODE_ENV;
-var lib = './lib/';
+var lib = '../../resources/';
 var src = './src/';
 var entryArr = [src + 'main.js'];
 var plugins = [
@@ -57,7 +57,7 @@ module.exports = {
         filename: 'bundle.js?v=' + version
     },
     // devtool: '',//'#source-map',//source map 支持
-    watchOptions: [lib + '**.js', src + '**.js', src + '*/**.js', src + '**.css'], //监控脚本
+    watchOptions: [lib + '**.js', lib + '**.css', src + '**.js', src + '*/**.js', src + '**.css'], //监控脚本
     plugins: plugins,
     //加载器
     module: {

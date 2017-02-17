@@ -2,7 +2,7 @@
 	<header>
 		<h2 class="title">签证首页</h2>
 	</header>
-	<article class="visa-home">
+	<article class="visa-home" :class="{'fadeIn' : loadedFlag}">
 		<SearchInput :component="keyword" class="search-input" />
 		<Swiper :component="swiperList" class="swiper-ct" />
 		<Hot :component="hotList" class="hot-ct" />
