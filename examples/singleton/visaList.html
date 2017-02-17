@@ -1,0 +1,93 @@
+<!DOCTYPE html >
+<html>
+<head>
+<title>签证首页</title>
+<meta name="Keywords" content="签证首页"/>
+<meta name="Description" content="签证首页"/>
+<meta charset="utf-8">
+<meta http-equiv=Content-Type content="text/html;charset=utf-8"/>
+<link rel="alternate" type="application/vnd.wap.xhtml+xml" media="handheld" href="target"/>
+<meta name="format-detection" content="telephone=no, address=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="visa" />
+<meta name="applicable-device" content="mobile">
+<meta content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width" name="viewport" />
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="max-age=7200" />
+<meta http-equiv="expires" content="0">
+<meta name="full-screen" content="yes">
+<meta name="x5-fullscreen" content="true">
+<link rel="apple-touch-startup-image" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png" sizes="320x460">
+<link rel="apple-touch-startup-image" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png" sizes="640x920">
+<link rel="apple-touch-startup-image" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png" sizes="768x1004">
+<!--竖-->
+<link rel="apple-touch-startup-image" media="screen and (orientation: portrait)" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png" /> 
+<!--横-->
+<link rel="apple-touch-startup-image" media="screen and (orientation: landscape)" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png" />
+<!-- 全屏展示 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="lvmmmmm">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
+<!-- ios主屏图标（无高光） -->
+<link rel="apple-touch-icon" sizes="57x57" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png"/>
+<link rel="apple-touch-icon" sizes="72x72" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png"/>
+<link rel="apple-touch-icon" sizes="114x114" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png"/>
+<link rel="apple-touch-icon" sizes="144x144" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png"/>
+<!-- ios主屏图标（有高光） -->
+<link rel="apple-touch-icon-precomposed" sizes="57x57" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png"/>
+<link rel="shortcut icon" href="http://www.lvmama.com/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="../../resources/main.css">
+<link rel="stylesheet" type="text/css" href="css/visaList.css">
+</head>
+<body>
+<script type="text/javascript" src="../../resources/main-test2.js"> </script>
+<script type="text/javascript">
+</script>
+<!--@ BODY -->
+<div id="container">
+  <div class="visaList">
+  	<header>
+  		<span class="back-btn" :on="click:goBack()"></span>
+  		<h2 class="title">{{city}}签证</h2>
+  	</header>
+  	<article class="visaList-body" :class="{'fadeIn' : loadedFlag}">
+  		<ul>
+  			<li :for="visa in visaList" class="visa-list" :on="click:goVisaDetail(visa.productBranchId, visa.goodsId)">
+  				<p>{{visa.productName}}</p>
+  				<p class="visa-grey"><img src="images/calendars.png" >需提前{{visa.map.visa_ahead_days}}天提交材料</p>
+  				<p>
+  					<span class="visa-grey"><img src="images/posi.png" >{{visa.map.visa_range}}</span>
+  					<span class="fr visa-price visa-grey">
+  						<i>¥</i>
+  						<i>{{visa.dailyLowestPrice}}</i>起
+  					</span>
+  				</p>
+  			</li>
+  		</ul>
+  	</article>
+  	<footer class="bottom">
+  		<span :style="filterStyleFn(paixu)"
+  			 :on="click:toggleIcon('paixu')">
+  			<img :src="{true : 'images/paixu.png', false : 'images/paixu1.png'}[paixu]">
+  			<label>筛选</label>
+  		</span>
+  		<span :style="filterStyleFn(quanbu)"
+  			 :on="click:toggleIcon('quanbu')">
+  			<img :src="{true : 'images/quanbu.png', false : 'images/quanbu1.png'}[quanbu]">
+  			<label>全部签证</label>
+  		</span>
+  		<span :style="filterStyleFn(changzhu)"
+  			 :on="click:toggleIcon('changzhu')">
+  			<img :src="{true : 'images/changzhu.png', false : 'images/changzhu1.png'}[changzhu]">
+  			<label>上海</label>
+  		</span>
+  	</footer>
+  </div>
+</div>
+<!-- BODY @-->
+<script type="text/javascript" src="js/visaList.js"></script>
+</body>
+</html>

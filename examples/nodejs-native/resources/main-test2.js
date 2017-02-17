@@ -2209,7 +2209,6 @@
 	};
 
 	function genComponent (vObj, attrStr, inst, parent, index) {
-		// vObj.children = [];
 		var 
 			tagName = vObj.tagName
 			, component = JSpring.component[tagName || 'div']
@@ -2220,7 +2219,6 @@
 			componentData = vObj.isComponent;
 			parent = parent || componentData;
 			component.vObj = inst.analyzeHtml(component.template);
-			// extendStaticAndUniqAttrs(component.vObj, vObj);
 			component.vTpl = genVNodeExpr(component.vObj, 0, inst);
 			component.props = component.props || {};
 			component.$scope = optimizeCb(defineProp
@@ -2229,7 +2227,6 @@
 				, {}
 				, inst);
 			_.push(vObj.children, component.vObj);
-			// $splice.call(vObj.parentVObj.children, vObj.index, 1, component.vObj);
 
 			return component.vTpl = '(function('
 				+ component.data
@@ -2589,7 +2586,8 @@
 	};
 
 	JSpring.addComponent = function (key, value) {
-		JSpring.component[key] = value;
+		value.key = key;
+		JSpring.component[_.lower(key)] = value;
 	};
 
 	//vm
@@ -2696,10 +2694,10 @@
 				tagAndSpaceHtml = match[0];
 				spaceOrNote = match[1];
 				tagHtml = match[2];
-				tagName = match[4];
+				tagName = _.lower(match[4]);
 				isComponentEndTag = REGEXP.compSetRE.test(tagHtml);
 				isEndTag = _.toBool(match[3]) || isComponentEndTag;
-				isNoEndTag = REGEXP.noEndRE.test(_.lower(tagName));
+				isNoEndTag = REGEXP.noEndRE.test(tagName);
 				vObj = createVObj(tagName, tagHtml, _this);
 
 				if (REGEXP.test(REGEXP.uniqLeftNoteRE, spaceOrNote)) {
@@ -3456,7 +3454,7 @@
 			if (!el.tagName) {
 				return false;
 			}
-			switch ($lower.call(el.tagName)) {
+			switch (_.lower(el.tagName)) {
 				case 'button':
 				case 'select':
 				case 'textarea':

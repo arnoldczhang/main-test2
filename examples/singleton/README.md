@@ -3,5 +3,5 @@
 
 简介
 ----
-> nodejs-native example
+> singleton example
 -----------
