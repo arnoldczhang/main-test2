@@ -1292,7 +1292,7 @@
 
 	function isComponentAttr (attr) {
 		return REGEXP.test(REGEXP.compRE, attr);
-	}
+	};
 
 	function isOnAttr (attr) {
 		return REGEXP.test(REGEXP.onRE, attr);
@@ -1420,7 +1420,7 @@
 		if (sUniq) {
 
 			if (!tUniq) {
-				tUniq = tData.tUniq = $create(null);
+				tUniq = tData.uniq = $create(null);
 			}
 			_.extend(tUniq, sUniq || {});
 			tData.uKeys = $keys(tUniq);
@@ -2589,7 +2589,7 @@
 	};
 
 	JSpring.addComponent = function (key, value) {
-		JSpring.component[_.lower(key)] = value;
+		JSpring.component[key] = value;
 	};
 
 	//vm
@@ -2696,10 +2696,10 @@
 				tagAndSpaceHtml = match[0];
 				spaceOrNote = match[1];
 				tagHtml = match[2];
-				tagName = _.lower(match[4]);
+				tagName = match[4];
 				isComponentEndTag = REGEXP.compSetRE.test(tagHtml);
 				isEndTag = _.toBool(match[3]) || isComponentEndTag;
-				isNoEndTag = REGEXP.noEndRE.test(tagName);
+				isNoEndTag = REGEXP.noEndRE.test(_.lower(tagName));
 				vObj = createVObj(tagName, tagHtml, _this);
 
 				if (REGEXP.test(REGEXP.uniqLeftNoteRE, spaceOrNote)) {
@@ -2766,16 +2766,17 @@
 				, collection = _.getChildNodes(_this.el)
 				;
 
-			// _this.el.classList.add('effect_active');
-			// _this.el.classList.add('slideUp');
 			_this.vNode.el = _this.el;
 			_this.bindElement(collection, _this.vNode.children);
-
-			//TODO
-			// _this.initNode();
-			// _this.el = _.replaceNode(_this.frag.children[0], _this.el);
 			_this.clearNoUseAttr();
-			console.timeEnd('server render')
+			return optimizeCb(
+				_this.controller
+				, _this
+				, _this.$scope
+				, $
+				, JSpring.module
+				, _this
+				), console.timeEnd('server render');
 		},
 
 		bindElement : function bindElement (collection, children) {
