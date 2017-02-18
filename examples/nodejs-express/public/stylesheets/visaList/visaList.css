@@ -1,0 +1,128 @@
+body * {
+    box-sizing: border-box;
+    font-family: Microsoft yahei,Lucida Grande,Helvetica Neue,Helvetica,Arial,Hiragino Sans GB,Hiragino Sans GB W3,WenQuanYi Micro Hei,sans-serif;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+h1,h2,h3 {
+    font-weight: normal;
+    margin: 0;
+}
+li {
+    list-style: none;
+}
+i {
+    font-style: normal;
+}
+body, input {
+    color: #000;
+    margin: 0;
+    font-size: 14px;
+}
+p {
+    margin: 0;
+}
+ul {
+    padding-left: 0;
+}
+body img {
+    -webkit-transition:.5s;
+    transition:.5s;
+}
+input {
+    -webkit-appearance: none;
+    outline: none;
+}
+input {
+    border: none;
+    width: 60%;
+    height: 25px;
+}
+a, button, div, input, li, optgroup, select, span, textarea, ul {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    tap-highlight-color: transparent;
+}
+.f12{font-size: 12px;}
+.fr {float: right;}
+.pink{color:#d30775;}
+header .title {
+    line-height: 44px;
+    text-align: center;
+    font-size: 19px;
+    margin: 0;
+}
+header {
+    height: 44px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #fafafa;
+    z-index: 80;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+}
+.visaList {
+    overflow-x: hidden;
+    margin-top: 45px;
+}
+.visa-list {
+    overflow: hidden;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 10px 23px 15px;
+    background-color: #fff;
+    margin-bottom: 10px;
+    position: relative;
+    height: auto;
+    box-sizing: border-box;
+}
+.visa-list p img{
+    height: 13px;
+    width: 13px;
+}
+.bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 48px;
+    width: 100%;
+    background-color: rgba(50,50,50,.95);
+    overflow: hidden;
+}
+.visaList-body {
+    margin-bottom: 48px;
+        opacity: 0;
+}
+.bottom > span {
+    width: 33%;
+    height: 48px;
+    float: left;
+    text-align: center;
+    position: relative;
+    color:white;
+}
+.bottom > span > img{
+    width: 18px;
+    height: 14px;
+    display: block;
+        margin: 10px auto 0 auto;
+}
+.visa-list .visa-price i{
+    color: #d30775;
+}
+.visa-list .visa-price > i:nth-child(2) {
+    font-size: 21px;
+}
+.visa-grey {
+    color:#aaa;
+}
+.back-btn {
+    position: absolute;
+    left: 10px;
+    top: 15px;
+    height: 15px;
+    width: 15px;
+    border-left: 1px solid #d30775;
+    border-top: 1px solid #d30775;
+    -webkit-transform:rotate(-45deg);
+    transform:rotate(-45deg);
+}
