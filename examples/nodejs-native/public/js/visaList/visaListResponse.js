@@ -1,11 +1,11 @@
 'use strict'
 let Compiler = require('../../../../../resources/compiler.js');
 
-exports.returnHtml = (req, res, opts) => {
+exports.returnHtml = (req, res, data, config) => {
 
 	const model = {
-		visaList : opts.data.visaData,
-		city : opts.data.city,
+		visaList : data.visaData,
+		city : data.city,
 		pageIndex : 1,
 		paixu : true,
 		quanbu : true,
@@ -27,18 +27,23 @@ exports.returnHtml = (req, res, opts) => {
 		}
 	};
 
-	if (opts.component) {
+	if (config.component) {
 
-		for (let cp of opts.component) {
+		for (let cp of config.component) {
 			Compiler.addComponent(cp.id, cp);
 		}
 	}
+
+	const options = {
+		model,
+		config
+	};
 
 	if (res && req) {
 		res.writeHead(200, {
 			'Content-Type': 'text/html'
 		});
-		let template = Compiler.render(opts.url, model, opts);
+		let template = Compiler.render(config.url, options);
 		res.write(template);
 		res.end();
 	}

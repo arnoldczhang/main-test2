@@ -8,10 +8,9 @@ const
 exports.requestData = (req, res) => {
         const KEY = 'visaListVNodeTpl';
         const client = redis.createClient();
-        const props = {
+        const config = {
             url : 'templates/visaList.tpl',
             css : ['public/css/visaList/visaList.css'],
-            component : [],
             js : ['public/js/visaList/visaListService.js'],
             metaUrl : 'templates/meta.tpl'
         };
@@ -25,10 +24,10 @@ exports.requestData = (req, res) => {
 
                 if (reply) {
                     console.log('use the redis cach')
-                    props.vNodeTpl = reply.toString();
+                    config.vNodeTemplate = reply.toString();
                 } else {
-                    props.redis = client;
-                    props.key = KEY;
+                    config.redis = client;
+                    config.redisKey = KEY;
                 }
 
                 const city = unescape(Utils.getCookie(req.headers.cookie, 'visa-country'));
@@ -43,12 +42,10 @@ exports.requestData = (req, res) => {
                     }
                 }, req).then((resp) => {
                         const visaData = resp.data.products;
-                        const data = {
+                        visaListResponse.returnHtml(req, res, {
                             visaData,
                             city
-                        };
-                        props.data = data;
-                        visaListResponse.returnHtml(req, res, props);
+                        }, config);
                 });
             });
         });

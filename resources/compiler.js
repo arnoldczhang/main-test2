@@ -15,7 +15,7 @@
  */
 "use strict"
 const fs = require('fs');
-let template;
+let TEMPLATE;
 const 
  	OBJ = {}
  	, ARRAY = []
@@ -161,7 +161,13 @@ const
  	lineRE : /\\n|\\r|\\t|\s/g,
  	nextLRE : /\\n|\\r|\\t/g,
  	spaceRE : /\s+/g,
- 	capital : /[A-Z]/g,
+ 	capitalRE : /[A-Z]/g,
+ 	modelRE : /\{MODEL\}/g,
+ 	fnRE : /\{FN\}/g,
+ 	jsRE : /\{JS\}/,
+ 	cssRE : /\{CSS\}/,
+ 	metaRE : /\{META\}/,
+ 	templateRE : /\{TEMPLATE\}/,
 
  	exec (regExp, word) {
  	  var result = regExp.exec(word);
@@ -203,7 +209,7 @@ const _ = {
 	},
 
 	capitalLower (str) {
-		return REGEXP.replace(str, REGEXP.capital, (match) => {
+		return REGEXP.replace(str, REGEXP.capitalRE, (match) => {
 			return '-' + $lower.call(match);
 		});
 	},
@@ -1316,19 +1322,20 @@ const createLink = (linkArr) => {
 
 const Compiler = {
 
-	render (url, model, opts) {
+	render (filePath, options = {}) {
+		const config = options.config || {};
 		this.start = Date.now();
-		template = fs.readFileSync(url, 'utf8');
+		TEMPLATE = fs.readFileSync(filePath, 'utf8');
 		this.outerHTML = '';
-		this.redis = opts.redis;
-		this.key = opts.key;
-		this.vNodeTemplate = opts.vNodeTpl;
-		this.js = createScript(opts.js || []);
-		this.css = createLink(opts.css || []);
-		this.metaUrl = opts.metaUrl;
-		this.template = template.match(REGEXP.bodyRE)[2];
-		template = template.replace(REGEXP.bodyRE, '$1BODY$3');
-		this.$scope = model || {};
+		this.redis = config.redis || '';
+		this.redisKey = config.redisKey || '';
+		this.vNodeTemplate = config.vNodeTemplate;
+		this.js = createScript(config.js || []);
+		this.css = createLink(config.css || []);
+		this.metaUrl = config.metaUrl;
+		this.template = TEMPLATE.match(REGEXP.bodyRE)[2];
+		TEMPLATE = TEMPLATE.replace(REGEXP.bodyRE, '$1BODY$3');
+		this.$scope = options.model || {};
 		return this.init();
 	},
 
@@ -1460,14 +1467,14 @@ const Compiler = {
 	clearNoUseAttr () {
 
 		if (this.redis)  {
-			this.redis.set(this.key, this.vNodeTemplate, (err, reply) => {
+			this.redis.set(this.redisKey, this.vNodeTemplate, (err, reply) => {
 
 				if (!err) {
-					console.log('redis has cach the ' + this.key + 'template');
+					console.log('redis has cach the ' + this.redisKey + 'template');
 				}
 			});
 			//一天缓存期限
-			this.redis.expire(this.key, 60 * 60 * 24);
+			this.redis.expire(this.redisKey, 60 * 60 * 24);
 		}
 
 		delete this.vObj;
@@ -1483,7 +1490,7 @@ const Compiler = {
 
 	component : {},
 
-	renderTpl () {
+	transferComponent () {
 		const comp = {};
 		for(let key in this.component) {
 			const 
@@ -1491,22 +1498,31 @@ const Compiler = {
 				, cp = this.component[key]
 				;
 
-			_.extend(obj, cp);
+			obj.data = cp.data;
+			obj.$scope = cp.$scope;
+			obj.template = cp.template;
 			comp[cp.key] = obj;
 		}
+		return comp;
+	},
 
-		let tpl = template
-			.replace(/\{MODEL\}/g, $stringify(this.$scope))
-			.replace(/\{FN\}/g, "new Function('__j', '" 
+	renderTpl () {
+
+		if (this.metaUrl) {
+			TEMPLATE = TEMPLATE.replace(REGEXP.metaRE, fs.readFileSync(this.metaUrl, 'utf8'));
+		}
+
+		let tpl = TEMPLATE
+			.replace(REGEXP.modelRE, $stringify(this.$scope))
+			.replace(REGEXP.bodyRE, this.outerHTML)
+			.replace(REGEXP.jsRE, this.js)
+			.replace(REGEXP.cssRE, this.css)
+			.replace(REGEXP.templateRE, $stringify(this.transferComponent()))
+			.replace(REGEXP.fnRE, "new Function('__j', '" 
 				+ this.vNodeTemplate
 					.replace(/'/g, '"')
 					.replace(REGEXP.nextLRE, '') 
 				+ "');")
-			.replace(REGEXP.bodyRE, this.outerHTML)
-			.replace(/\{JS\}/, this.js)
-			.replace(/\{CSS\}/, this.css)
-			.replace(/\{META\}/, fs.readFileSync(this.metaUrl, 'utf8'))
-			.replace(/\{TEMPLATE\}/, $stringify(comp))
 			;
 		this.clearNoUseAttr();
 		return tpl;
@@ -1562,7 +1578,7 @@ module.exports = Compiler;
 // 	Compiler.addComponent(cp.id, cp);
 // }
 
-// Compiler.render('templates/mainPage.tpl', {
+// Compiler.render('templates/mainPage.tpl', {model : {
 // 	keyword : '',
 // 	startSlide : 1,
 // 	swiperList : [],
@@ -1570,22 +1586,38 @@ module.exports = Compiler;
 // 	word : '',
 // 	loadedFlag : false,
 // 	specialList : []
-// }, {});
+// }, config : {}});
 
 
 
+// Compiler.render('templates/visaList.tpl', {
+// 	model : {
+// 		visaList : [],
+// 		city : 'ss',
+// 		pageIndex : 1,
+// 		paixu : true,
+// 		quanbu : true,
+// 		changzhu : true,
+// 		loadedFlag : true,
+// 		filterStyleFn (flag) {
+// 			return flag ? {
 
-// var tar = [];
-// while((tar = REGEXP.attrsRE.exec(`
-// 	<div :for="let el in nameArr" style="display:block;" class="dd   ccc" 
-//       :class="{true: 'active', false : 'unactive'}[nameArr.length < 1]"
-//       :if="nameArr.length < 10"
-//       :on="click:toggleIf(el, $index)"
-//       disabled
-//       checked="1">
-//                   <h1>a    {{el}}   a</h1>
-//                   <h2 :text="nameIndexArr[$index]"></h2>
-//     </div>
-// 	`)) != null) {
-// 	console.log(tar)
-// }
+// 			} : {
+// 				color : '#d30775'
+// 			};
+// 		},
+// 		goBack () {
+// 		},
+// 		toggleIcon (key) {
+// 			this[key] = !this[key];
+// 		},
+// 		goVisaDetail (productId, goodsId) {
+// 		}
+// 	}, config : {
+// 		url: 'templates/visaList.tpl',
+// 		css: ['public/css/visaList/visaList.css'],
+// 		js: ['public/js/visaList/visaListService.js'],
+// 		metaUrl: 'templates/meta.tpl'
+// 	}
+// });
+

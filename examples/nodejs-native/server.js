@@ -20,7 +20,7 @@ console.log("Server has started. port:"+config.port);
 function processRequestRoute(request, response) {
     var pathname = url.parse(request.url).pathname;
     if (pathname === '/') {
-        pathname = "/index.html"; //默认页面
+        pathname = "/mainPage"; //默认页面
     }
     var ext = path.extname(pathname);
     var localPath = ''; //本地相对路径
