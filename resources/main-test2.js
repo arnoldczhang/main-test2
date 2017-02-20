@@ -1860,6 +1860,7 @@
 		constructor: Query,
 
 		val : function val (value) {
+
 			if (_.isVoid0(value)) {
 				return this.els[0] ? this.els[0].value : '';
 			}
@@ -1877,6 +1878,7 @@
 		},
 
 		each : function each (callback) {
+
 			if (_.isFunction(callback)) {
 				this.els.length && this.els.forEach(function eachEach (el, i, arr) {
 					callback(el, i, arr);
@@ -1886,6 +1888,7 @@
 		},
 
 		html : function _html (html) {
+
 			if (_.isVoid0(html)) {
 				return this.els[0].innerHTML;
 			}
@@ -1896,6 +1899,7 @@
 		},
 
 		attr : function attr (key, value) {
+
 			if (!(1 in arguments)) {
 				return this.els[0].getAttribute(key);
 			}
@@ -2810,6 +2814,7 @@
 				;
 
 			if (!_this.isStatic) {
+
 				try {
 					_this.vNodeTemplate = _this.analyzeTplStr();
 					_this.renderFn = makeGetterFn(_this.vNodeTemplate);
@@ -3031,6 +3036,7 @@
 					case 5 :// 'APPEND' : 5
 						parentVNode.append(vNode);
 						break;
+
 					default :
 						break;
 				}
@@ -3128,6 +3134,7 @@
 			;
 
 		_.each(routeKeys, function routeKeysEach(r) {
+
 			if (REGEXP.test(REGEXP.colonREG, r)) {
 				matchRoute[r] = [];
 				matchRoute[r][1] = [];
@@ -3387,6 +3394,7 @@
 				}
 
 				if (routeInfo.cach && JSpring.backViewPort) {
+
 					if (viewport = JSpring.vm[routeInfo.uniqId]) {
 						return viewport.renderFromCach(), onHashChanging = false;
 					}
@@ -3417,6 +3425,7 @@
 
 		function setTitle(title, hash) {
 			var el;
+
 			if (_.isNull(title)) {
 				return false;
 			}
@@ -3457,9 +3466,11 @@
 		};
 
 		function isNeedsClick(el) {
+
 			if (!el.tagName) {
 				return false;
 			}
+
 			switch (_.lower(el.tagName)) {
 				case 'button':
 				case 'select':
@@ -3467,6 +3478,7 @@
 					return el.disabled;
 					break;
 				case 'input':
+				
 					if ((deviceIsIOS && el.type === 'file') || el.disabled) {
 						return true;
 					} 
