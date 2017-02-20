@@ -1,17 +1,6 @@
-webpackJsonp([2],[
-/* 0 */,
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */
+webpackJsonp([2],{
+
+/***/ 12:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -85,21 +74,12 @@ webpackJsonp([2],[
 	};
 
 /***/ },
-/* 13 */,
-/* 14 */,
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */,
-/* 20 */,
-/* 21 */,
-/* 22 */,
-/* 23 */
+
+/***/ 31:
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./visaList/visaList.js": 24
+		"./visaList/visaList.js": 32
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -112,11 +92,12 @@ webpackJsonp([2],[
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 23;
+	webpackContext.id = 31;
 
 
 /***/ },
-/* 24 */
+
+/***/ 32:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -130,11 +111,11 @@ webpackJsonp([2],[
 
 	var _cm = __webpack_require__(12);
 
-	var _controllerVisaList = __webpack_require__(25);
+	var _controllerVisaList = __webpack_require__(33);
 
 	var _controllerVisaList2 = _interopRequireDefault(_controllerVisaList);
 
-	var _serviceVisaList = __webpack_require__(26);
+	var _serviceVisaList = __webpack_require__(34);
 
 	var _serviceVisaList2 = _interopRequireDefault(_serviceVisaList);
 
@@ -173,7 +154,8 @@ webpackJsonp([2],[
 	}(JSpringComponent);
 
 /***/ },
-/* 25 */
+
+/***/ 33:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -190,7 +172,8 @@ webpackJsonp([2],[
 	};
 
 /***/ },
-/* 26 */
+
+/***/ 34:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -241,11 +224,12 @@ webpackJsonp([2],[
 	};
 
 /***/ },
-/* 27 */
+
+/***/ 35:
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./visaList/visaList.css": 28
+		"./visaList/visaList.css": 36
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -258,17 +242,18 @@ webpackJsonp([2],[
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 27;
+	webpackContext.id = 35;
 
 
 /***/ },
-/* 28 */
+
+/***/ 36:
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(29);
+	var content = __webpack_require__(37);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(5)(content, {});
@@ -288,7 +273,8 @@ webpackJsonp([2],[
 	}
 
 /***/ },
-/* 29 */
+
+/***/ 37:
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
@@ -302,4 +288,5 @@ webpackJsonp([2],[
 
 
 /***/ }
-]);
+
+});

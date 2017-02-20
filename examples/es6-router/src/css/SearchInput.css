@@ -1,0 +1,57 @@
+.search-input {
+	width: 91%;
+	height: 35px;
+	margin: auto;
+	border:1px solid #e7e7e7;
+}
+.search-input p {
+	height: 100%;
+	display: block;
+	position: relative;
+}
+.search-input p:before {
+	content : '';
+	width: 25px;
+	height: 25px;
+	background-image:url(../../images/icon-fangdajing.png);
+	background-size:contain;
+	position: absolute;
+	top: 5px;
+	left: 70px;
+}
+.search-input p label {
+	display: inline-block;
+	text-align: center;
+	height: 100%;
+	width: 60px;
+	line-height: 35px;
+	margin-left: 0;
+	position: relative;
+}
+.search-input p label:before {
+	content : '';
+	width: 25px;
+	height: 25px;
+	border-left: 1px solid #e7e7e7;
+	position: absolute;
+	top: 5px;
+	left: 65px;
+}
+.search-input p label:after {
+	content : '';
+	width: 7px;
+	height: 7px;
+	border-top: 1px solid #d30775;
+	border-right: 1px solid #d30775;
+	-webkit-transform: rotate(135deg);
+	transform: rotate(135deg);
+	position: absolute;
+	top: 11px;
+	right: 0px;
+}
+.search-input p input {
+	display: inline-block;
+	margin-left: 35px;
+	font-size: 12px;
+	line-height: 35px;
+}

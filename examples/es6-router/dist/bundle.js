@@ -73,7 +73,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 
-/******/ 			script.src = __webpack_require__.p + "" + chunkId + ".bundle.js?v=2017217843";
+/******/ 			script.src = __webpack_require__.p + "" + chunkId + ".bundle.js?v=2017220926";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -119,7 +119,7 @@
 	        uniqId: 'mainPage',
 	        templateUrl: BASE + 'templates/mainPage.tpl',
 	        controllerFn: function controllerFn(resolve) {
-	            __webpack_require__.e/* require */(1, function(__webpack_require__) { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(8)(BASE + 'mainPage/mainPage.js'), __webpack_require__(18)(BASE + 'mainPage/mainPage.css')]; (resolve.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));}.bind(this));
+	            __webpack_require__.e/* require */(1, function(__webpack_require__) { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(8)(BASE + 'mainPage/mainPage.js'), __webpack_require__(27)(BASE + 'mainPage/mainPage.css')]; (resolve.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));}.bind(this));
 	        },
 	        title: '签证首页',
 	        cach: true
@@ -129,7 +129,7 @@
 	        uniqId: 'visaList',
 	        templateUrl: BASE + 'templates/visaList.tpl',
 	        controllerFn: function controllerFn(resolve) {
-	            __webpack_require__.e/* require */(2, function(__webpack_require__) { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(23)(BASE + 'visaList/visaList.js'), __webpack_require__(27)(BASE + 'visaList/visaList.css')]; (resolve.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));}.bind(this));
+	            __webpack_require__.e/* require */(2, function(__webpack_require__) { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(31)(BASE + 'visaList/visaList.js'), __webpack_require__(35)(BASE + 'visaList/visaList.css')]; (resolve.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));}.bind(this));
 	        },
 	        title: '签证列表',
 	        cach: false
@@ -139,7 +139,7 @@
 	        uniqId: 'visaDetail',
 	        templateUrl: BASE + 'templates/visaDetail.tpl',
 	        controllerFn: function controllerFn(resolve) {
-	            __webpack_require__.e/* require */(3, function(__webpack_require__) { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(30)(BASE + 'visaDetail/visaDetail.js'), __webpack_require__(34)(BASE + 'visaDetail/visaDetail.css')]; (resolve.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));}.bind(this));
+	            __webpack_require__.e/* require */(3, function(__webpack_require__) { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(38)(BASE + 'visaDetail/visaDetail.js'), __webpack_require__(42)(BASE + 'visaDetail/visaDetail.css')]; (resolve.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));}.bind(this));
 	        },
 	        title: '签证详情',
 	        cach: false
@@ -961,6 +961,7 @@
 				client.open(method, url, true);
 				client.setRequestHeader('signal', 'ab4494b2-f532-4f99-b57e-7ca121a137ca');
 				client.onreadystatechange = handler;
+
 				try {
 					client.responseType = responseType;
 				} catch (err) {
@@ -971,12 +972,14 @@
 
 				function handler() {
 					var response;
+
 					if (this.readyState !== 4) {
 						return;
 					}
 
 					if (this.status === 200) {
 						response = this.response;
+
 						if (responseType == 'json') {
 							_.isString(response) && (response = JSON.parse(response));
 						}
@@ -989,6 +992,7 @@
 
 			serialize: function serialize(data) {
 				var result = '';
+
 				if (_.isObject(data)) {
 					_.each($keys(data), function seriKeyEach(key) {
 						var value;
@@ -1803,7 +1807,7 @@
 			if (sUniq) {
 
 				if (!tUniq) {
-					tUniq = tData.tUniq = $create(null);
+					tUniq = tData.uniq = $create(null);
 				}
 				_.extend(tUniq, sUniq || {});
 				tData.uKeys = $keys(tUniq);
@@ -2514,7 +2518,6 @@
 		};
 
 		function genComponent(vObj, attrStr, inst, parent, index) {
-			// vObj.children = [];
 			var tagName = vObj.tagName,
 			    component = JSpring.component[tagName || 'div'],
 			    componentData;
@@ -2523,12 +2526,10 @@
 				componentData = vObj.isComponent;
 				parent = parent || componentData;
 				component.vObj = inst.analyzeHtml(component.template);
-				// extendStaticAndUniqAttrs(component.vObj, vObj);
 				component.vTpl = genVNodeExpr(component.vObj, 0, inst);
 				component.props = component.props || {};
 				component.$scope = optimizeCb(defineProp, component, component.props, {}, inst);
 				_.push(vObj.children, component.vObj);
-				// $splice.call(vObj.parentVObj.children, vObj.index, 1, component.vObj);
 
 				return component.vTpl = '(function(' + component.data + ', ' + (component.index || '$index') + ', ' + (component.parent || '$parent') + ') { with(__j._cp["' + tagName + '"].$scope) {' + 'return __j._n(\"' + vObj.tagName + '\", ' + attrStr + ', [' + component.vTpl + '], true)' + '}} (' + componentData + ', ' + index + ', "' + parent + '"))';
 			}
@@ -2834,6 +2835,7 @@
 		JSpring.component = {};
 
 		JSpring.addComponent = function (key, value) {
+			value.key = key;
 			JSpring.component[_.lower(key)] = value;
 		};
 
@@ -2991,16 +2993,10 @@
 				var _this = this,
 				    collection = _.getChildNodes(_this.el);
 
-				// _this.el.classList.add('effect_active');
-				// _this.el.classList.add('slideUp');
 				_this.vNode.el = _this.el;
 				_this.bindElement(collection, _this.vNode.children);
-
-				//TODO
-				// _this.initNode();
-				// _this.el = _.replaceNode(_this.frag.children[0], _this.el);
 				_this.clearNoUseAttr();
-				console.timeEnd('server render');
+				return optimizeCb(_this.controller, _this, _this.$scope, $, JSpring.module, _this), console.timeEnd('server render');
 			},
 
 			bindElement: function bindElement(collection, children) {
@@ -3575,7 +3571,7 @@
 				if (!el.tagName) {
 					return false;
 				}
-				switch ($lower.call(el.tagName)) {
+				switch (_.lower(el.tagName)) {
 					case 'button':
 					case 'select':
 					case 'textarea':

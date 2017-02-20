@@ -336,7 +336,7 @@
 			}
 		},
 
-		uniqPush: function uniqPush (arr, child) {
+		uniqPush : function uniqPush (arr, child) {
 
 			if (_.isArray(arr)) {
 				return !_.inArray(arr, child) && _.push(arr, child);
@@ -431,10 +431,12 @@
 				opts = {};
 			}
 
-			var jsonpREG = new RegExp((opts.jsonp || 'callback') + '=([^&]+)', 'g'),
-				script = $createEl("script"),
-				result = url.match(jsonpREG),
-				cbName;
+			var 
+				jsonpREG = new RegExp((opts.jsonp || 'callback') + '=([^&]+)', 'g')
+				, script = $createEl("script")
+				, result = url.match(jsonpREG)
+				, cbName
+				;
 
 			if (!result) {
 				return LOG.err('必须包含回调方法名');
@@ -491,6 +493,7 @@
 			client.open(method, url, true);
 			client.setRequestHeader('signal', 'ab4494b2-f532-4f99-b57e-7ca121a137ca');
 			client.onreadystatechange = handler;
+
 			try {
 				client.responseType = responseType;
 			} catch (err) {
@@ -501,12 +504,14 @@
 
 			function handler () {
 				var response;
+
 				if (this.readyState !== 4) {
 					return;
 				}
 
 				if (this.status === 200) {
 					response = this.response;
+
 					if (responseType == 'json') {
 						_.isString(response) && (response = JSON.parse(response));
 					}
@@ -521,6 +526,7 @@
 
 		serialize : function serialize (data) {
 			var result = '';
+			
 			if (_.isObject(data)) {
 				_.each($keys(data), function seriKeyEach(key) {
 					var value;

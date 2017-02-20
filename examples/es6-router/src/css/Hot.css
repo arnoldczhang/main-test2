@@ -1,0 +1,51 @@
+.hot-list {
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+}
+.hot-title {
+	margin-bottom: 5px;
+}
+.hot-list .hot-item {
+	width: 33.333%;
+    	float: left;
+	padding-right: 2%;
+	padding-bottom: 4%;
+	text-align: center;
+	color: #FFF;
+	position: relative;
+	overflow: hidden;
+}
+
+.hot-item-span img{
+	border-radius: 4px;
+}
+.hot-item-span {
+	height: 100%;
+	width: 100%;
+}
+.hot-item-span-title {
+	background-color: rgba(0, 0, 0, .5);
+	position: absolute;
+    	left: 50%;
+    	top: 33%;
+    	padding: 5px 10px;
+    	-webkit-transform:translateX(-55%);
+    	transform:translateX(-55%);
+    	white-space: nowrap;
+    	display: inline-block;
+}
+.hot-item-span-price {
+	position: absolute;
+	background-color: #FF720E;
+	font-size: 12px;
+    	right: 6%;
+    	top: 0;
+    	border-top-right-radius: 4px;
+    	border-bottom-left-radius: 4px;
+    	padding: 2px 0 2px 3px;
+}
+.hot-ct {
+	width: 102%;
+	padding:10px;
+}

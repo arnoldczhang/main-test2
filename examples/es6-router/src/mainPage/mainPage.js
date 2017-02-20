@@ -9,17 +9,20 @@ const hotItemTemplate = require('../../templates/HotItem.tpl');
 
 JSpring.addComponent('SearchInput', {
   data : 'word',
-  template : searchInputTemplate
+  template : searchInputTemplate,
+  style : require('../css/SearchInput.css')
 });
 
 JSpring.addComponent('Swiper', {
   data : 'list',
-  template : swiperTemplate
+  template : swiperTemplate,
+  style : require('../css/Swiper.css')
 });
 
 JSpring.addComponent('Hot', {
   data : 'list',
-  template : hotTemplate
+  template : hotTemplate,
+  style : require('../css/Hot.css')
 });
 
 JSpring.addComponent('HotItem', {
@@ -29,7 +32,8 @@ JSpring.addComponent('HotItem', {
 
 JSpring.addComponent('Special', {
   data : 'list',
-  template : specialTemplate
+  template : specialTemplate,
+  style : require('../css/Special.css')
 });
 
 export class MainPage extends JSpringComponent {

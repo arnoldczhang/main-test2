@@ -75,11 +75,11 @@ webpackJsonp([3],{
 
 /***/ },
 
-/***/ 30:
+/***/ 38:
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./visaDetail/visaDetail.js": 31
+		"./visaDetail/visaDetail.js": 39
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -92,12 +92,12 @@ webpackJsonp([3],{
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 30;
+	webpackContext.id = 38;
 
 
 /***/ },
 
-/***/ 31:
+/***/ 39:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -111,11 +111,11 @@ webpackJsonp([3],{
 
 	var _cm = __webpack_require__(12);
 
-	var _controllerVisaDetail = __webpack_require__(32);
+	var _controllerVisaDetail = __webpack_require__(40);
 
 	var _controllerVisaDetail2 = _interopRequireDefault(_controllerVisaDetail);
 
-	var _serviceVisaDetail = __webpack_require__(33);
+	var _serviceVisaDetail = __webpack_require__(41);
 
 	var _serviceVisaDetail2 = _interopRequireDefault(_serviceVisaDetail);
 
@@ -155,7 +155,7 @@ webpackJsonp([3],{
 
 /***/ },
 
-/***/ 32:
+/***/ 40:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -179,7 +179,7 @@ webpackJsonp([3],{
 
 /***/ },
 
-/***/ 33:
+/***/ 41:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -244,11 +244,11 @@ webpackJsonp([3],{
 
 /***/ },
 
-/***/ 34:
+/***/ 42:
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./visaDetail/visaDetail.css": 35
+		"./visaDetail/visaDetail.css": 43
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -261,18 +261,18 @@ webpackJsonp([3],{
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 34;
+	webpackContext.id = 42;
 
 
 /***/ },
 
-/***/ 35:
+/***/ 43:
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(36);
+	var content = __webpack_require__(44);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(5)(content, {});
@@ -293,7 +293,7 @@ webpackJsonp([3],{
 
 /***/ },
 
-/***/ 36:
+/***/ 44:
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(4)();
