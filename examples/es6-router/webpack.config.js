@@ -25,11 +25,11 @@ if (serverFlag) {
 }
 
 if (env != 'development') {
-    // plugins.push(new webpack.optimize.UglifyJsPlugin({
-    //     compress: {
-    //         warnings: false
-    //     }
-    // }));
+    plugins.push(new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            warnings: false
+        }
+    }));
 
     if (env == 'production') {
         HOST = '.';
@@ -78,7 +78,7 @@ module.exports = {
             loader: "html-loader"
         }, {
             test: /\.tpl$/,
-            loader: "html-loader"
+            loader: "text-loader"
         }, {
             test: /.*\.(png|jpg|jpe?g|ico|gif|svg)$/i,
             loaders: [

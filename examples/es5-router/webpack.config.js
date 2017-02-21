@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var version = updateVersion();
-var serverFlag = true;//open wepack-server flag
+var serverFlag = false;//open wepack-server flag
 var HOST = '.';
 var env = process.env.NODE_ENV;
 var lib = '../../resources/';
@@ -25,11 +25,11 @@ if (serverFlag) {
 }
 
 if (env != 'development') {
-    // plugins.push(new webpack.optimize.UglifyJsPlugin({
-    //     compress: {
-    //         warnings: false
-    //     }
-    // }));
+    plugins.push(new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            warnings: false
+        }
+    }));
 
     if (env == 'production') {
         HOST = '.';
@@ -69,7 +69,7 @@ module.exports = {
             loader: "html-loader"
         }, {
             test: /\.tpl$/,
-            loader: "html-loader"
+            loader: "text-loader"
         }, {
             test: /.*\.(png|jpg|jpe?g|ico|gif|svg)$/i,
             loaders: [
