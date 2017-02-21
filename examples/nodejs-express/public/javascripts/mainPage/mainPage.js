@@ -11,28 +11,28 @@ var Swiper = __TEMPLATE__.Swiper;
 JSpring.addComponent('Swiper', {
   data : 'list',
   $scope : Swiper.$scope,
-  template : __TEMPLATE__.Swiper
+  template : Swiper.template
 });
 
 var Hot = __TEMPLATE__.Hot;
 JSpring.addComponent('Hot', {
   data : 'list',
   $scope : Hot.$scope,
-  template : __TEMPLATE__.Hot
+  template : Hot.template
 });
 
 var HotItem = __TEMPLATE__.HotItem;
 JSpring.addComponent('HotItem', {
   data : 'obj',
   $scope : HotItem.$scope,
-  template : __TEMPLATE__.HotItem
+  template : HotItem.template
 });
 
 var Special = __TEMPLATE__.Special;
 JSpring.addComponent('Special', {
   data : 'list',
   $scope : Special.$scope,
-  template : __TEMPLATE__.Special
+  template : Special.template
 });
 
 function setCookie (name, value) {
