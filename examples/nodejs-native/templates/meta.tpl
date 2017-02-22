@@ -9,8 +9,13 @@
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="Cache-Control" content="max-age=7200" />
 <meta http-equiv="expires" content="0">
+<!-- UC全屏、应用模式 -->
 <meta name="full-screen" content="yes">
+<meta name="browsermode" content="application">
+<!-- QQ全屏、应用模式 -->
 <meta name="x5-fullscreen" content="true">
+<meta name="x5-page-mode" content="app">
+<!-- splash screen image  -->
 <link rel="apple-touch-startup-image" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png" sizes="320x460">
 <link rel="apple-touch-startup-image" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png" sizes="640x920">
 <link rel="apple-touch-startup-image" href="//pic.lvmama.com/img/mobile/touch/img/lvmama_v1_png.png" sizes="768x1004">

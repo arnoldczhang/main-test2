@@ -7,42 +7,154 @@
         <meta name="viewport" content="width=device-width">
         <style type="text/css"></style>
         <link rel="stylesheet" type="text/css" href="./test/main.css">
+        <link rel="stylesheet" type="text/css" href="./test/test.css">
     </head>
-    <body>
-        <div id="for_inst">
-              ===
-              ===
-               <div class="for_div"
-                      :show="el > 2"
-                      :if="el > 1"
-                      :data="dataFn(el)"
-                      :for="el in arr"
-                      :class="{'aa bb' : el == 1, 'cc dd' : el == 2, 'ee' : el == 3, 'ff' : el > 0 }"
-                      :attr="{true : 'name:my name is ' + el, false : 'name : your name is ' + el}[el > 2]"
-                      :style="styleObj"
-                      >
-                 <label>{{el}}</label>
-                 <!--@ dsfasfdaf @-->
-                 <ul>
-                     <li class="for_li1">{{$index}}</li>
-                 </ul>
-              </div>
-              <ul>
-                  <li>1111</li>
-              </ul>
-               <ul id="for_ul">
-                 <li class="for_li2" :for="el in arr">
-                      <label :text="el"></label>
-                 </li>
-              </ul>
-            <label>{{obj.name}}</label>
-        </div>
-        <br />
-        <br />
-        <br />
+    <body style="height: 2000px;">
+    <div id="tpl1" class="oD">
+        <header                    
+
+
+
+
+        >
+            <label>上海</label>
+            <input type="text" name="" />
+            <img src="">
+        </header>
+        <article>
+            <section class="swiper"></section>
+            <section class="main_intro">
+                <ul class="main_intro_ul">
+                    <li>
+                        <a href="javascript:;">0</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">1</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">2</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">3</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">4</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">5</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">6</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">7</a>
+                    </li>
+                </ul>
+            </section>
+            <section class="sub_intro">
+                <ul class="sub_intro_ul">
+                    <li>
+                        <a href="javascript:;">0</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">1</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">2</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">3</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">4</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">5</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">6</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">7</a>
+                    </li>
+                </ul>
+            </section>
+            <section class="mobile_alone">
+                <ul>
+                    <li class="top_mobile_info">
+                        <span>1</span>
+                        <span>
+                            <span>1</span>
+                            <span>1</span>
+                        </span>
+                    </li>
+                    <li class="middle_mobile_info">
+                        <span>2</span>
+                        <span>2</span>
+                        <span>2</span>
+                    </li>
+                    <li class="bottom_mobile_info">
+                        <span>3</span>
+                        <span>3</span>
+                    </li>
+                    <li class="bottom_mobile_info">
+                        <span>3</span>
+                        <span>3</span>
+                    </li>
+                    <li class="bottom_mobile_info">
+                        <span>3</span>
+                        <span>3</span>
+                    </li>
+                </ul>
+            </section>
+            <section class="prod_list">
+                <ul class="prod_list_ul">
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                </ul>
+            </section>
+        </article>
+    </div>
+    <style type="text/css">
+    
+    </style>
+    <script type="text/javascript">
+
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div id="tpl2" style="margin-top:1000px;">
         ==component==
-        <div id="tpl2">
-          <userlist :component="arr"></userlist>
+          <userlist :component="arr" id='dd'>
+              
+
+
+          </userlist>
+
+          <userlist :component="arr" id="ccc" class="aaa dd">
+              
+
+              
+          </userlist>
+
         </div>
         ==component==
         <div id="tpl3">
@@ -51,7 +163,7 @@
                     lv-on="click: closePopNum(false)"
                     lv-class="{'aa' : popHotelNum, 'bb cc' : !popHotelNum, 'dd ee ffdd' : popHotelNum}">
                 <div class="lvalert_container">
-                    <p class="title">修改间数</p>
+                    <p class="title" id="abcd">修改间数</p>
                     <div>
                         <ul>
                             <b>{{myName.toUpperCase()}}</b>
@@ -119,6 +231,18 @@
                 }}
                 <div id="aa"></div>
         </div>
+        ==========vue==
+        <div id="tpl6">
+            <User class="aaa">
+                <div></div>
+            </User>
+            <User class="aaa bb dd">
+                <div></div>
+            </User>
+        </div>
+        <div id="for_inst">
+           <user :component="arr[0]" class="user3" />
+        </div>
         <script src="./resources/main-test2.js"></script>
         <script src="./test/lodash.js"></script>
         <script src="./test/platform.js"></script>
@@ -126,6 +250,7 @@
         <script src="./test/vue-2.0.3.js"></script>
         <script src="./test/test.js"></script>
         <script type="text/javascript">
+
         </script>
         <script type="text/javascript">
         </script>

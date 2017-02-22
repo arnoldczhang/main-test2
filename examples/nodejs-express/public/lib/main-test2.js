@@ -171,6 +171,11 @@
 			return 'not match the format of {1}'
 				.replace(/\{\d\}/g, attr);
 		},
+		missComp : function (tag) {
+			return '`{1}` is not a component'
+				.replace(/\{\d\}/g, tag);
+		},
+		h5Semantic : 'dont`t wrap block-element inside <p>',
 		container : 'the viewport haven`t found the container to place in'
 	};
 
@@ -179,8 +184,8 @@
 	 * REGEXP
 	 **/
 	var REGEXP = {
-		startEndAngleRE : /((?:\s|&[a-zA-Z]+;|<!\-\-@|[^<>]+)*)(<?(\/?)([^!<>\/\s]+)(?:\s*[^\s=\/>]+(?:="[^"]*"|='[^']*'|)|)+\s*\/?>?)(?:\s*@\-\->)?/g,
-		noEndRE : /^(?:input|br|img|link|hr|base|area|meta|embed|frame)$/,
+		startEndAngleRE : /((?:\s|&[a-zA-Z]+;|<!\-\-@|[^<>]+)*)(<?(\/?)([^!<>\/\s]+)(?:\s*[^\s=\/>]+(?:="[^"]*"|='[^']*'|=[^'"\s]+|)|)+\s*\/?>?)(?:\s*@\-\->)?/g,
+		ghostRE : /^(?:input|br|img|link|hr|base|area|meta|embed|frame)$/,//虚元素
 		attrsRE : /\s+([^\s=<>]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s<>]+))/g,
 		routeParamREG : /\:([^\:\-\.]+)/g,
 		uniqNoteRE : /<!\-\-@\s*([^@]+)\s*@\-\->/g,
@@ -336,7 +341,7 @@
 			}
 		},
 
-		uniqPush: function uniqPush (arr, child) {
+		uniqPush : function uniqPush (arr, child) {
 
 			if (_.isArray(arr)) {
 				return !_.inArray(arr, child) && _.push(arr, child);
@@ -431,10 +436,12 @@
 				opts = {};
 			}
 
-			var jsonpREG = new RegExp((opts.jsonp || 'callback') + '=([^&]+)', 'g'),
-				script = $createEl("script"),
-				result = url.match(jsonpREG),
-				cbName;
+			var 
+				jsonpREG = new RegExp((opts.jsonp || 'callback') + '=([^&]+)', 'g')
+				, script = $createEl("script")
+				, result = url.match(jsonpREG)
+				, cbName
+				;
 
 			if (!result) {
 				return LOG.err('必须包含回调方法名');
@@ -491,6 +498,7 @@
 			client.open(method, url, true);
 			client.setRequestHeader('signal', 'ab4494b2-f532-4f99-b57e-7ca121a137ca');
 			client.onreadystatechange = handler;
+
 			try {
 				client.responseType = responseType;
 			} catch (err) {
@@ -501,12 +509,14 @@
 
 			function handler () {
 				var response;
+
 				if (this.readyState !== 4) {
 					return;
 				}
 
 				if (this.status === 200) {
 					response = this.response;
+
 					if (responseType == 'json') {
 						_.isString(response) && (response = JSON.parse(response));
 					}
@@ -521,6 +531,7 @@
 
 		serialize : function serialize (data) {
 			var result = '';
+			
 			if (_.isObject(data)) {
 				_.each($keys(data), function seriKeyEach(key) {
 					var value;
@@ -1854,6 +1865,7 @@
 		constructor: Query,
 
 		val : function val (value) {
+
 			if (_.isVoid0(value)) {
 				return this.els[0] ? this.els[0].value : '';
 			}
@@ -1871,6 +1883,7 @@
 		},
 
 		each : function each (callback) {
+
 			if (_.isFunction(callback)) {
 				this.els.length && this.els.forEach(function eachEach (el, i, arr) {
 					callback(el, i, arr);
@@ -1880,6 +1893,7 @@
 		},
 
 		html : function _html (html) {
+
 			if (_.isVoid0(html)) {
 				return this.els[0].innerHTML;
 			}
@@ -1890,6 +1904,7 @@
 		},
 
 		attr : function attr (key, value) {
+
 			if (!(1 in arguments)) {
 				return this.els[0].getAttribute(key);
 			}
@@ -2252,9 +2267,11 @@
 				+ parent
 				+ '"))';
 		}
-		return '__j._n("'
-			+ vObj.tagName
-			+ '")';
+
+		return LOG.warn(WARN.missComp(tagName)),
+			'__j._n("'
+				+ vObj.tagName
+				+ '")';
 	};
 
 	/**
@@ -2697,7 +2714,7 @@
 				tagName = _.lower(match[4]);
 				isComponentEndTag = REGEXP.compSetRE.test(tagHtml);
 				isEndTag = _.toBool(match[3]) || isComponentEndTag;
-				isNoEndTag = REGEXP.noEndRE.test(tagName);
+				isNoEndTag = REGEXP.ghostRE.test(tagName);
 				vObj = createVObj(tagName, tagHtml, _this);
 
 				if (REGEXP.test(REGEXP.uniqLeftNoteRE, spaceOrNote)) {
@@ -2783,6 +2800,10 @@
 				, firstchild
 				;
 
+			if (collection.length != children.length) {
+				return LOG.warn(WARN.h5Semantic);
+			}
+
 			_.each(children, function (child, index) {
 				var collect = collection[index];
 
@@ -2804,6 +2825,7 @@
 				;
 
 			if (!_this.isStatic) {
+
 				try {
 					_this.vNodeTemplate = _this.analyzeTplStr();
 					_this.renderFn = makeGetterFn(_this.vNodeTemplate);
@@ -3025,6 +3047,7 @@
 					case 5 :// 'APPEND' : 5
 						parentVNode.append(vNode);
 						break;
+
 					default :
 						break;
 				}
@@ -3122,6 +3145,7 @@
 			;
 
 		_.each(routeKeys, function routeKeysEach(r) {
+
 			if (REGEXP.test(REGEXP.colonREG, r)) {
 				matchRoute[r] = [];
 				matchRoute[r][1] = [];
@@ -3381,6 +3405,7 @@
 				}
 
 				if (routeInfo.cach && JSpring.backViewPort) {
+
 					if (viewport = JSpring.vm[routeInfo.uniqId]) {
 						return viewport.renderFromCach(), onHashChanging = false;
 					}
@@ -3411,6 +3436,7 @@
 
 		function setTitle(title, hash) {
 			var el;
+
 			if (_.isNull(title)) {
 				return false;
 			}
@@ -3451,9 +3477,11 @@
 		};
 
 		function isNeedsClick(el) {
+
 			if (!el.tagName) {
 				return false;
 			}
+
 			switch (_.lower(el.tagName)) {
 				case 'button':
 				case 'select':
@@ -3461,6 +3489,7 @@
 					return el.disabled;
 					break;
 				case 'input':
+				
 					if ((deviceIsIOS && el.type === 'file') || el.disabled) {
 						return true;
 					} 
