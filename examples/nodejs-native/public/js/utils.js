@@ -26,6 +26,7 @@ const get = (object = {}, req) => {
         } else if (res.statusCode == 200) {
             try {
                 deferred.resolve(JSON.parse(body));
+                console.log('接口耗时：' + (Date.now() - startTime) + 'ms');
             } catch (err) {
                 deferred.resolve({});
             }

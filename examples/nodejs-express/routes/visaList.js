@@ -51,20 +51,24 @@ router.get('/', function(req, res, next) {
         			quanbu : true,
         			changzhu : true,
         			loadedFlag : true,
-        			filterStyleFn (flag) {
-        				return flag ? {
+        			filterStyleFn : function (flag) {
+				return flag ? {
 
-        				} : {
-        					color : '#d30775'
-        				};
-        			},
-        			goBack () {
-        			},
-        			toggleIcon (key) {
-        				this[key] = !this[key];
-        			},
-        			goVisaDetail (productId, goodsId) {
-        			}
+					} : {
+						color : '#d30775'
+					};
+			},
+			goBack : function () {
+				history.go(-1);
+			},
+			toggleIcon : function (key) {
+				this[key] = !this[key];
+			},
+			goVisaDetail : function (productId, goodsId) {
+				setCookie('visa-goodsId', goodsId);
+				setCookie('visa-productId', productId);
+				location.href = 'visaDetail#' + goodsId;
+			}
         		};
 
 	        	if (config.component) {

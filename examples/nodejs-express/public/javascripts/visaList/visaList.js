@@ -10,26 +10,6 @@ function setCookie (name, value) {
 var sprintInst = JSpring([function($scope, $, _this) {
 	;
 }, function($, module) {
-	$.extend(__INITIAL_STATE__, {
-		filterStyleFn (flag) {
-			return flag ? {
-
-				} : {
-					color : '#d30775'
-				};
-		},
-		goBack () {
-			history.go(-1);
-		},
-		toggleIcon (key) {
-			this[key] = !this[key];
-		},
-		goVisaDetail (productId, goodsId) {
-			setCookie('visa-goodsId', goodsId);
-			setCookie('visa-productId', productId);
-			location.href = 'visaDetail#' + goodsId;
-		}
-	});
 	return __INITIAL_STATE__;
 }, "#container"], {
 	renderFn : __RENDER_FN__

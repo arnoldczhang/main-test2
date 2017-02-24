@@ -67,9 +67,18 @@ router.get('/', function(req, res, next) {
 	        		visaData = resp.datas
 	        		, model = {
 				keyword : '上海123',
-				getInfo : '',
-				goVisaList : '',
-				goVisaDetail : '',
+				getInfo : function () {
+					return $.get(cm.URL.getInfo);
+				},
+				goVisaList : function (pinyin, word) {
+					setCookie('visa-country', word);
+					location.href = 'visaList#' + pinyin;
+				},
+				goVisaDetail : function (productId, goodsId) {
+					setCookie('visa-goodsId', goodsId);
+					setCookie('visa-productId', productId);
+					location.href = 'visaDetail#' + goodsId;
+				},
 				loadedFlag : false
 			}
 	        		;

@@ -61,13 +61,13 @@ router.get('/', function(req, res, next) {
 				pageSize : 10,
 				goodsId : goodsId,
 				productId : productId,
-				goBack () {
+				goBack : function () {
 					history.go(-1);
 				},
-				toBr (str) {
+				toBr : function (str) {
 					return str.replace(/[2-9]+[、\.]/g,"<br />$&");
 				},
-				toggleTab (flag) {
+				toggleTab : function (flag) {
 					this.visaDetailFlag = false;
 					this.needInfoFlag = false; 
 					this.reserveFlag = false; 

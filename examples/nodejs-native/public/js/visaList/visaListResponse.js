@@ -11,19 +11,23 @@ exports.returnHtml = (req, res, data, config) => {
 		quanbu : true,
 		changzhu : true,
 		loadedFlag : true,
-		filterStyleFn (flag) {
+		filterStyleFn :function filterStyleFn (flag) {
 			return flag ? {
 
 			} : {
 				color : '#d30775'
 			};
 		},
-		goBack () {
+		goBack : function goBack () {
+			history.go(-1);
 		},
-		toggleIcon (key) {
+		toggleIcon : function toggleIcon (key) {
 			this[key] = !this[key];
 		},
-		goVisaDetail (productId, goodsId) {
+		goVisaDetail : function goVisaDetail (productId, goodsId) {
+			setCookie('visa-goodsId', goodsId);
+			setCookie('visa-productId', productId);
+			location.href = 'visaDetail#' + goodsId;
 		}
 	};
 

@@ -10,21 +10,6 @@ function setCookie (name, value) {
 var sprintInst = JSpring([function($scope, $, _this) {
 	;
 }, function($, module) {
-	$.extend(__INITIAL_STATE__, {
-		goBack () {
-			history.go(-1);
-		},
-		toBr (str) {
-			return str.replace(/[2-9]+[、\.]/g,"<br />$&");
-		},
-		toggleTab (flag) {
-			this.visaDetailFlag = false;
-			this.needInfoFlag = false; 
-			this.reserveFlag = false; 
-			this.commentFlag = false; 
-			this[flag] = true;
-		}
-	});
 	return __INITIAL_STATE__;
 }, "#container"], {
 	renderFn : __RENDER_FN__

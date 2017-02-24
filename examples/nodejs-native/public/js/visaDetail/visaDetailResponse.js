@@ -14,13 +14,13 @@ exports.returnHtml = (req, res, data, config) => {
 		pageSize : 10,
 		goodsId : data.goodsId,
 		productId : data.productId,
-		goBack () {
+		goBack : function goBack () {
 			history.go(-1);
 		},
-		toBr (str) {
+		toBr : function toBr (str) {
 			return str.replace(/[2-9]+[、\.]/g,"<br />$&");
 		},
-		toggleTab (flag) {
+		toggleTab : function toggleTab (flag) {
 			this.visaDetailFlag = false;
 			this.needInfoFlag = false; 
 			this.reserveFlag = false; 

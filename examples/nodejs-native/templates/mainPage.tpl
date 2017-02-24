@@ -14,7 +14,7 @@
 <script type="text/javascript">
 window.__RENDER_FN__ = {FN};
 window.__TEMPLATE__ = {TEMPLATE};
-window.__INITIAL_STATE__  = {MODEL};
+window.__INITIAL_STATE__ = {MODEL};
 </script>
 <!--@ BODY -->
 <div id="container">

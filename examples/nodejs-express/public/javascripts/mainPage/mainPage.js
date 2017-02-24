@@ -52,22 +52,7 @@ var sprintInst = JSpring([function($scope, $, _this) {
 	});
 	$scope.loadedFlag = true;
 }, function($, module) {
-	$.extend(__INITIAL_STATE__, {
-		getInfo : function () {
-			return $.get(cm.URL.getInfo);
-		},
-		goVisaList : function (pinyin, word) {
-			setCookie('visa-country', word);
-			location.href = 'visaList#' + pinyin;
-		},
-		goVisaDetail : function (productId, goodsId) {
-			setCookie('visa-goodsId', goodsId);
-			setCookie('visa-productId', productId);
-			location.href = 'visaDetail#' + goodsId;
-		},
-	});
-
 	return __INITIAL_STATE__;
 }, "#container"], {
-	renderFn: __RENDER_FN__
+	renderFn : __RENDER_FN__
 });

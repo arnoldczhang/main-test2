@@ -6,9 +6,19 @@ exports.returnHtml = (req, res, data, config) => {
 	const 
 		model = {
 			keyword : '上海123',
-			getInfo : '',
-			goVisaList : '',
-			goVisaDetail : '',
+			getInfo : function getInfo () {
+				return $.get(cm.URL.getInfo);
+			},
+			goVisaList : function goVisaList (pinyin, word) {
+				setCookie('visa-country', word);
+				location.href = 'visaList#' + pinyin;
+			},
+			goVisaDetail : function goVisaDetail (productId, goodsId) {
+				setCookie('visa-goodsId', goodsId);
+				setCookie('visa-productId', productId);
+				console.log(this.loadedFlag);
+				location.href = 'visaDetail#' + goodsId;
+			},
 			loadedFlag : false
 		}
 		;
