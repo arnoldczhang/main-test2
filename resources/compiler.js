@@ -1506,14 +1506,29 @@ const Compiler = {
 		return comp;
 	},
 
+	funcFormat (scope = this.$scope) {
+		let _this = this;
+		_.each(scope, (value, key) => {
+
+			if (_.isFunction(value)) {
+				scope[key] = value.toString();
+			}
+
+			else if (_.isObject(value)) {
+				_this.funcFormat(value);
+			}
+		});
+	},
+
 	renderTpl () {
+		this.funcFormat();
 
 		if (this.metaUrl) {
 			TEMPLATE = TEMPLATE.replace(REGEXP.metaRE, fs.readFileSync(this.metaUrl, 'utf8'));
 		}
 
 		let tpl = TEMPLATE
-			.replace(REGEXP.modelRE, $stringify(this.$scope))
+			.replace(REGEXP.modelRE, 'JSpring.fn.funcFormat(' + $stringify(this.$scope) + ')')
 			.replace(REGEXP.bodyRE, this.outerHTML)
 			.replace(REGEXP.jsRE, this.js)
 			.replace(REGEXP.cssRE, this.css)
