@@ -1,40 +1,5 @@
 'use strict'
 
-var SearchInput = __TEMPLATE__.SearchInput;
-JSpring.addComponent('SearchInput', {
-  data : 'word',
-  $scope : SearchInput.$scope,
-  template : SearchInput.template
-});
-
-var Swiper = __TEMPLATE__.Swiper;
-JSpring.addComponent('Swiper', {
-  data : 'list',
-  $scope : Swiper.$scope,
-  template : Swiper.template
-});
-
-var Hot = __TEMPLATE__.Hot;
-JSpring.addComponent('Hot', {
-  data : 'list',
-  $scope : Hot.$scope,
-  template : Hot.template
-});
-
-var HotItem = __TEMPLATE__.HotItem;
-JSpring.addComponent('HotItem', {
-  data : 'obj',
-  $scope : HotItem.$scope,
-  template : HotItem.template
-});
-
-var Special = __TEMPLATE__.Special;
-JSpring.addComponent('Special', {
-  data : 'list',
-  $scope : Special.$scope,
-  template : Special.template
-});
-
 function setCookie (name, value) {
     let Days = 30; //此 cookie 将被保存 30 天
     let exp = new Date(); //new Date("December 31, 9998");

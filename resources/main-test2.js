@@ -3065,9 +3065,9 @@
 		},
 
 		clearNoUseAttr : function clearNoUseAttr () {
-			delete this.vObj;
-			delete this.template;
-			delete this.vNodeTemplate;
+			this.vObj = null;
+			this.template = null;
+			this.vNodeTemplate = null;
 		},
 
 		bootstrap : function bootstrap () {
@@ -3133,6 +3133,17 @@
 				}
 			});
 			return obj;
+		},
+
+		addMultiComponent : function addMultiComponent (obj) {
+			var _this = this;
+			_.each(obj, function(comp, key) {
+				JSpring.addComponent(key, {
+					data: comp.data,
+					$scope: _this.funcFormat(comp.$scope),
+					template: comp.template
+				});
+			});
 		}
 	};
 
@@ -3414,7 +3425,7 @@
 
 				if (route.readyTransition) {
 					_.each(routeKeys, function routeKeysEach (rt) {
-						delete routes[rt].readyTransition;
+						routes[rt].readyTransition = null;
 					});
 				}
 

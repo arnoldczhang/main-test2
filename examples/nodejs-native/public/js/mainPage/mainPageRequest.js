@@ -24,6 +24,11 @@ exports.requestData = (req, res) => {
                 {
                     id : 'Hot',
                     data : 'list',
+                    props : {
+                        dd : function () {
+                            console.log(1111)
+                        }
+                    },
                     url : 'templates/Hot.tpl'
                 },
                 {
