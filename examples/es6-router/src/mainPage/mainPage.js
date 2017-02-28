@@ -36,7 +36,7 @@ JSpring.addComponent('Special', {
   style : require('../css/Special.css')
 });
 
-export class MainPage extends JSpringComponent {
+export class MainPage extends JSpringClass {
   constructor (uniqId) {
     super(uniqId, controller, service);
   }
