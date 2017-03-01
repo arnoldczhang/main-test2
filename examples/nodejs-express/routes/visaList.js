@@ -51,6 +51,14 @@ router.get('/', function(req, res, next) {
         			quanbu : true,
         			changzhu : true,
         			loadedFlag : true,
+        			getList : function (pageSize) {
+        				return $.get('http://m.lvmama.com/api/router/rest.do?method=api.com.visa.product.search&firstChannel=TOUCH&secondChannel=LVMM&version=1.0.0&format=json&', {
+        					pageSize : 20,
+					pageIndex: 2,
+					provinceName: '上海',
+					countryName: '中国'
+        				});
+        			},
         			filterStyleFn : function (flag) {
 				return flag ? {
 

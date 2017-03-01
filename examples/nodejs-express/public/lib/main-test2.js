@@ -3625,6 +3625,8 @@
 		return this.render.call(this, arguments);
 	};
 
+	window.$ = $;
+
 	JSpringClass.prototype = {
 		render : function (args) {
 			return JSpring(args);
