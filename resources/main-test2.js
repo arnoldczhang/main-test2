@@ -167,14 +167,16 @@
 	 * WARN
 	 **/
 	var WARN = {
-		format : function (attr) {
+		format : function format (attr) {
 			return 'not match the format of {1}'
 				.replace(/\{\d\}/g, attr);
 		},
-		missComp : function (tag) {
+
+		missComp : function missComp (tag) {
 			return '`{1}` is not a component'
 				.replace(/\{\d\}/g, tag);
 		},
+		
 		h5Semantic : 'dont`t wrap block-element inside <p>',
 		container : 'the viewport haven`t found the container to place in'
 	};
