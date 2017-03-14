@@ -167,14 +167,16 @@
 	 * WARN
 	 **/
 	var WARN = {
-		format : function (attr) {
+		format : function format (attr) {
 			return 'not match the format of {1}'
 				.replace(/\{\d\}/g, attr);
 		},
-		missComp : function (tag) {
+
+		missComp : function missComp (tag) {
 			return '`{1}` is not a component'
 				.replace(/\{\d\}/g, tag);
 		},
+		
 		h5Semantic : 'dont`t wrap block-element inside <p>',
 		container : 'the viewport haven`t found the container to place in'
 	};
@@ -538,11 +540,11 @@
 			var result = '';
 			
 			if (_.isObject(data)) {
-				_.each($keys(data), function seriKeyEach(key) {
+				_.each($keys(data), function seriKeyEach (key) {
 					var value;
 
 					if (_.isArray(value = data[key])) {
-						_.each(value, function seriValueEach(val) {
+						_.each(value, function seriValueEach (val) {
 
 							if (!_.isVoid0(val)) {
 								result += key + '=' + encodeURIComponent(val) + '&';
@@ -971,7 +973,7 @@
 	});
 
 	_.each([BROWSER, PLATFORM], function enumEach (keyObj) {
-		_.each($keys(keyObj), function keyObjEach(key) {
+		_.each($keys(keyObj), function keyObjEach (key) {
 			_['is' + key] = REGEXP.test(keyObj[key], UA);
 		});
 	});
@@ -1038,7 +1040,7 @@
 
 	Promise.prototype = {
 		constructor: Promise,
-		init : function init(callback, opts) {
+		init : function init (callback, opts) {
 			opts = opts || {};
 			var inst = opts.inst;
 			inst.define(opts.inst);
@@ -1048,7 +1050,7 @@
 			}
 		},
 
-		define : function define(inst) {
+		define : function define (inst) {
 			var pId = inst.promiseId;
 			inst.pushQById(pId);
 

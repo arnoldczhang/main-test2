@@ -540,11 +540,11 @@
 			var result = '';
 			
 			if (_.isObject(data)) {
-				_.each($keys(data), function seriKeyEach(key) {
+				_.each($keys(data), function seriKeyEach (key) {
 					var value;
 
 					if (_.isArray(value = data[key])) {
-						_.each(value, function seriValueEach(val) {
+						_.each(value, function seriValueEach (val) {
 
 							if (!_.isVoid0(val)) {
 								result += key + '=' + encodeURIComponent(val) + '&';
@@ -973,7 +973,7 @@
 	});
 
 	_.each([BROWSER, PLATFORM], function enumEach (keyObj) {
-		_.each($keys(keyObj), function keyObjEach(key) {
+		_.each($keys(keyObj), function keyObjEach (key) {
 			_['is' + key] = REGEXP.test(keyObj[key], UA);
 		});
 	});
@@ -1040,7 +1040,7 @@
 
 	Promise.prototype = {
 		constructor: Promise,
-		init : function init(callback, opts) {
+		init : function init (callback, opts) {
 			opts = opts || {};
 			var inst = opts.inst;
 			inst.define(opts.inst);
@@ -1050,7 +1050,7 @@
 			}
 		},
 
-		define : function define(inst) {
+		define : function define (inst) {
 			var pId = inst.promiseId;
 			inst.pushQById(pId);
 
