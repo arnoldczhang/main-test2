@@ -128,7 +128,7 @@ const
   **/
  const REGEXP = {
  	bodyRE : /(<!--@ BODY -->)([\s\S]+)(<!-- BODY @-->)/,
- 	startEndAngleRE : /((?:\s|&[a-zA-Z]+;|<!\-\-@|[^<>]+)*)(<?(\/?)([^!<>\/\s]+)(?:\s*[^\s=\/>]+(?:="[^"]*"|='[^']*'|)|)+\s*\/?>?)(?:\s*@\-\->)?/g,
+ 	startEndAngleRE : /((?:\s|&[a-zA-Z]+;|<!\-\-@|[^<>]+)*)(<?(\/?)([^!<>\/\s]+)(?:\s*[^\s=\/>]+(?:="[^"]*"|='[^']*'|=[^'"\s]+|)|)+\s*\/?>?)(?:\s*@\-\->)?/g,
  	noEndRE : /^(?:input|br|img|link|hr|base|area|meta|embed|frame)$/,
  	attrsRE : /\s+([^\s=<>]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s<>]+))/g,
  	routeParamREG : /\:([^\:\-\.]+)/g,
@@ -1333,7 +1333,7 @@ const Compiler = {
 		this.js = createScript(config.js || []);
 		this.css = createLink(config.css || []);
 		this.metaUrl = config.metaUrl;
-		this.template = TEMPLATE.match(REGEXP.bodyRE)[2];
+		this.template = REGEXP.replace(TEMPLATE.match(REGEXP.bodyRE)[2], REGEXP.noteRE, STRING);
 		TEMPLATE = TEMPLATE.replace(REGEXP.bodyRE, '$1BODY$3');
 		this.$scope = options.model || {};
 		return this.init();
