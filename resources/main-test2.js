@@ -2413,7 +2413,7 @@
 
 		className = classReg ? className.replace(classReg, STRING) : className;
 		el.className = _.trim(className + ' ' + value + ' ');
-		vNode.classReg = getNonMatchReg(value);
+		vNode.classReg = value && getNonMatchReg(value);
 	};
 
 	function vStyle (el, value, vNode) {
@@ -2657,7 +2657,7 @@
 			_this.route = JSpring.routeCach[_this.uniqId] || $create(null);
 			_this.parent = JSpring.container.eq(0);
 			_this._single_page = true;
-			_this.template = _this.route.template;
+			_this.template = REGEXP.replace(_this.route.template, REGEXP.noteRE, STRING);
 		
 		} 
 
