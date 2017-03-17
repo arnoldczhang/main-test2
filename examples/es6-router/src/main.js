@@ -7,6 +7,7 @@ const
             BASE = './'
             , DEST = BASE + 'dist/'
             ;
+// JSpring.router.enableHtml5Mode();
 JSpring.router('#container', {
 
     'mainPage' : {
