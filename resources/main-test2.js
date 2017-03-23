@@ -628,7 +628,13 @@
 				.replace(/&quot;/g, '"')
 				.replace(/&amp;/g, '&')
 				.replace(/&gt;/g, '>')
-				.replace(/&lt;/g, '<');
+				.replace(/&lt;/g, '<')
+				.replace(/&reg;/g, '®')
+				.replace(/&trade;/g, '™')
+				.replace(/&copy;/g, '©')
+				.replace(/&times;/g, '×')
+				.replace(/&divide;/g, '÷')
+				.replace(/&yen;/g, '¥');
 		},
 
 		toBool : function toBool (value) {
@@ -2657,8 +2663,7 @@
 			_this.route = JSpring.routeCach[_this.uniqId] || $create(null);
 			_this.parent = JSpring.container.eq(0);
 			_this._single_page = true;
-			_this.template = REGEXP.replace(_this.route.template, REGEXP.noteRE, STRING);
-		
+			_this.template = _.replaceEscapeWord(REGEXP.replace(_this.route.template, REGEXP.noteRE, STRING));
 		} 
 
 		//nodejs server Or singleton
