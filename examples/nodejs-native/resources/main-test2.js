@@ -3565,9 +3565,11 @@
 	  * $location
 	  **/
 	function getUrl (pathname, search) {
-		return (!JSpring.router.html5Mode 
-			? location.pathname + '#/' 
-			: '') + pathname + search;
+
+		if (!JSpring.router.html5Mode) {
+			return location.pathname + search + '#/' + pathname;
+		}
+		return pathname + search;
 	};
 
 	var 
@@ -3579,7 +3581,7 @@
 
 	_.extend($location, {
 		go : function go (pathname, search) {
-			search = search || '';
+			search = search || location.search;
 
 			if (lastPathName != pathname) {
 				lastPathName = pathname;
@@ -3604,7 +3606,7 @@
 		},
 
 		replace : function replace (pathname, search) {
-			search = search || '';
+			search = search || location.search;
 			this.$search = _.getSearchObj(search);
 			history.replaceState(null, '', getUrl(pathname, search));
 			return JSpring.hashLoad(pathname, {
