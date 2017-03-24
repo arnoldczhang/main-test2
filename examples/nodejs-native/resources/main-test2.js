@@ -3360,7 +3360,7 @@
 			});
 		};
 
-		function hashLoad(hash, opts) {
+		function hashLoad (hash, opts) {
 
 			if (onHashChanging) {
 				return false;
@@ -3454,7 +3454,7 @@
 					}
 				}
 
-				if (!opts.noSearch && (loc = module['$location'])) {
+				if (!opts.noSearch && (loc = JSpring.module['$location'])) {
 					var indexQ = _.indexOf(location.hash, '?');
 					loc.$search = _.getSearchObj(location.search || (indexQ > -1 ? location.hash.slice(indexQ) : ''));
 				}
