@@ -24,12 +24,12 @@
 ;(function (global, factory) {
 	typeof exports === 'object' 
 		&& typeof module !== 'undefined' 
-			? module.exports = factory() 
+			? module.exports = factory(global) 
 			: typeof define === 'function' 
 				&& define.amd 
 					? define(factory) 
 					: global.JSpring = factory(global);
-} (this || window, function () {
+} (this || window, function (w) {
 	 "use strict"
 
 	var 
@@ -1246,7 +1246,7 @@
 			length = arrObj.length;
 
 			while (++index < length) {
-				result[index] = cb(arrObj[index], index, inst);
+				result[index] = cb(arrObj[index], index, inst, index == 0, index == length - 1);
 			}
 		} 
 
@@ -1255,7 +1255,7 @@
 			length = arrKey.length;
 
 			while (++index < length) {
-				result[index] = cb(arrObj[arrKey[index]], arrKey[index], inst);
+				result[index] = cb(arrObj[arrKey[index]], arrKey[index], inst, index == 0, index == length - 1);
 			}
 		}
 		return result;
@@ -2217,7 +2217,7 @@
 			index = match[3];
 			parent = match[2];
 			str = '__j._mp(' + parent + ', function(' + match[1] + ', '
-				+ (index || '$index') + ') {';
+				+ (index || '$index') + ', $this, $first, $last) {';
 
 			if (!vObj.isComponent) {
 				str += 'return __j._n(\"' + vObj.tagName + '\", ' + attrStr + ', '
@@ -2229,7 +2229,7 @@
 				str += 'return ' 
 					+ genComponent(vObj, attrStr, inst, parent, index || '$index');
 			}
-			str += '})';
+			str += '}, __j)';
 			return str;
 		}
 		return WARN.format('for'), STRING;

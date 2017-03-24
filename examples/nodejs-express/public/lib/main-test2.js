@@ -24,12 +24,12 @@
 ;(function (global, factory) {
 	typeof exports === 'object' 
 		&& typeof module !== 'undefined' 
-			? module.exports = factory() 
+			? module.exports = factory(global) 
 			: typeof define === 'function' 
 				&& define.amd 
 					? define(factory) 
 					: global.JSpring = factory(global);
-} (this || window, function () {
+} (this || window, function (w) {
 	 "use strict"
 
 	var 
@@ -628,7 +628,13 @@
 				.replace(/&quot;/g, '"')
 				.replace(/&amp;/g, '&')
 				.replace(/&gt;/g, '>')
-				.replace(/&lt;/g, '<');
+				.replace(/&lt;/g, '<')
+				.replace(/&reg;/g, '®')
+				.replace(/&trade;/g, '™')
+				.replace(/&copy;/g, '©')
+				.replace(/&times;/g, '×')
+				.replace(/&divide;/g, '÷')
+				.replace(/&yen;/g, '¥');
 		},
 
 		toBool : function toBool (value) {
@@ -1240,7 +1246,7 @@
 			length = arrObj.length;
 
 			while (++index < length) {
-				result[index] = cb(arrObj[index], index, inst);
+				result[index] = cb(arrObj[index], index, inst, index == 0, index == length - 1);
 			}
 		} 
 
@@ -1249,7 +1255,7 @@
 			length = arrKey.length;
 
 			while (++index < length) {
-				result[index] = cb(arrObj[arrKey[index]], arrKey[index], inst);
+				result[index] = cb(arrObj[arrKey[index]], arrKey[index], inst, index == 0, index == length - 1);
 			}
 		}
 		return result;
@@ -2211,7 +2217,7 @@
 			index = match[3];
 			parent = match[2];
 			str = '__j._mp(' + parent + ', function(' + match[1] + ', '
-				+ (index || '$index') + ') {';
+				+ (index || '$index') + ', $this, $first, $last) {';
 
 			if (!vObj.isComponent) {
 				str += 'return __j._n(\"' + vObj.tagName + '\", ' + attrStr + ', '
@@ -2223,7 +2229,7 @@
 				str += 'return ' 
 					+ genComponent(vObj, attrStr, inst, parent, index || '$index');
 			}
-			str += '})';
+			str += '}, __j)';
 			return str;
 		}
 		return WARN.format('for'), STRING;
@@ -2657,8 +2663,7 @@
 			_this.route = JSpring.routeCach[_this.uniqId] || $create(null);
 			_this.parent = JSpring.container.eq(0);
 			_this._single_page = true;
-			_this.template = REGEXP.replace(_this.route.template, REGEXP.noteRE, STRING);
-		
+			_this.template = _.replaceEscapeWord(REGEXP.replace(_this.route.template, REGEXP.noteRE, STRING));
 		} 
 
 		//nodejs server Or singleton
