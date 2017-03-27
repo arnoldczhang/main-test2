@@ -3017,7 +3017,6 @@
 				type : UpdateType.REPLACE,
 				vNode : [prevVNode, newVNode]
 			});
-			opts.step = 0;
 
 			function _childrenDiffProxy () {
 				return childrenDiff(prevVNode.children
