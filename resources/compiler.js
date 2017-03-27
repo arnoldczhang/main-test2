@@ -231,7 +231,13 @@ const _ = {
 			.replace(/&quot;/g, '"')
 			.replace(/&amp;/g, '&')
 			.replace(/&gt;/g, '>')
-			.replace(/&lt;/g, '<');
+			.replace(/&lt;/g, '<')
+			.replace(/&reg;/g, '®')
+			.replace(/&trade;/g, '™')
+			.replace(/&copy;/g, '©')
+			.replace(/&times;/g, '×')
+			.replace(/&divide;/g, '÷')
+			.replace(/&yen;/g, '¥');
 	},
 
 	toBool (value) {
@@ -481,7 +487,7 @@ const genFor = (vObj, attrStr, inst) => {
 		index = match[3];
 		parent = match[2];
 		str = '__j._mp(' + parent + ', function(' + match[1] + ', '
-			+ (index || '$index') + ') {';
+			+ (index || '$index') + ', $this, $first, $last) {';
 
 		if (!vObj.isComponent) {
 			str += 'return __j._n(\"' + vObj.tagName + '\", ' + attrStr + ', '
@@ -494,7 +500,7 @@ const genFor = (vObj, attrStr, inst) => {
 				+ genComponent(vObj, attrStr, inst, parent, index || '$index');
 		}
 
-		str += '})';
+		str += '}, __j)';
 		return str;
 	}
 	return WARN.format('for'), STRING;
@@ -1059,7 +1065,13 @@ const getMapResult = (arrObj, cb, inst) => {
 		length = arrObj.length;
 
 		while (++index < length) {
-			result[index] = cb(arrObj[index], index, inst);
+			result[index] = cb(
+				arrObj[index]
+				, index
+				, inst
+				, index == 0
+				, index == length - 1
+				);
 		}
 
 	} 
@@ -1069,7 +1081,13 @@ const getMapResult = (arrObj, cb, inst) => {
 		length = arrKey.length;
 
 		while (++index < length) {
-			result[index] = cb(arrObj[arrKey[index]], arrKey[index], inst);
+			result[index] = cb(
+				arrObj[arrKey[index]]
+				, arrKey[index]
+				, inst
+				, index == 0
+				, index == length - 1
+				);
 		}
 
 	}
@@ -1129,6 +1147,7 @@ const extendStaticAndUniqAttrs = (target, source) => {
 };
 
 const makeGetterFn = (body, callback) => {
+
 	try {
 		return new Function('__j', body + ';');
 	} catch (e) {
@@ -1323,9 +1342,9 @@ const createLink = (linkArr) => {
 const Compiler = {
 
 	render (filePath, options = {}) {
+		TEMPLATE = fs.readFileSync(filePath, 'utf8');
 		const config = options.config || {};
 		this.start = Date.now();
-		TEMPLATE = fs.readFileSync(filePath, 'utf8');
 		this.outerHTML = '';
 		this.redis = config.redis || '';
 		this.redisKey = config.redisKey || '';
@@ -1334,8 +1353,8 @@ const Compiler = {
 		this.css = createLink(config.css || []);
 		this.metaUrl = config.metaUrl;
 		this.template = REGEXP.replace(TEMPLATE.match(REGEXP.bodyRE)[2], REGEXP.noteRE, STRING);
-		TEMPLATE = TEMPLATE.replace(REGEXP.bodyRE, '$1BODY$3');
 		this.$scope = options.model || {};
+		TEMPLATE = TEMPLATE.replace(REGEXP.bodyRE, '$1BODY$3');
 		return this.init();
 	},
 
@@ -1441,7 +1460,7 @@ const Compiler = {
 			}
 			_this.vNode = _this.renderFn.call(_this, _this);
 		} catch(err) {
-			console.log(_this.vNodeTemplate);
+			// console.log(_this.vNodeTemplate);
 			return LOG.warn('TIP : ' + err.message), _this;
 		}
 		return _this;
@@ -1473,6 +1492,7 @@ const Compiler = {
 					console.log('redis has cach the ' + this.redisKey + 'template');
 				}
 			});
+
 			//一天缓存期限
 			this.redis.expire(this.redisKey, 60 * 60 * 24);
 		}
