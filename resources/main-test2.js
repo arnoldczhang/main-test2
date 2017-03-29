@@ -187,6 +187,7 @@
 	 * REGEXP
 	 **/
 	var REGEXP = {
+		validTagRE : /^[a-zA-Z][a-zA-Z:_\.\-\d]*$/,
 		startEndAngleRE : /((?:\s|&[a-zA-Z]+;|<!\-\-@|[^<>]+)*)(<?(\/?)([^!<>\/\s]+)(?:\s*[^\s=\/>]+(?:="[^"]*"|='[^']*'|=[^'"\s]+|)|)+\s*\/?>?)(?:\s*@\-\->)?/g,
 		ghostRE : /^(?:input|br|img|link|hr|base|area|meta|embed|frame)$/,//虚元素
 		attrsRE : /\s+([^\s=<>]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s<>]+))/g,
@@ -2250,6 +2251,10 @@
 			, component = JSpring.component[tagName || 'div']
 			, componentData
 			;
+
+		if (!REGEXP.validTagRE.test(tagName)) {
+			return new Error('The tagName ' + tagName + ' is not a valid name');
+		}
 
 		if (component) {
 			componentData = vObj.isComponent;
